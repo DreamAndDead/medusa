@@ -58,8 +58,8 @@ def make_test(filename):
 
         luafile = LUA_CODE_FORMAT.format(filename)
 
-        tmp_file = os.open(luafile, "w")
-        tmp_file.write(Translator.get_luainit() + "\n")
+        tmp_file = open(luafile, "w")
+        tmp_file.write("dofile('./pythonlua/luainit.lua')\n\n")
         tmp_file.write(lua_code)
         tmp_file.flush()
         tmp_file.close()
