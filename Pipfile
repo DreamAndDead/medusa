@@ -10,6 +10,7 @@ jedi = "*"
 epc = "*"
 colorama = "*"
 pyyaml = "*"
+ipdb = "*"
 
 [requires]
 python_version = "3.7"

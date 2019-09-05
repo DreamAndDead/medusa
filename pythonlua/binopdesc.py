@@ -6,7 +6,12 @@ _DEFAULT_FORMAT = "{left} {operation} {right}"
 
 
 class BinaryOperationDesc:
-    """Binary operation description"""
+    """
+    Binary operation description
+
+    TODO:
+    - more binary ops
+    """
 
     OPERATION = {
         ast.Add: {

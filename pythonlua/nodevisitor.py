@@ -1,4 +1,9 @@
-"""Node visitor"""
+"""
+Node visitor
+
+ref: https://docs.python.org/3/library/ast.html#abstract-grammar
+"""
+
 import ast
 
 from .binopdesc import BinaryOperationDesc
@@ -13,8 +18,6 @@ from .tokenendmode import TokenEndMode
 
 
 class NodeVisitor(ast.NodeVisitor):
-    LUACODE = "[[luacode]]"
-
     """Node visitor"""
     def __init__(self, context=None, config=None):
         self.context = context if context is not None else Context()
@@ -22,8 +25,89 @@ class NodeVisitor(ast.NodeVisitor):
         self.last_end_mode = TokenEndMode.LINE_FEED
         self.output = []
 
+    def generic_visit(self, node):
+        """
+        Unknown nodes handler
+
+        not support:
+        - AsyncFunctionDef
+        - AnnAssign
+        - AsyncFor
+        - AsyncWith
+        - Raise
+        - Try
+        - Assert
+        - ImportFrom
+        - Nonlocal
+        - ? Continue
+
+        - NamedExpr
+        - Set
+        - SetComp
+        - GeneratorExp
+        - Await
+        - Yield
+        - YieldFrom
+        - FormattedValue
+        - JoinedStr
+        """
+        raise RuntimeError("Unsupported node: {}".format(node))
+
+    def visit_all(self, nodes, inline=False):
+        """
+        Visit all nodes in the given list
+
+        inline: 
+        - True, return the visit node result, we can manipulate them ourselves
+        - False, embed the result in visitor self output
+        """
+        if not inline:
+            last_ctx = self.context.last()
+            last_ctx["locals"].push()
+
+        visitor = NodeVisitor(context=self.context, config=self.config)
+
+        if isinstance(nodes, list):
+            for node in nodes:
+                visitor.visit(node)
+            if not inline:
+                self.output.append(visitor.output)
+        else:
+            visitor.visit(nodes)
+            if not inline:
+                self.output.extend(visitor.output)
+
+        if not inline:
+            last_ctx = self.context.last()
+            last_ctx["locals"].pop()
+
+        if inline:
+            return " ".join(visitor.output)
+
+    def emit(self, code):
+        """Add translated code to the output"""
+        self.output.append(code)
+
+    def visit_Module(self, node):
+        """
+        Visit module
+
+        node attr:
+        - body, a list of statements
+        """
+        self.visit_all(node.body)
+        # body is a list, it's a list result in output, fetch it with [0]
+        self.output = self.output[0]
+
     def visit_Assign(self, node):
-        """Visit assign"""
+        """
+        Visit assign
+        
+        TODO:
+        - a = b = 1 not included, node.targets is a list
+        - starred may happens here
+        """
+        # why only targets[0] here?
         target = self.visit_all(node.targets[0], inline=True)
         value = self.visit_all(node.value, inline=True)
 
@@ -72,6 +156,7 @@ class NodeVisitor(ast.NodeVisitor):
     def visit_BinOp(self, node):
         """Visit binary operation"""
         operation = BinaryOperationDesc.OPERATION[node.op.__class__]
+        # 保证运算优先级
         line = "({})".format(operation["format"])
         values = {
             "left": self.visit_all(node.left, True),
@@ -98,7 +183,13 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit("break")
 
     def visit_Call(self, node):
-        """Visit function call"""
+        """
+        Visit function call
+
+        TODO:
+        - 这里忽略了所有 keywords
+        """
+        # 当函数调用中有 *o 这样的形式，解析出来是 unpack，用于将列表展开，传递参数
         line = "{name}({arguments})"
 
         name = self.visit_all(node.func, inline=True)
@@ -171,9 +262,13 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit("({})".format(line))
 
     def visit_Continue(self, node):
-        """Visit continue"""
-        last_ctx = self.context.last()
-        line = "goto {}".format(last_ctx["loop_label_name"])
+        """
+        Visit continue
+        
+        TODO:
+        - difficult for lua5.1
+        """
+        line = "-- TODO: continue"
         self.emit(line)
 
     def visit_Delete(self, node):
@@ -239,19 +334,33 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit("...")
 
     def visit_Expr(self, node):
-        """Visit expr"""
+        """
+        Visit expr
+        
+        node attr:
+        - value
+        """
+        # FIXME: something wrong here
+        # 在定义函数之后，直接使用 “”“”“” 是一个 Str Expr
+        # 而如果我在随便一行写上 "" 一个字符串，用下面的规则，也会被认为是 doc string
+        # 这一点对于代码执行是没有影响的，因为 lua 不支持字符串表达式作为语句，并且在 python 中，
+        # 一行 Str 语句也没有什么影响，没有副作用，等。
+        # 所以在 lua 中，作为一行空白注释也可以理解
         expr_is_docstring = False
         if isinstance(node.value, ast.Str):
             expr_is_docstring = True
 
         self.context.push({"docstring": expr_is_docstring})
-        output = self.visit_all(node.value)
+        #import ipdb; ipdb.set_trace()
+        output = self.visit_all(node.value, inline=True)
         self.context.pop()
 
         self.output.append(output)
 
     def visit_FunctionDef(self, node):
-        """Visit function definition"""
+        """
+        Visit function definition
+        """
         line = "{local}function {name}({arguments})"
 
         last_ctx = self.context.last()
@@ -260,6 +369,7 @@ class NodeVisitor(ast.NodeVisitor):
         if last_ctx["class_name"]:
             name = ".".join([last_ctx["class_name"], name])
 
+        # TODO: 忽略了所有 keywords 参数
         arguments = [arg.arg for arg in node.args.args]
 
         if node.args.vararg is not None:
@@ -287,14 +397,15 @@ class NodeVisitor(ast.NodeVisitor):
             line = "local {name} = list {{...}}".format(name=node.args.vararg.arg)
             body.insert(0, line)
 
+        # 填充位置参数的默认值
         arg_index = -1
-        for i in reversed(node.args.defaults):
+        for d in reversed(node.args.defaults):
             line = "{name} = {name} or {value}"
 
             arg = node.args.args[arg_index]
             values = {
                 "name": arg.arg,
-                "value": self.visit_all(i, inline=True),
+                "value": self.visit_all(d, inline=True),
             }
             body.insert(0, line.format(**values))
 
@@ -302,6 +413,7 @@ class NodeVisitor(ast.NodeVisitor):
 
         self.emit("end")
 
+        # 装饰器
         for decorator in reversed(node.decorator_list):
             decorator_name = self.visit_all(decorator, inline=True)
             values = {
@@ -312,7 +424,7 @@ class NodeVisitor(ast.NodeVisitor):
             self.emit(line)
 
     def visit_For(self, node):
-        """Visit for loop"""
+        """Visit for"""
         line = "for {target} in {iter} do"
 
         values = {
@@ -322,14 +434,7 @@ class NodeVisitor(ast.NodeVisitor):
 
         self.emit(line.format(**values))
 
-        continue_label = LoopCounter.get_next()
-        self.context.push({
-            "loop_label_name": continue_label,
-        })
         self.visit_all(node.body)
-        self.context.pop()
-
-        self.output[-1].append("::{}::".format(continue_label))
 
         self.emit("end")
 
@@ -346,8 +451,10 @@ class NodeVisitor(ast.NodeVisitor):
         line = "if {} then".format(test)
 
         self.emit(line)
+
         self.visit_all(node.body)
 
+        # 其实转化为 elseif 关键字不是必要的，用 else \n if 也可以正常运行，不过代码就不美观
         if node.orelse:
             if isinstance(node.orelse[0], ast.If):
                 elseif = node.orelse[0]
@@ -359,6 +466,7 @@ class NodeVisitor(ast.NodeVisitor):
                 output_length = len(self.output)
                 self.visit_If(node.orelse[0])
 
+                # 删除开始的 if 和 末尾的 end
                 del self.output[output_length]
                 del self.output[-1]
             else:
@@ -449,11 +557,6 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit("return result")
         self.emit("end)()")
 
-    def visit_Module(self, node):
-        """Visit module"""
-        self.visit_all(node.body)
-        self.output = self.output[0]
-
     def visit_Name(self, node):
         """Visit name"""
         self.emit(node.id)
@@ -485,11 +588,8 @@ class NodeVisitor(ast.NodeVisitor):
     def visit_Str(self, node):
         """Visit str"""
         value = node.s
-        if value.startswith(NodeVisitor.LUACODE):
-            value = value[len(NodeVisitor.LUACODE):]
-            self.emit(value)
-        elif self.context.last()["docstring"]:
-            self.emit('--[[ {} ]]'.format(node.s))
+        if self.context.last()["docstring"]:
+            self.emit('--[[{}]]'.format(node.s))
         else:
             self.emit('"{}"'.format(node.s))
 
@@ -527,19 +627,17 @@ class NodeVisitor(ast.NodeVisitor):
 
         self.emit("while {} do".format(test))
 
-        continue_label = LoopCounter.get_next()
-        self.context.push({
-            "loop_label_name": continue_label,
-        })
         self.visit_all(node.body)
-        self.context.pop()
-
-        self.output[-1].append("::{}::".format(continue_label))
 
         self.emit("end")
 
     def visit_With(self, node):
-        """Visit with"""
+        """
+        Visit with
+
+        TODO:
+        - just do ... end block? not connect with context
+        """
         self.emit("do")
 
         self.visit_all(node.body)
@@ -560,36 +658,4 @@ class NodeVisitor(ast.NodeVisitor):
 
         self.emit("end")
 
-    def generic_visit(self, node):
-        """Unknown nodes handler"""
-        raise RuntimeError("Unknown node: {}".format(node))
 
-    def visit_all(self, nodes, inline=False):
-        """Visit all nodes in the given list"""
-
-        if not inline:
-            last_ctx = self.context.last()
-            last_ctx["locals"].push()
-
-        visitor = NodeVisitor(context=self.context, config=self.config)
-
-        if isinstance(nodes, list):
-            for node in nodes:
-                visitor.visit(node)
-            if not inline:
-                self.output.append(visitor.output)
-        else:
-            visitor.visit(nodes)
-            if not inline:
-                self.output.extend(visitor.output)
-
-        if not inline:
-            last_ctx = self.context.last()
-            last_ctx["locals"].pop()
-
-        if inline:
-            return " ".join(visitor.output)
-
-    def emit(self, value):
-        """Add translated value to the output"""
-        self.output.append(value)
