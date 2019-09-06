@@ -1,4 +1,6 @@
-# if, for, while
+# python control flow logic test
+
+# for in
 
 # # lua: for i = 1, 10 do end
 # for i in range(1, 10):
@@ -41,7 +43,7 @@
 #             print(4)
 
 # while, there's no do until in python
-while True:
-    print("while")
-    if True:
-        break
+# while True:
+#    print("while")
+#    if True:
+#        break
