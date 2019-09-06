@@ -24,3 +24,14 @@ print((1 and 2 and 3))
 print((1 or 2 or 3))
 print(((1 and 2) or 3))
 print((1 or (2 and 3)))
+local a = 10
+print(a)
+local b = 20
+local c = 20
+print(b)
+print(c)
+local a, b = b, a
+print(a)
+print(b)
+a = (a + 1)
+print(a)

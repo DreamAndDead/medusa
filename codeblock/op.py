@@ -85,3 +85,26 @@ print(1 or 2 and 3)
 
 # assignment
 
+a = 10
+print(a)
+
+b = c = 20
+print(b)
+print(c)
+
+a, b = b, a
+print(a)
+print(b)
+
+#d, *e = 1, 2, 3
+#print(d)
+#for i in e:
+#    print(i)
+
+## ann assignment
+
+a += 1
+print(a)
+
+
+

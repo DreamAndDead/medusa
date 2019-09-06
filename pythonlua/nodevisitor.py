@@ -104,28 +104,26 @@ class NodeVisitor(ast.NodeVisitor):
         Visit assign
         
         TODO:
-        - a = b = 1 not included, node.targets is a list
         - starred may happens here
         """
-        # why only targets[0] here?
-        target = self.visit_all(node.targets[0], inline=True)
+        targets = [self.visit_all(t, inline=True) for t in node.targets]
         value = self.visit_all(node.value, inline=True)
 
-        local_keyword = ""
+        for target in targets:
+            local_keyword = ""
 
-        last_ctx = self.context.last()
+            last_ctx = self.context.last()
 
-        if last_ctx["class_name"]:
-            target = ".".join([last_ctx["class_name"], target])
+            if last_ctx["class_name"]:
+                target = ".".join([last_ctx["class_name"], target])
 
-        if "." not in target and not last_ctx["locals"].exists(target):
-            local_keyword = "local "
-            last_ctx["locals"].add_symbol(target)
+            if "." not in target and not last_ctx["locals"].exists(target):
+                local_keyword = "local "
+                last_ctx["locals"].add_symbol(target)
 
-
-        self.emit("{local}{target} = {value}".format(local=local_keyword,
-                                                     target=target,
-                                                     value=value))
+            self.emit("{local}{target} = {value}".format(local=local_keyword,
+                                                         target=target,
+                                                         value=value))
 
     def visit_AugAssign(self, node):
         """Visit augassign"""
