@@ -42,6 +42,7 @@ class BinaryOperationDesc:
             "value": "/",
             "format": "math.floor({left} {operation} {right})",
         },
+        # TODO: lua 5.1 doesn't include bit32 lib
         ast.LShift: {
             "value": "",
             "format": "bit32.lshift({left}, {right})",

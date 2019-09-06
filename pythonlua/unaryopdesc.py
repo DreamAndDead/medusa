@@ -21,6 +21,7 @@ class UnaryOperationDesc:
             "value": "not",
             "format": "not {value}",
         },
+        # TODO: bit op in lua 5.1
         ast.Invert: {
             "value": "~",
             "format": "bit32.bnot({value})",

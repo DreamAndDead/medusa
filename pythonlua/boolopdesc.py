@@ -2,19 +2,14 @@
 import ast
 
 
-_DEFAULT_FORMAT = "{left} {operation} {right}"
-
-
 class BooleanOperationDesc:
     """Binary operation description"""
 
     OPERATION = {
         ast.And: {
-            "value": "and",
-            "format": _DEFAULT_FORMAT,
+            "value": " and "
         },
         ast.Or: {
-            "value": "or",
-            "format": _DEFAULT_FORMAT,
+            "value": " or "
         },
     }

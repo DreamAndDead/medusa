@@ -45,7 +45,13 @@ local function output_wrapper(func)
     end
     return wrapper
 end
-output_wrapper(play)(10, 20, "total 10 seconds")
+local function wait(second)
+    print("wait")
+    print(second)
+    print("seconds")
+end
+wait = output_wrapper(wait)
+wait(20)
 local function output_wrapper_with(beginning, finish)
     function output_wrapper(func)
         local function wrapper(...)
@@ -58,7 +64,13 @@ local function output_wrapper_with(beginning, finish)
     end
     return output_wrapper
 end
-output_wrapper_with("hello every one", "see you again")(play)(1, 99, "all ints below 100")
+function wait(second)
+    print("wait")
+    print(second)
+    print("seconds")
+end
+wait = output_wrapper_with("begin wait", "end wait")(wait)
+wait(40)
 local function registerClickEvent(callback)
     --[[register click event]]
     local event = dict {["id"] = "click"}

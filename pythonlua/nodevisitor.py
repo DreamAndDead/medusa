@@ -169,14 +169,13 @@ class NodeVisitor(ast.NodeVisitor):
     def visit_BoolOp(self, node):
         """Visit boolean operation"""
         operation = BooleanOperationDesc.OPERATION[node.op.__class__]
-        line = "({})".format(operation["format"])
-        values = {
-            "left": self.visit_all(node.values[0], True),
-            "right": self.visit_all(node.values[1], True),
-            "operation": operation["value"],
-        }
+        
+        values = [self.visit_all(n, inline=True) for n in node.values]
 
-        self.emit(line.format(**values))
+        line = operation["value"].join(values)
+        line = "({})".format(line)
+
+        self.emit(line)
 
     def visit_Break(self, node):
         """Visit break"""

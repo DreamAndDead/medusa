@@ -55,7 +55,14 @@ def output_wrapper(func):
         print("function end")
     return wrapper
 
-output_wrapper(play)(10, 20, "total 10 seconds")
+
+@output_wrapper
+def wait(second):
+    print("wait")
+    print(second)
+    print("seconds")
+
+wait(20)
 
 
 def output_wrapper_with(beginning, finish):
@@ -67,8 +74,13 @@ def output_wrapper_with(beginning, finish):
         return wrapper
     return output_wrapper
         
-output_wrapper_with("hello every one", "see you again")(play)(1, 99, "all ints below 100")
+@output_wrapper_with("begin wait", "end wait")
+def wait(second):
+    print("wait")
+    print(second)
+    print("seconds")
 
+wait(40)
 
 # callbacks
 # 在 lua 中，可以直接在函数调用时，定义匿名函数作为参数，就像
