@@ -16,7 +16,7 @@ function test_pyfile()
     pyluafile=$pyfile.lua
     echocyan "test file $pyfile"
 
-    echo "dofile('${dir}pythonlua/luainit.lua')" > $pyluafile
+    echo "dofile('./codeblock/luainit.lua')" > $pyluafile
     echo >> $pyluafile
     $PYTHON $pylua --no-lua-init $pyfile >> $pyluafile
 

@@ -117,7 +117,7 @@ class NodeVisitor(ast.NodeVisitor):
             if last_ctx["class_name"]:
                 target = ".".join([last_ctx["class_name"], target])
 
-            if "." not in target and not last_ctx["locals"].exists(target):
+            if "." not in target and "[" not in target and not last_ctx["locals"].exists(target):
                 local_keyword = "local "
                 last_ctx["locals"].add_symbol(target)
 

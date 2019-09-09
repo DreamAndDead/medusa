@@ -3,6 +3,8 @@
 #
 # TODO:
 # - bit operation, ref: http://lua-users.org/wiki/BitwiseOperators
+# - starred assignment
+
 
 # binop
 
@@ -96,12 +98,17 @@ a, b = b, a
 print(a)
 print(b)
 
+
+## starred assignment
+
+
 #d, *e = 1, 2, 3
 #print(d)
 #for i in e:
 #    print(i)
 
-## ann assignment
+
+## ann assignment, with all binop operator
 
 a += 1
 print(a)

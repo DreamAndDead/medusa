@@ -1,4 +1,5 @@
-# python builtin test
+# python builtin functions
+# main funcs, decorators, 
 
 # print
 
