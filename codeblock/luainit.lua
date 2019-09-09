@@ -196,7 +196,7 @@ setmetatable(list, {
 
                       for i = start, end_, 1 do
                          if result._data[i] == value then
-                            return i
+                            return i - 1
                          end
                       end
 
@@ -204,11 +204,16 @@ setmetatable(list, {
                    end
 
                    methods.insert = function(index, value)
-                      table.insert(result._data, index, value)
+                      table.insert(result._data, index + 1, value)
                    end
 
                    methods.pop = function(index)
-                      index = index or #result._data
+		      if index then
+			 index = index + 1
+		      else
+			 index = #result._data
+		      end
+		      
                       local value = result._data[index]
                       table.remove(result._data, index)
                       return value
@@ -233,15 +238,16 @@ setmetatable(list, {
                    end
 
                    methods.sort = function(key, reverse)
+		      -- TODO: key is a callable
                       key = key or nil
                       reverse = reverse or false
 
                       table.sort(result._data, function(a, b)
                                     if reverse then
-                                       return a < b
+                                       return a > b
                                     end
 
-                                    return a > b
+                                    return a < b
                       end)
                    end
 
@@ -258,12 +264,11 @@ setmetatable(list, {
 
                                       return methods[index]
                                    end,
-				   -- only number index is permitted
+				   -- only number index is permitted in python
                                    __newindex = function(self, index, value)
                                       rawset(result._data, index + 1, value)
                                    end,
                                    __call = function(self, _, idx)
-				      
                                       if idx == nil and iterator_index ~= nil then
                                          iterator_index = nil
                                       end
