@@ -286,7 +286,20 @@ setmetatable(list, {
 
 
 --[[
-   dict structure
+dict structure
+
+methods:
+- clear
+- copy
+- fromkeys
+- get
+- items
+- keys
+- pop
+- popitem
+- setdefault
+- update
+- values
 --]]
 
 dict = {}
@@ -295,8 +308,8 @@ setmetatable(dict, {
 		   local result = {}
 
 		   result._is_dict = true
-
 		   result._data = {}
+
 		   for k, v in pairs(t) do
 		      result._data[k] = v
 		   end
@@ -313,6 +326,16 @@ setmetatable(dict, {
 		      return dict(result._data)
 		   end
 
+		   methods.fromkeys = function(keys, value)
+		      value = value or nil
+		      d = {}
+		      for k in keys do
+			 d[k] = value
+		      end
+
+		      return dict(d)
+		   end
+		   
 		   methods.get = function(key, default)
 		      default = default or nil
 		      if result._data[key] == nil then
@@ -342,12 +365,13 @@ setmetatable(dict, {
 		      if result._data[key] ~= nil then
 			 local value = result._data[key]
 			 result._data[key] = nil 
-			 return key, value
+			 return value
 		      end
 
-		      return key, default
+		      return default
 		   end
 
+		   -- amazing! the python pop seq is same with lua table!
 		   methods.popitem = function()
 		      local key, value = next(result._data)
 		      if key ~= nil then

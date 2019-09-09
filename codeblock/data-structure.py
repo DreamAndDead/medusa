@@ -1,5 +1,9 @@
 # pythou builtin data structure
 # list, dict, set and others
+#
+# TODO
+# - set
+
 
 # list
 
@@ -69,9 +73,92 @@ print_list(l)
 
 
 
-
-
 # dict
 
-# d = { "k": 1 }
+def print_dict(d):
+    for k, v in d.items():
+        print(k)
+        print(v)
 
+d = { "name": "d", "size": 8 }
+print_dict(d)
+
+
+## d.clear()
+
+
+d_copy = d.copy()
+d_copy["name"] = "d_copy"
+
+print_dict(d)
+print_dict(d_copy)
+
+
+f = d.fromkeys(['a', 'b'], 2)
+print_dict(f)
+
+
+print(d.get("name"))
+print(d.get("age", 18))
+
+
+for k, v in d.items():
+    print(k)
+    print(v)
+
+    
+for k in d.keys():
+    print(k)
+
+
+v = d.pop("name")
+print(v)
+
+v = d.pop("age", 18)
+print(v)
+
+
+d["tel"] = "+86"
+d["age"] = 81
+
+k, v = d.popitem()
+print(k)
+print(v)
+
+
+v = d.setdefault("tel", "+00")
+print(v)
+
+v = d.setdefault("home", "cn")
+print(v)
+
+
+d.update({ "tel": "+186...", "home": "us", "height": 180 })
+print(d["tel"])
+print(d["height"])
+
+
+## d.values() return a iterator
+## for in iter print different order with lua iter
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# set
