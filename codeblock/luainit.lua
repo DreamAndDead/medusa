@@ -19,6 +19,82 @@ unpack = function(t)
    return g_real_unpack(t)
 end
 
+--[[
+builtin functions
+ref: https://docs.python.org/3/library/functions.html
+
+- abs
+- all
+- any
+- ascii
+- bin
+- bool
+- breakpoint
+- bytearray
+- bytes
+- callable
+- chr
+- classmethod
+- compile
+- complex
+- delattr
+- dict
+- dir
+- divmod
+- enumerate
+- eval
+- exec
+- filter
+- float
+- format
+- frozenset
+- getattr
+- globals
+- hasattr
+- hash
+- help
+- hex
+- id
+- input
+- int
+- isinstance
+- issubclass
+- iter
+- len
+- list
+- locals
+- map
+- max
+- memoryview
+- min
+- next
+- object
+- oct
+- open
+- ord
+- pow
+- print
+- property
+- range
+- repr
+- reversed
+- round
+- set
+- setattr
+- slice
+- sorted
+- staticmethod
+- str
+- sum
+- super
+- tuple
+- type
+- vars
+- zip
+- __import__
+
+--]]
+
 abs = math.abs
 ascii = string.byte
 chr = string.char
@@ -285,6 +361,14 @@ setmetatable(list, {
 })
 
 
+
+--[[
+tuple
+--]]
+
+
+
+
 --[[
 dict structure
 
@@ -433,6 +517,55 @@ setmetatable(dict, {
 		end,
 })
 
+--[[
+set structure
+ref: https://docs.python.org/3/library/stdtypes.html#set-types-set-frozenset
+
+- add
+- clear
+- copy
+- difference
+- difference_update
+- discard
+- intersection
+- intersection_update
+- isdisjoint
+- issubset
+- issuperset
+- pop
+- remove
+- symmetric_difference
+- symmetric_difference_update
+- union
+- update
+
+--]]
+
+set = {}
+setmetatable(set, {
+		__call = function(_, t)
+		   local result = {}
+
+		   result._is_set = true
+		   result.data = {}
+
+		   local methods = {}
+
+		   methods.clear = function()
+		   end
+		   
+		end
+
+		
+})
+
+
+--[[
+frozenset
+--]]
+
+
+
 function staticmethod(old_fun)
    local wrapper = function(first, ...)
       return old_fun(...)
@@ -455,7 +588,25 @@ function operator_in(item, items)
    return false
 end
 
--- Lua classes
+
+
+
+--[[
+classes
+
+TODO：
+- inherit
+- base object，全部的类都继承于它
+- magic methods
+- MRO机制
+- metaclass
+- @property, @staticmethod, @classmethod
+- super()
+--]]
+
+function super(cls, obj)
+end
+
 function class(class_init, bases)
    bases = bases or {}
 
@@ -499,6 +650,3 @@ function class(class_init, bases)
    
    return c
 end
---[[
-   End of the lua pythonization.
---]]
