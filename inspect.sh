@@ -2,7 +2,7 @@
 
 pyfile=$1
 pyast=pyast.py
-pylua=__main__.py
+pylua=py2lua.py
 
 echo "==========py=========="
 cat $pyfile

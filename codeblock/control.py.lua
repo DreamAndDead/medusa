@@ -1,4 +1,4 @@
-dofile('/home/manjaro/project/python-lua/pythonlua/luainit.lua')
+dofile('./pypolyfill.lua')
 
 for i in range(1, 10) do
     print(i)

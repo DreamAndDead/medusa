@@ -1,4 +1,4 @@
-dofile('./codeblock/luainit.lua')
+dofile('./pypolyfill.lua')
 
 local Point = class(function(Point)
     function Point.__init__(self, x, y)

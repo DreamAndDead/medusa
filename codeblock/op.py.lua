@@ -1,4 +1,4 @@
-dofile('./codeblock/luainit.lua')
+dofile('./pypolyfill.lua')
 
 print((10 + 20))
 print((5 + 0.5))

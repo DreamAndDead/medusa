@@ -5,7 +5,7 @@ source rainbow.sh
 PYTHON=python3.7
 LUA=lua5.1
 TEST_FOLDER=./codeblock/
-pylua=./__main__.py
+pylua=./py2lua.py
 
 pyfile_path=$1
 
@@ -15,7 +15,7 @@ function test_pyfile()
     pyluafile=$pyfile.lua
     echocyan "test python file $pyfile"
 
-    echo "dofile('./codeblock/luainit.lua')" > $pyluafile
+    echo "dofile('./pypolyfill.lua')" > $pyluafile
     echo >> $pyluafile
     $PYTHON $pylua < $pyfile >> $pyluafile
 

@@ -1,4 +1,4 @@
-dofile('/home/manjaro/project/python-lua/pythonlua/luainit.lua')
+dofile('./pypolyfill.lua')
 
 local function move(direction, distance)
     --[[move dist to a direction]]

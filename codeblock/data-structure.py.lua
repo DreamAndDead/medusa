@@ -1,4 +1,4 @@
-dofile('./codeblock/luainit.lua')
+dofile('./pypolyfill.lua')
 
 local function print_list(l)
     for e in l do

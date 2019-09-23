@@ -11,6 +11,7 @@ epc = "*"
 colorama = "*"
 pyyaml = "*"
 ipdb = "*"
+pyinstaller = "*"
 
 [requires]
 python_version = "3.7"
