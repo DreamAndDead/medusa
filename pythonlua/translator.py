@@ -2,29 +2,18 @@
 import ast
 import os
 
-from .config import Config
 from .nodevisitor import NodeVisitor
 
-
 class Translator:
-    """Python to lua main class translator"""
-    def __init__(self, config=None, show_ast=False):
-        self.config = config if config is not None else Config()
-        self.show_ast = show_ast
-
+    """translator"""
+    def __init__(self):
         self.output = []
 
     def translate(self, pycode):
         """Translate python code to lua code"""
         py_ast_tree = ast.parse(pycode)
-
-        visitor = NodeVisitor(config=self.config)
-
-        if self.show_ast:
-            print(ast.dump(py_ast_tree))
-
+        visitor = NodeVisitor()
         visitor.visit(py_ast_tree)
-
         self.output = visitor.output
 
         return self.to_code()
@@ -52,8 +41,7 @@ class Translator:
 
         return "\n".join(lines)
 
-    @staticmethod
-    def get_luainit(filename="luainit.lua"):
+    def get_luainit():
         """Get lua initialization code."""
         script_name = os.path.realpath(__file__)
         folder = os.path.dirname(script_name)
@@ -61,4 +49,5 @@ class Translator:
 
         with open(luainit_path) as file:
             return file.read()
+
         return ""

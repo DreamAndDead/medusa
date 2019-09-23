@@ -19,9 +19,8 @@ from .tokenendmode import TokenEndMode
 
 class NodeVisitor(ast.NodeVisitor):
     """Node visitor"""
-    def __init__(self, context=None, config=None):
+    def __init__(self, context=None):
         self.context = context if context is not None else Context()
-        self.config = config
         self.last_end_mode = TokenEndMode.LINE_FEED
         self.output = []
 
@@ -39,7 +38,7 @@ class NodeVisitor(ast.NodeVisitor):
         - Assert
         - ImportFrom
         - Nonlocal
-        - ? Continue
+        - Continue
 
         - NamedExpr
         - Set
@@ -65,7 +64,7 @@ class NodeVisitor(ast.NodeVisitor):
             last_ctx = self.context.last()
             last_ctx["locals"].push()
 
-        visitor = NodeVisitor(context=self.context, config=self.config)
+        visitor = NodeVisitor(context=self.context)
 
         if isinstance(nodes, list):
             for node in nodes:
@@ -226,8 +225,8 @@ class NodeVisitor(ast.NodeVisitor):
 
         # Return class object only in the top-level classes.
         # Not in the nested classes.
-        if self.config["class"]["return_at_the_end"] and not last_ctx["class_name"]:
-            self.emit("return {}".format(name))
+        #if not last_ctx["class_name"]:
+        #    self.emit("return {}".format(name))
 
     def visit_Compare(self, node):
         """Visit compare"""
