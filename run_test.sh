@@ -4,9 +4,8 @@ source rainbow.sh
 
 PYTHON=python3.7
 LUA=lua5.1
-dir=/home/manjaro/project/python-lua/
-TEST_FOLDER=${dir}codeblock/
-pylua=${dir}__main__.py
+TEST_FOLDER=./codeblock/
+pylua=./__main__.py
 
 pyfile_path=$1
 
@@ -14,11 +13,11 @@ function test_pyfile()
 {
     pyfile=$1
     pyluafile=$pyfile.lua
-    echocyan "test file $pyfile"
+    echocyan "test python file $pyfile"
 
     echo "dofile('./codeblock/luainit.lua')" > $pyluafile
     echo >> $pyluafile
-    $PYTHON $pylua --no-lua-init $pyfile >> $pyluafile
+    $PYTHON $pylua < $pyfile >> $pyluafile
 
     pyout=`$PYTHON $pyfile`
     luaout=`$LUA $pyluafile`
@@ -35,7 +34,7 @@ function test_pyfile()
 	echored "fail"
     fi
 
-    echo    
+    echo
 }
 
 if [[ "$pyfile_path" == "" ]]; then

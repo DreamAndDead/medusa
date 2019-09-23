@@ -1,4 +1,4 @@
-dofile('/home/manjaro/project/python-lua/pythonlua/luainit.lua')
+dofile('./codeblock/luainit.lua')
 
 print((10 + 20))
 print((5 + 0.5))
