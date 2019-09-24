@@ -1,13 +1,10 @@
 """Class to store the python code context"""
 from .symbolsstack import SymbolsStack
-from .tokenendmode import TokenEndMode
-
 
 class Context:
     """Class to store the python code context"""
     def __init__(self, values=None):
         values = values if values is not None else {
-            "token_end_mode": TokenEndMode.LINE_FEED,
             "class_name": "",
             "locals": SymbolsStack(),
             "globals": SymbolsStack(),  # Not working yet

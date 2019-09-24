@@ -1,16 +1,14 @@
 """Binary operation description"""
 import ast
 
-
 _DEFAULT_FORMAT = "{left} {operation} {right}"
-
 
 class BinaryOperationDesc:
     """
     Binary operation description
 
     TODO:
-    - more binary ops
+    - bit ops
     """
 
     OPERATION = {

@@ -1,4 +1,5 @@
 """Python to lua translator class"""
+
 import ast
 import os
 
@@ -41,13 +42,3 @@ class Translator:
 
         return "\n".join(lines)
 
-    def get_luainit():
-        """Get lua initialization code."""
-        script_name = os.path.realpath(__file__)
-        folder = os.path.dirname(script_name)
-        luainit_path = os.path.join(folder, filename)
-
-        with open(luainit_path) as file:
-            return file.read()
-
-        return ""

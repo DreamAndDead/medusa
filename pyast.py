@@ -1,4 +1,6 @@
-#!/usr/bin/env python
+"""
+pretty print ast
+"""
 
 import ast
 

@@ -1,6 +1,5 @@
 """Name constant description"""
 
-
 class NameConstantDesc:
     """Name constant description"""
 

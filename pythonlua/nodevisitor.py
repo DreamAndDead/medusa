@@ -11,17 +11,13 @@ from .boolopdesc import BooleanOperationDesc
 from .cmpopdesc import CompareOperationDesc
 from .nameconstdesc import NameConstantDesc
 from .unaryopdesc import UnaryOperationDesc
-
 from .context import Context
 from .loopcounter import LoopCounter
-from .tokenendmode import TokenEndMode
-
 
 class NodeVisitor(ast.NodeVisitor):
     """Node visitor"""
     def __init__(self, context=None):
         self.context = context if context is not None else Context()
-        self.last_end_mode = TokenEndMode.LINE_FEED
         self.output = []
 
     def generic_visit(self, node):
@@ -50,6 +46,8 @@ class NodeVisitor(ast.NodeVisitor):
         - FormattedValue
         - JoinedStr
         """
+
+        # TODO: with line/col information
         raise RuntimeError("Unsupported node: {}".format(node))
 
     def visit_all(self, nodes, inline=False):
