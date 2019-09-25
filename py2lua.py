@@ -24,7 +24,7 @@ def get_polyfill(filename="pypolyfill.lua"):
     folder = os.path.dirname(script_name)
     path = os.path.join(folder, filename)
 
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         return f.read()
 
 if __name__ == "__main__":
