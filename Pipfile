@@ -8,8 +8,6 @@ verify_ssl = true
 [packages]
 jedi = "*"
 epc = "*"
-colorama = "*"
-pyyaml = "*"
 ipdb = "*"
 pyinstaller = "*"
 

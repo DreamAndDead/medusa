@@ -1,7 +1,9 @@
 """
 Node visitor
 
-ref: https://docs.python.org/3/library/ast.html#abstract-grammar
+ref:
+- https://docs.python.org/3/library/ast.html#abstract-grammar
+- https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 """
 
 import ast
@@ -25,10 +27,6 @@ class NodeVisitor(ast.NodeVisitor):
         Unknown nodes handler
 
         not support:
-        - AsyncFunctionDef
-        - AnnAssign
-        - AsyncFor
-        - AsyncWith
         - Raise
         - Try
         - Assert
@@ -40,11 +38,8 @@ class NodeVisitor(ast.NodeVisitor):
         - Set
         - SetComp
         - GeneratorExp
-        - Await
         - Yield
         - YieldFrom
-        - FormattedValue
-        - JoinedStr
         """
 
         # TODO: with line/col information
@@ -182,6 +177,7 @@ class NodeVisitor(ast.NodeVisitor):
 
         TODO:
         - 这里忽略了所有 keywords
+        - 在 3.4 和 3.5 以上有一些变化 https://greentreesnakes.readthedocs.io/en/latest/nodes.html#Call
         """
         # 当函数调用中有 *o 这样的形式，解析出来是 unpack，用于将列表展开，传递参数
         line = "{name}({arguments})"
@@ -193,6 +189,8 @@ class NodeVisitor(ast.NodeVisitor):
 
     def visit_ClassDef(self, node):
         """Visit class definition"""
+        # TODO, 在 python 3.5 之后有些变化 https://greentreesnakes.readthedocs.io/en/latest/nodes.html#ClassDef
+        
         bases = [self.visit_all(base, inline=True) for base in node.bases]
 
         local_keyword = ""
@@ -575,6 +573,9 @@ class NodeVisitor(ast.NodeVisitor):
 
     def visit_Starred(self, node):
         """Visit starred object"""
+
+        # TODO, 在 python 3.5 之后, 在 function call 中有些变化
+        # https://greentreesnakes.readthedocs.io/en/latest/nodes.html#Starred
         value = self.visit_all(node.value, inline=True)
         line = "unpack({})".format(value)
         self.emit(line)

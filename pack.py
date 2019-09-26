@@ -7,6 +7,6 @@ version_file = 'exe_version.txt'
 PyInstaller.__main__.run([
     '--name=%s' % pack_name,
     '--onefile',
-	'--version-file=%s' % version_file,
+    '--version-file=%s' % version_file,
     pack_file
 ])
