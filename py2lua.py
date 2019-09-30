@@ -1,10 +1,9 @@
-#!/usr/bin/env python3
-
 """Entry point to the translator"""
 import sys
 import os
 
 from pythonlua.translator import Translator
+from pythonlua.polyfill import polyfill
 
 def main():
     """Entry point function to the translator"""
@@ -12,7 +11,6 @@ def main():
     translator = Translator()
     lua_code = translator.translate(content)
 
-    polyfill = get_polyfill()
     print(polyfill)
     
     print(lua_code)
