@@ -11,7 +11,7 @@ def main():
     translator = Translator()
     lua_code = translator.translate(content)
 
-    print(polyfill)
+#    print(polyfill)
     
     print(lua_code)
     return 0
