@@ -1,4 +1,5 @@
 """Entry point to the translator"""
+
 import sys
 import os
 
