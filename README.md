@@ -49,7 +49,7 @@ $ python distribute.py
 
 支持的 python 语言以 python 3.4 为基准，支持大部分 feature。
 
-具体可见 [features](./features.md)
+具体可见 [features](./doc/features.md)
 
 
 ## development
