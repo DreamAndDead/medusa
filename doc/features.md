@@ -8,8 +8,7 @@ transpiler 支持的 python 语言以 3.4 为基准，支持大部分语言功�
 
 本质是用 lua 实现了 python，（这里不是 100%）
 
-
-## feature list
+## python feature supported
 
 ### bool 运算
 
@@ -265,9 +264,13 @@ lua 中不支持异常。
 
 ### Assert
 
+不支持
+
 ### Import ImportFrom
 
-模块的引入，如果后续可以兼容大部分库的话。
+需要配合 Module 概念的引入，将单个文件作为一个 Module。
+
+如果后续可以兼容大部分库的话。
 
 ### Global Nonlocal
 
@@ -284,7 +287,6 @@ lua 中不支持异常。
 ### Continue 语句
 
 也许难以相信，lua 不支持 Continue 语句，很难模拟 :(
-
 
 
 ## python newer than 3.4

@@ -41,9 +41,7 @@ class NodeVisitor(ast.NodeVisitor):
         - Yield
         - YieldFrom
         """
-
-        # TODO: with line/col information
-        raise RuntimeError("Unsupported node: {}".format(node))
+        raise RuntimeError("unsupported syntax '%s' at line %d col %d" % (node.__class__.__name__, node.lineno, node.col_offset))
 
     def visit_all(self, nodes, inline=False):
         """

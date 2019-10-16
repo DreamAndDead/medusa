@@ -9,13 +9,14 @@ from pythonlua.polyfill import polyfill
 def main():
     """Entry point function to the translator"""
     content = sys.stdin.read()
+#    content = open('unsupported.txt').read()
     translator = Translator()
-    lua_code = translator.translate(content)
+    error, result = translator.translate(content)
 
-#    print(polyfill)
-    
-    print(lua_code)
-    return 0
+    exit_code = 1 if error else 0
+    print(result)
+
+    return exit_code
 
 def get_polyfill(filename="pypolyfill.lua"):
     """Get python lua polyfill code."""
