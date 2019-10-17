@@ -6,7 +6,8 @@ transpiler 支持的 python 语言以 3.4 为基准，支持大部分语言功�
 
 粗略的讲，是运行得到同样的结果。
 
-本质是用 lua 实现了 python，（这里不是 100%）
+本质是用 lua 实现了 python，（这里不是 100%），表达同样的语义。
+
 
 ## python features supported
 
@@ -14,12 +15,12 @@ transpiler 支持的 python 语言以 3.4 为基准，支持大部分语言功�
 
 ### Constant 常量
 
-从含义上讲，python 中的 `True False None`，对应于 lua 中的 `true false nil`。
+从语义上讲，python 中的 `True False None`，对应于 lua 中的 `true false nil`。
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |布尔真|`True`|`true`|:heavy_check_mark:|
-|布尔假|`False`|`false`|:x:|
+|布尔假|`False`|`false`|:heavy_check_mark:|
 |空|`None`|`nil`|:heavy_check_mark:|
 
 
@@ -28,37 +29,77 @@ transpiler 支持的 python 语言以 3.4 为基准，支持大部分语言功�
 |[constant.py](./../codeblock/constant.py)|[constant.py.lua](./../codeblock/constant.py.lua)|
 
 
-### Name 变量
+### Variable 变量
 
-python lua 两者都是弱类型，变量不需要提前声明。
+python 和 lua 都是弱类型语言，变量没有类型，不需要提前声明，变量默认都是空值。
 
-不同的可能在于作用域。
+可能存在区别的在于**作用域**，这一点到后面详细讨论。
 
-TODO：支持示例
+|feature|python|lua|supported|
+|:-:|:-:|:-:|:-:|
+|变量|`var`|`var`|:heavy_check_mark:|
 
 
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[variable.py](./../codeblock/variable.py)|[variable.py.lua](./../codeblock/variable.py.lua)|
 
 
+TODO:
+- 关于 local 何时出现的讨论
 
 ### Assign 语句
 
-python 中很多种赋值方法，后面要细细讨论。
+python 中多种赋值方法，都可以转化为相应的 lua 代码来实现。
 
-TODO：支持示例
+|feature|python|lua|supported|
+|:-:|:-:|:-:|:-:|
+|单变量赋值|`a = 1`|`local a = 1`|:heavy_check_mark:|
+|多变量赋相同值|`a = b = 1`|`local a = 1; local b = 1`|:heavy_check_mark:|
+|多变量同时赋值|`a, b = b, a`|`local a, b = b, a`|:heavy_check_mark:|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[assign.py](./../codeblock/assign.py)|[assign.py.lua](./../codeblock/assign.py.lua)|
+
+
+TODO:
+- 多变量同时赋值，出现空变量的情况
+- 出现 `*` 变量的情况
+
 
 ### Del 语句
 
-在 python 中，del 语句用于解除一个值。
-lua 中没有相应的语句，可以用赋值 nil 来模拟。
+python 中 del 语句用于解除一个值，lua 中没有 del 的概念，可以用赋值 nil 来进行同义模拟。
+
+|feature|python|lua|supported|
+|:-:|:-:|:-:|:-:|
+|del|`del v`|`v = nil`|:heavy_check_mark:|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[del.py](./../codeblock/del.py)|[del.py.lua](./../codeblock/del.py.lua)|
 
 
 ### AugAssign 语句
 
-类似于自增的语句。
+自赋值，是一种简便的写法。
+在 python 中，任何二元运算都有相应的自赋值写法，比如 `a += 1`，`b *= 3`。
+在 lua 中没有相应的概念，但是可以将赋值的右侧展开进行同义模拟。
 
-在 lua 中可以将其展开来模拟。
+|feature|python|lua|supported|
+|:-:|:-:|:-:|:-:|
+|augassign|`a += 1`|`a = a + 1`|:heavy_check_mark:|
 
-TODO：支持示例
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[augassign.py](./../codeblock/augassign.py)|[augassign.py.lua](./../codeblock/augassign.py.lua)|
+
+
+
 
 
 
