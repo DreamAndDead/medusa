@@ -57,7 +57,8 @@ function test_pyfile()
     pyluafile=$pyfile.lua
     echocyan "test python file $pyfile"
 
-    $PYTHON $pylua < $pyfile > $pyluafile
+    echo "dofile('./polyfill/pypolyfill.lua')" > $pyluafile
+    $PYTHON $pylua < $pyfile >> $pyluafile
 
     pyout=`$PYTHON $pyfile`
     luaout=`$LUA $pyluafile`

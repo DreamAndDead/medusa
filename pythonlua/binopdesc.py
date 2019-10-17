@@ -40,25 +40,24 @@ class BinaryOperationDesc:
             "value": "/",
             "format": "math.floor({left} {operation} {right})",
         },
-        # TODO: lua 5.1 doesn't include bit32 lib
         ast.LShift: {
             "value": "",
-            "format": "bit32.lshift({left}, {right})",
+            "format": "bit.blshift({left}, {right})",
         },
         ast.RShift: {
             "value": "",
-            "format": "bit32.rshift({left}, {right})",
+            "format": "bit.brshift({left}, {right})",
         },
         ast.BitOr: {
             "value": "",
-            "format": "bit32.bor({left}, {right})",
+            "format": "bit.bor({left}, {right})",
         },
         ast.BitAnd: {
             "value": "",
-            "format": "bit32.band({left}, {right})",
+            "format": "bit.band({left}, {right})",
         },
         ast.BitXor: {
             "value": "",
-            "format": "bit32.bxor({left}, {right})",
+            "format": "bit.bxor({left}, {right})",
         },
     }

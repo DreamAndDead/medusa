@@ -11,19 +11,18 @@ class UnaryOperationDesc:
     OPERATION = {
         ast.USub: {
             "value": "-",
-            "format": _DEFAULT_FORMAT,
+            "format": "({operation}{value})",
         },
         ast.UAdd: {
             "value": "",
-            "format": _DEFAULT_FORMAT,
+            "format": "{operation}{value}",
         },
         ast.Not: {
             "value": "not",
             "format": "not {value}",
         },
-        # TODO: bit op in lua 5.1
         ast.Invert: {
             "value": "~",
-            "format": "bit32.bnot({value})",
+            "format": "bit.bnot({value})",
         },
     }

@@ -106,7 +106,12 @@ python 中 del 语句用于解除一个值，lua 中没有 del 的概念，可�
 
 
 
-### 布尔运算
+### Bool 布尔运算
+
+python 和 lua 本身都支持 and or 二元运算，都为短路求值，且 and or 的优先级（and 高于 or，先结合）相同。
+同时两者都支持 not 一元运算，返回 True/False(python) true/false(lua)。
+
+从某种意义上，布尔运算可以无缝转换。
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
@@ -114,29 +119,40 @@ python 中 del 语句用于解除一个值，lua 中没有 del 的概念，可�
 |或|`1 or 2`|`1 or 2`|:heavy_check_mark:|
 |非|`not 1`|`not 1`|:heavy_check_mark:|
 
-python 语言和 lua 语言本身都支持 and or 二元运算，并且都为短路求值，且 and or 的优先级（and 高于 or 先结合）相同。
 
-同时两者都支持 not 一元运算，返回 True/False(python) true/false(lua)。
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[bool.py](./../codeblock/bool.py)|[bool.py.lua](./../codeblock/bool.py.lua)|
 
-所以从某种意义上，布尔运算可以无缝转换。
 
+### Arithmetic 算术运算
 
-### 算术运算
+几乎所有语言都有内建基本的算术运算，python lua 也不例外。
+因为算术运算在数学概念上是统一的，所以含义相同。
+
+**部分 lua 没有的算术运算符，用函数来模拟**
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
 |加法|`1 + 2`|`1 + 2`|:heavy_check_mark:|
 |减法|`1 - 2`|`1 - 2`|:heavy_check_mark:|
 |乘法|`1 * 2`|`1 * 2`|:heavy_check_mark:|
-|除法|`1 / 2`|`1 / 2`|:heavy_check_mark:，同时都是浮点除法|
-|地板除法|`1 // 2`|`floordiv(1, 2)`|:heavy_check_mark:，通过 function 模拟|
-|余数|`10 % 3`|`10 % 3`|:heavy_check_mark:|
-|指数|`2 ** 2`|`2 ^ 2`|:heavy_check_mark:|
+|浮点除法|`1 / 2`|`1 / 2`|:heavy_check_mark:|
+|地板除法|`1 // 2`|`math.floor(1 / 2)`|:heavy_check_mark:|
+|余数|`10 % 3`|`math.fmod(10, 3)`|:heavy_check_mark:|
+|指数|`2 ** 2`|`math.pow(2, 2)`|:heavy_check_mark:|
 |正数|`+2`|`2`|:heavy_check_mark:|
-|负数|`-2`|`-2`|:heavy_check_mark:|
+|负数|`-2`|`(-2)`|:heavy_check_mark:|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[arithmetic.py](./../codeblock/arithmetic.py)|[arithmetic.py.lua](./../codeblock/arithmetic.py.lua)|
 
 
 ### 位运算
+
+python 同时内建了位运算，在 lua 5.1 版本，无论是内建还是标准库，都不包含位运算，所以需要函数来模拟。
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
@@ -347,6 +363,20 @@ TODO：支持示例
 
 
 
+### Assert 断言
+
+python 和 lua 都内建了 assert 函数，进行真值的断言，如果为假，则程序 exit，附加 assert message。
+
+|feature|python|lua|supported|
+|:-:|:-:|:-:|:-:|
+|断言|`assert 1 == 1`|`assert((1 == 1))`|:heavy_check_mark:|
+|断言+消息|`assert 1 == 1, "one always one"`|`assert((1 == 1), "one always one")`|:heavy_check_mark:|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[assert.py](./../codeblock/assert.py)|[assert.py.lua](./../codeblock/assert.py.lua)|
+
 ### With 语句
 
 上下文操作，暂时不支持。
@@ -354,22 +384,6 @@ TODO：支持示例
 ### Raise， Try
 
 lua 中不支持异常。
-
-### Assert 断言
-
-python 和 lua 都内建了 assert 函数，进行真值的断言。
-如果为假，则程序 exit。
-
-|feature|python|lua|supported|
-|:-:|:-:|:-:|:-:|
-|断言|`assert(1 == 1)`|`assert(1 == 1)`|:heavy_check_mark:|
-
-
-|python示例代码|lua转换代码|
-|:-:|:-:|
-|[assert.py](./../codeblock/assert.py)|[assert.py.lua](./../codeblock/assert.py.lua)|
-
-
 
 ### Import ImportFrom
 
