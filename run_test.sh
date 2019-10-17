@@ -60,16 +60,13 @@ function test_pyfile()
     echo "dofile('./polyfill/pypolyfill.lua')" > $pyluafile
     $PYTHON $pylua < $pyfile >> $pyluafile
 
-    pyout=`$PYTHON $pyfile`
-    luaout=`$LUA $pyluafile`
+    $PYTHON $pyfile
+    py_exit=$?
+    
+    $LUA $pyluafile
+    lua_exit=$?
 
-    echo "==========pyout=============="
-    echo "$pyout"
-
-    echo "==========luaout=============="
-    echo "$luaout"
-
-    if [[ "$pyout" == "$luaout" ]]; then
+    if [[ $py_exit -eq 0 ]] && [[ $lua_exit -eq 0 ]]; then
 	echogreen "success"
     else
 	echored "fail"

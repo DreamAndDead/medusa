@@ -156,12 +156,12 @@ python 同时内建了位运算，在 lua 5.1 版本，无论是内建还是标�
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
-|左移|`1 << 2`|`lshift(1, 2)`|:heavy_check_mark:，通过 function 模拟|
-|右移|`1 >> 2`|`rshift(1, 2)`|:heavy_check_mark:，通过 function 模拟|
-|与|`1 & 2`|`bitand(1, 2)`|:heavy_check_mark:，通过 function 模拟|
-|或|`1 \| 2`|`bitor(1, 2)`|:heavy_check_mark:，通过 function 模拟|
-|取反|`~1`|`bitinvert(1)`|:heavy_check_mark:，通过 function 模拟|
-|异或|`1 ^ 2`|`bitxor(1, 2)`|:heavy_check_mark:，通过 function 模拟|
+|左移|`1 << 2`|`lshift(1, 2)`|:heavy_check_mark:|
+|右移|`1 >> 2`|`rshift(1, 2)`|:heavy_check_mark:|
+|与|`1 & 2`|`bitand(1, 2)`|:heavy_check_mark:|
+|或|`1 \| 2`|`bitor(1, 2)`|:heavy_check_mark:|
+|取反|`~1`|`bitinvert(1)`|:heavy_check_mark:|
+|异或|`1 ^ 2`|`bitxor(1, 2)`|:heavy_check_mark:|
 
 
 ### 比较运算
@@ -174,10 +174,10 @@ python 同时内建了位运算，在 lua 5.1 版本，无论是内建还是标�
 |小于等于|`1 <= 2`|`1 <= 2`|:heavy_check_mark:|
 |大于|`1 > 2`|`1 > 2`|:heavy_check_mark:|
 |大于等于|`1 >= 2`|`1 >= 2`|:heavy_check_mark:|
-|is|`1 is 2`|` `|不:heavy_check_mark:|
-|is not|`1 is not 2`|` `|不:heavy_check_mark:|
-|in|`1 in {}`|` `|不:heavy_check_mark:|
-|not in|`1 not in {}`|` `|不:heavy_check_mark:|
+|is|`1 is 2`|` `|:x:|
+|is not|`1 is not 2`|` `|::|
+|in|`1 in {}`|` `|:x:|
+|not in|`1 not in {}`|` `|:x:|
 
 
 
