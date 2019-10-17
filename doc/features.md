@@ -8,28 +8,70 @@ transpiler 支持的 python 语言以 3.4 为基准，支持大部分语言功�
 
 本质是用 lua 实现了 python，（这里不是 100%）
 
-## python feature supported
+## python features supported
 
-### bool 运算
 
-- 支持 and or 二元运算，并支持短路求值，和 and or 的优先级（and 高于 or 先结合）
 
-```python
-a = 1 and 2 or 3
-```
+### 常量
 
-转换为 lua
+从含义上讲，python 中的 `True False None`，对应于 lua 中的 `true false nil`。
 
-```lua
-local a = ((1 and 2) or 3)
-```
+|feature|python|lua|supported|
+|:-:|:-:|:-:|:-:|
+|布尔真|`True`|`true`|:white_check_mark:|
+|布尔假|`False`|`false`|:x:|
+|空|`None`|`nil`|支持|
 
-两者求值的结果，a 都等于 2
 
-- 支持 not 一元运算，返回 true/false 值
+### Name 变量
 
-python 中的 True/False 对应 lua 中的 true/false
+python lua 两者都是弱类型，变量不需要提前声明。
 
+不同的可能在于作用域。
+
+TODO：支持示例
+
+
+
+
+
+### Assign 语句
+
+python 中很多种赋值方法，后面要细细讨论。
+
+TODO：支持示例
+
+### Del 语句
+
+在 python 中，del 语句用于解除一个值。
+lua 中没有相应的语句，可以用赋值 nil 来模拟。
+
+
+### AugAssign 语句
+
+类似于自增的语句。
+
+在 lua 中可以将其展开来模拟。
+
+TODO：支持示例
+
+
+
+
+
+### 布尔运算
+
+|feature|python|lua|支持|
+|:-:|:-:|:-:|:-:|
+|与|`1 and 2`|`1 and 2`|支持|
+|或|`1 or 2`|`1 or 2`|支持|
+|非|`not 1`|`not 1`|支持|
+
+python 语言和 lua 语言本身都支持 and or 二元运算，并且都为短路求值，且 and or 的优先级（and 高于 or 先结合）相同。
+
+同时两者都支持 not 一元运算，返回 True/False(python) true/false(lua)。
+
+所以从某种意义上，布尔运算可以无缝转换。
 
 
 ### 算术运算
@@ -45,7 +87,6 @@ python 中的 True/False 对应 lua 中的 true/false
 |指数|`2 ** 2`|`2 ^ 2`|支持|
 |正数|`+2`|`2`|支持|
 |负数|`-2`|`-2`|支持|
-
 
 
 ### 位运算
@@ -77,20 +118,8 @@ python 中的 True/False 对应 lua 中的 true/false
 
 
 
-### lambda 表达式
-
-在 python 中，lambda 是匿名函数，但是其中只能包含一个简单的返回值。
-而在 lua 中，天生支持匿名函数，且其中的语句没有限制。
-
-TODO: 支持示例
-
-### if 表达式
-
-python 从 perl 借鉴来的语法，将 if 判断作为表达式，而不是语句块。
-而在 lua 中，没有这种类型的语法，只能将其转化为普通的 if 语句块来运行。
 
 
-TODO：支持示例
 
 ### dict 字面量
 
@@ -123,6 +152,132 @@ tuple 是 python 内建的数据结构。
 
 TODO：支持示例
 
+### Subscript
+
+python 中有 3 种下标，Index, Slice 和 ExtSlice。
+在 lua 中，默认只有 Index 对应的概念，`d[1]`。
+
+TODO：支持示例
+
+
+
+
+
+
+
+### If 语句
+
+同 while，if 是一个比较协同的概念。
+
+elif 和 else if 等价。
+
+TODO：支持示例
+
+
+### For 语句
+
+for in 是 python 中常用的迭代方法。
+lua 中也有 for 写法，需要模拟迭代器。
+
+TODO：支持示例
+
+### While 语句
+
+while 语句在 python 和 lua 中概念相似。
+
+TODO：支持示例
+
+### Pass 语句
+
+在 python 中需要用来占位，但是 lua 中不需要，对应空语句
+
+### Break 语句
+
+在 python 和 lua 中相同，用于跳出循环。
+
+### Continue 语句
+
+也许难以相信，lua 不支持 Continue 语句，很难模拟 :(
+
+
+
+
+
+
+
+### lambda 表达式
+
+在 python 中，lambda 是匿名函数，但是其中只能包含一个简单的返回值。
+而在 lua 中，天生支持匿名函数，且其中的语句没有限制。
+
+TODO: 支持示例
+
+
+### 函数定义
+
+python 的函数定义有装饰器，普通参数，默认值参数，vararg，键值参数，kwarg
+
+相比之下，lua 的函数定义就更加纯粹。如果需要同样的效果就要更多的代码工作。
+
+TODO：支持示例
+
+
+### Starred
+
+`*d` 存在在 python 中的许多地方。
+在 lua 中没有相应的概念，需要再思考。
+
+TODO：支持示例
+
+### Call 函数调用
+
+函数调用在 python lua 以及其它语言中是一个通用概念。
+
+TODO：支持示例
+
+在 python 的函数调用中，除了普通函数，还有 列表参数和字典参数。
+
+### Return 语句
+
+return 语句的概念是相同的
+
+
+### Yield
+
+不支持
+
+虽然 lua 中有协程，但是和 python 中的 yield 不是一个概念。
+
+
+### 类定义
+
+类是 python 中的关键概念。
+lua 中不存在类的概念，只能用 table 和 metatable 来模拟。
+
+TODO：支持示例
+
+### 属性
+
+python 中一切都是对象，获取对象的属性是常用操作。
+在 lua 中，没有对象的概念，对应的 `.` 是索引的概念。
+
+TODO：支持示例
+
+
+
+
+
+
+
+
+### if 表达式
+
+python 从 perl 借鉴来的语法，将 if 判断作为表达式，而不是语句块。
+而在 lua 中，没有这种类型的语法，只能将其转化为普通的 if 语句块来运行。
+
+
+TODO：支持示例
+
 ### list 生成式
 
 list 生成式也是 python 中的创新，用表达式来生成列表，本质是循环（+判断）的表达式写法。
@@ -142,117 +297,8 @@ TODO：支持示例
 
 语法和列表生成类似，不过使用的是 () ，得到一个 generator 对象，而不是即时的列表。
 
-### Yield
-
-不支持
-
-虽然 lua 中有协程，但是和 python 中的 yield 不是一个概念。
-
-### 常量
-
-在 python 中的 `True False None`，对应 lua 中的 `true false nil`
 
 
-### 属性
-
-python 中一切都是对象，获取对象的属性是常用操作。
-在 lua 中，没有对象的概念，对应的 `.` 是索引的概念。
-
-TODO：支持示例
-
-### Subscript
-
-python 中有 3 种下标，Index, Slice 和 ExtSlice。
-在 lua 中，默认只有 Index 对应的概念，`d[1]`。
-
-TODO：支持示例
-
-### Starred
-
-`*d` 存在在 python 中的许多地方。
-在 lua 中没有相应的概念，需要再思考。
-
-TODO：支持示例
-
-### Name 变量
-
-python lua 两者都是弱类型，变量不需要提前声明。
-
-不同的可能在于作用域。
-
-TODO：支持示例
-
-
-### 函数定义
-
-python 的函数定义有装饰器，普通参数，默认值参数，vararg，键值参数，kwarg
-
-相比之下，lua 的函数定义就更加纯粹。如果需要同样的效果就要更多的代码工作。
-
-TODO：支持示例
-
-
-### Call 函数调用
-
-函数调用在 python lua 以及其它语言中是一个通用概念。
-
-TODO：支持示例
-
-在 python 的函数调用中，除了普通函数，还有 列表参数和字典参数。
-
-
-### 类定义
-
-类是 python 中的关键概念。
-lua 中不存在类的概念，只能用 table 和 metatable 来模拟。
-
-TODO：支持示例
-
-
-### Return 语句
-
-return 语句的概念是相同的
-
-### Del 语句
-
-在 python 中，del 语句用于解除一个值。
-lua 中没有相应的语句，可以用赋值 nil 来模拟。
-
-### Assign 语句
-
-python 中很多种赋值方法，后面要细细讨论。
-
-TODO：支持示例
-
-
-### AugAssign 语句
-
-类似于自增的语句。
-
-在 lua 中可以将其展开来模拟。
-
-TODO：支持示例
-
-### For 语句
-
-for in 是 python 中常用的迭代方法。
-lua 中也有 for 写法，需要模拟迭代器。
-
-TODO：支持示例
-
-### While 语句
-
-while 语句在 python 和 lua 中概念相似。
-
-TODO：支持示例
-
-### If 语句
-
-同 while，if 是一个比较协同的概念。
-
-elif 和 else if 等价。
-
-TODO：支持示例
 
 ### With 语句
 
@@ -276,17 +322,9 @@ lua 中不支持异常。
 
 涉及到作用域的问题
 
-### Pass 语句
 
-在 python 中需要用来占位，但是 lua 中不需要，对应空语句
 
-### Break 语句
 
-在 python 和 lua 中相同，用于跳出循环。
-
-### Continue 语句
-
-也许难以相信，lua 不支持 Continue 语句，很难模拟 :(
 
 
 ## python newer than 3.4
