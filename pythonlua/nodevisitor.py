@@ -29,7 +29,6 @@ class NodeVisitor(ast.NodeVisitor):
         not support:
         - Raise
         - Try
-        - Assert
         - ImportFrom
         - Nonlocal
         - Continue
@@ -88,6 +87,21 @@ class NodeVisitor(ast.NodeVisitor):
         self.visit_all(node.body)
         # body is a list, it's a list result in output, fetch it with [0]
         self.output = self.output[0]
+
+    def visit_Assert(self, node):
+        """
+        Visit assert
+
+        node attr:
+        - test, commonly a Compare node
+        - msg, a Str node or None
+        """
+        test = self.visit_all(node.test, inline=True)
+        if node.msg:
+            msg = self.visit_all(node.msg, inline=True)
+            self.emit("assert({test}, {msg})".format(test=test, msg=msg))
+        else:
+            self.emit("assert({test})".format(test=test))
 
     def visit_Assign(self, node):
         """
@@ -250,16 +264,6 @@ class NodeVisitor(ast.NodeVisitor):
                 line += " and "
 
         self.emit("({})".format(line))
-
-    def visit_Continue(self, node):
-        """
-        Visit continue
-        
-        TODO:
-        - difficult for lua5.1
-        """
-        line = "-- TODO: continue"
-        self.emit(line)
 
     def visit_Delete(self, node):
         """Visit delete"""

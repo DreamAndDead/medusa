@@ -105,6 +105,7 @@ python 中 del 语句用于解除一个值，lua 中没有 del 的概念，可�
 
 
 
+
 ### 布尔运算
 
 |feature|python|lua|支持|
@@ -354,9 +355,21 @@ TODO：支持示例
 
 lua 中不支持异常。
 
-### Assert
+### Assert 断言
 
-不支持
+python 和 lua 都内建了 assert 函数，进行真值的断言。
+如果为假，则程序 exit。
+
+|feature|python|lua|supported|
+|:-:|:-:|:-:|:-:|
+|断言|`assert(1 == 1)`|`assert(1 == 1)`|:heavy_check_mark:|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[assert.py](./../codeblock/assert.py)|[assert.py.lua](./../codeblock/assert.py.lua)|
+
+
 
 ### Import ImportFrom
 
