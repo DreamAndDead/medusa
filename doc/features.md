@@ -25,7 +25,7 @@ transpiler 支持的 python 语言以 3.4 为基准，支持大部分语言功�
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[constant.py](./codeblock/constant.py)|[constant.py.lua](./codeblock/constant.py.lua)|
+|[constant.py](./../codeblock/constant.py)|[constant.py.lua](./../codeblock/constant.py.lua)|
 
 
 ### Name 变量
