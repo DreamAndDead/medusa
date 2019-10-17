@@ -12,15 +12,20 @@ transpiler 支持的 python 语言以 3.4 为基准，支持大部分语言功�
 
 
 
-### 常量
+### Constant 常量
 
 从含义上讲，python 中的 `True False None`，对应于 lua 中的 `true false nil`。
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
-|布尔真|`True`|`true`|:white_check_mark:|
+|布尔真|`True`|`true`|:heavy_check_mark:|
 |布尔假|`False`|`false`|:x:|
-|空|`None`|`nil`|支持|
+|空|`None`|`nil`|:heavy_check_mark:|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[](./codeblock/constant.py)|[](./codeblock/constant.py.lua)|
 
 
 ### Name 变量
@@ -63,9 +68,9 @@ TODO：支持示例
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
-|与|`1 and 2`|`1 and 2`|支持|
-|或|`1 or 2`|`1 or 2`|支持|
-|非|`not 1`|`not 1`|支持|
+|与|`1 and 2`|`1 and 2`|:heavy_check_mark:|
+|或|`1 or 2`|`1 or 2`|:heavy_check_mark:|
+|非|`not 1`|`not 1`|:heavy_check_mark:|
 
 python 语言和 lua 语言本身都支持 and or 二元运算，并且都为短路求值，且 and or 的优先级（and 高于 or 先结合）相同。
 
@@ -78,43 +83,43 @@ python 语言和 lua 语言本身都支持 and or 二元运算，并且都为短
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
-|加法|`1 + 2`|`1 + 2`|支持|
-|减法|`1 - 2`|`1 - 2`|支持|
-|乘法|`1 * 2`|`1 * 2`|支持|
-|除法|`1 / 2`|`1 / 2`|支持，同时都是浮点除法|
-|地板除法|`1 // 2`|`floordiv(1, 2)`|支持，通过 function 模拟|
-|余数|`10 % 3`|`10 % 3`|支持|
-|指数|`2 ** 2`|`2 ^ 2`|支持|
-|正数|`+2`|`2`|支持|
-|负数|`-2`|`-2`|支持|
+|加法|`1 + 2`|`1 + 2`|:heavy_check_mark:|
+|减法|`1 - 2`|`1 - 2`|:heavy_check_mark:|
+|乘法|`1 * 2`|`1 * 2`|:heavy_check_mark:|
+|除法|`1 / 2`|`1 / 2`|:heavy_check_mark:，同时都是浮点除法|
+|地板除法|`1 // 2`|`floordiv(1, 2)`|:heavy_check_mark:，通过 function 模拟|
+|余数|`10 % 3`|`10 % 3`|:heavy_check_mark:|
+|指数|`2 ** 2`|`2 ^ 2`|:heavy_check_mark:|
+|正数|`+2`|`2`|:heavy_check_mark:|
+|负数|`-2`|`-2`|:heavy_check_mark:|
 
 
 ### 位运算
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
-|左移|`1 << 2`|`lshift(1, 2)`|支持，通过 function 模拟|
-|右移|`1 >> 2`|`rshift(1, 2)`|支持，通过 function 模拟|
-|与|`1 & 2`|`bitand(1, 2)`|支持，通过 function 模拟|
-|或|`1 \| 2`|`bitor(1, 2)`|支持，通过 function 模拟|
-|取反|`~1`|`bitinvert(1)`|支持，通过 function 模拟|
-|异或|`1 ^ 2`|`bitxor(1, 2)`|支持，通过 function 模拟|
+|左移|`1 << 2`|`lshift(1, 2)`|:heavy_check_mark:，通过 function 模拟|
+|右移|`1 >> 2`|`rshift(1, 2)`|:heavy_check_mark:，通过 function 模拟|
+|与|`1 & 2`|`bitand(1, 2)`|:heavy_check_mark:，通过 function 模拟|
+|或|`1 \| 2`|`bitor(1, 2)`|:heavy_check_mark:，通过 function 模拟|
+|取反|`~1`|`bitinvert(1)`|:heavy_check_mark:，通过 function 模拟|
+|异或|`1 ^ 2`|`bitxor(1, 2)`|:heavy_check_mark:，通过 function 模拟|
 
 
 ### 比较运算
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
-|相同|`1 == 2`|`1 == 2`|支持|
-|不相同|`1 != 2`|`1 ~= 2`|支持|
-|小于|`1 < 2`|`1 < 2`|支持|
-|小于等于|`1 <= 2`|`1 <= 2`|支持|
-|大于|`1 > 2`|`1 > 2`|支持|
-|大于等于|`1 >= 2`|`1 >= 2`|支持|
-|is|`1 is 2`|` `|不支持|
-|is not|`1 is not 2`|` `|不支持|
-|in|`1 in {}`|` `|不支持|
-|not in|`1 not in {}`|` `|不支持|
+|相同|`1 == 2`|`1 == 2`|:heavy_check_mark:|
+|不相同|`1 != 2`|`1 ~= 2`|:heavy_check_mark:|
+|小于|`1 < 2`|`1 < 2`|:heavy_check_mark:|
+|小于等于|`1 <= 2`|`1 <= 2`|:heavy_check_mark:|
+|大于|`1 > 2`|`1 > 2`|:heavy_check_mark:|
+|大于等于|`1 >= 2`|`1 >= 2`|:heavy_check_mark:|
+|is|`1 is 2`|` `|不:heavy_check_mark:|
+|is not|`1 is not 2`|` `|不:heavy_check_mark:|
+|in|`1 in {}`|` `|不:heavy_check_mark:|
+|not in|`1 not in {}`|` `|不:heavy_check_mark:|
 
 
 
