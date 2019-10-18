@@ -11,8 +11,6 @@ transpiler 支持的 python 语言以 3.4 为基准，支持大部分语言功�
 
 ## python features supported
 
-
-
 ### Constant 常量
 
 从语义上讲，python 中的 `True False None`，对应于 lua 中的 `true false nil`。
@@ -31,22 +29,58 @@ transpiler 支持的 python 语言以 3.4 为基准，支持大部分语言功�
 
 ### Variable 变量
 
-python 和 lua 都是弱类型语言，变量没有类型，不需要提前声明，变量默认都是空值。
+python 和 lua 都是弱类型语言，变量没有类型。
 
 可能存在区别的在于**作用域**，这一点到后面详细讨论。
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
-|变量|`var`|`var`|:heavy_check_mark:|
+|变量|`var`|`[local] var`|:heavy_check_mark:|
 
+变量第一次出现的时候，变量前面需要加上 `local`，限定变量的作用域；在变量后面再使用的时候，不再需要 `local`。
+
+虽然弱类型语言的变量不需要先声明再使用，但是还是存在一个隐性的声明过程，就是变量第一次被赋值的时候。
+
+比如 python 中，直接使用一个变量
+
+```python
+a = a + 1
+```
+
+运行会引发运行错误
+
+	NameError: name 'a' is not defined
+
+如果转化为 lua 代码
+
+```lua
+local a = (a + 1)
+```
+
+运行同样会引发错误
+
+	attempt to perform arithmetic on global 'a' (a nil value)
+
+所以在这一点，两个语言是一致的。
+
+正确的做法需要先给 a 赋初始值，当作 a 的声明。
+
+```python
+a = 0
+a = a + 1
+```
+
+转化为 lua
+
+```lua
+local a = 0
+a = (a + 1)
+```
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
 |[variable.py](./../codeblock/variable.py)|[variable.py.lua](./../codeblock/variable.py.lua)|
 
-
-TODO:
-- 关于 local 何时出现的讨论
 
 ### Assign 语句
 
@@ -56,17 +90,15 @@ python 中多种赋值方法，都可以转化为相应的 lua 代码来实现�
 |:-:|:-:|:-:|:-:|
 |单变量赋值|`a = 1`|`local a = 1`|:heavy_check_mark:|
 |多变量赋相同值|`a = b = 1`|`local a = 1; local b = 1`|:heavy_check_mark:|
-|多变量同时赋值|`a, b = b, a`|`local a, b = b, a`|:heavy_check_mark:|
+|多变量同时赋值|`a, b = b, a`|`a, b = b, a`|:heavy_check_mark:|
 
+*TODO: 除了上面描述的情况，python 中会出现其它的赋值方法，目前仍未完全支持，具体的讨论可以参见示例代码中的注释*
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
 |[assign.py](./../codeblock/assign.py)|[assign.py.lua](./../codeblock/assign.py.lua)|
 
 
-TODO:
-- 多变量同时赋值，出现空变量的情况
-- 出现 `*` 变量的情况
 
 
 ### Del 语句
@@ -130,7 +162,7 @@ python 和 lua 本身都支持 and or 二元运算，都为短路求值，且 an
 几乎所有语言都有内建基本的算术运算，python lua 也不例外。
 因为算术运算在数学概念上是统一的，所以含义相同。
 
-**部分 lua 没有的算术运算符，用函数来模拟**
+*部分 lua 没有的算术运算符，用函数来模拟*
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
@@ -154,15 +186,16 @@ python 和 lua 本身都支持 and or 二元运算，都为短路求值，且 an
 
 python 同时内建了位运算，在 lua 5.1 版本，无论是内建还是标准库，都不包含位运算，所以需要函数来模拟。
 
+**FIXME: 这部分函数的运行结果还在调整，以期和 python 的表现相同**
+
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
-|左移|`1 << 2`|`lshift(1, 2)`|:heavy_check_mark:|
-|右移|`1 >> 2`|`rshift(1, 2)`|:heavy_check_mark:|
-|与|`1 & 2`|`bitand(1, 2)`|:heavy_check_mark:|
-|或|`1 \| 2`|`bitor(1, 2)`|:heavy_check_mark:|
-|取反|`~1`|`bitinvert(1)`|:heavy_check_mark:|
-|异或|`1 ^ 2`|`bitxor(1, 2)`|:heavy_check_mark:|
-
+|左移|`1 << 2`|`bit.lshift(1, 2)`|:heavy_check_mark:|
+|右移|`1 >> 2`|`bit.rshift(1, 2)`|:heavy_check_mark:|
+|与|`1 & 2`|`bit.and(1, 2)`|:heavy_check_mark:|
+|或|`1 \| 2`|`bit.or(1, 2)`|:heavy_check_mark:|
+|取反|`~1`|`bit.invert(1)`|:heavy_check_mark:|
+|异或|`1 ^ 2`|`bit.xor(1, 2)`|:heavy_check_mark:|
 
 ### 比较运算
 

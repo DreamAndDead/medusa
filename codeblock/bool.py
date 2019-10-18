@@ -12,6 +12,10 @@ assert b == 1
 c = not 1
 assert c == False
 
+c = not c
+assert c == True
+
+
 # and & or
 d = 1 and 2 or 3
 assert d == 2
