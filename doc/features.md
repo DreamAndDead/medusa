@@ -99,8 +99,6 @@ python 中多种赋值方法，都可以转化为相应的 lua 代码来实现�
 |[assign.py](./../codeblock/assign.py)|[assign.py.lua](./../codeblock/assign.py.lua)|
 
 
-
-
 ### Del 语句
 
 python 中 del 语句用于解除一个值，lua 中没有 del 的概念，可以用赋值 nil 来进行同义模拟。
@@ -132,7 +130,7 @@ python 中 del 语句用于解除一个值，lua 中没有 del 的概念，可�
 
 
 
-
+---
 
 
 
@@ -162,7 +160,7 @@ python 和 lua 本身都支持 and or 二元运算，都为短路求值，且 an
 几乎所有语言都有内建基本的算术运算，python lua 也不例外。
 因为算术运算在数学概念上是统一的，所以含义相同。
 
-*部分 lua 没有的算术运算符，用函数来模拟*
+*对于 lua 没有的算术运算符，用函数来模拟*
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
@@ -182,11 +180,11 @@ python 和 lua 本身都支持 and or 二元运算，都为短路求值，且 an
 |[arithmetic.py](./../codeblock/arithmetic.py)|[arithmetic.py.lua](./../codeblock/arithmetic.py.lua)|
 
 
-### 位运算
+### Bit 位运算
+
+**FIXME: 这部分函数的运行结果还在调整，以期和 python 的表现相同（python 的底层不仅是 32 位的，从 << 可以看出来）**
 
 python 同时内建了位运算，在 lua 5.1 版本，无论是内建还是标准库，都不包含位运算，所以需要函数来模拟。
-
-**FIXME: 这部分函数的运行结果还在调整，以期和 python 的表现相同**
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
@@ -197,7 +195,17 @@ python 同时内建了位运算，在 lua 5.1 版本，无论是内建还是标�
 |取反|`~1`|`bit.invert(1)`|:heavy_check_mark:|
 |异或|`1 ^ 2`|`bit.xor(1, 2)`|:heavy_check_mark:|
 
-### 比较运算
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[bit.py](./../codeblock/bit.py)|[bit.py.lua](./../codeblock/bit.py.lua)|
+
+### Compare 比较运算
+
+对于大于，等于，小于，属于编程语言中通用的元素，python 和 lua 都支持（对于不同的数据类型可能有重载）。
+
+is 是 python 中特别的比较运算，用于判断对象是否在底层相同（python 中一切都是对象），在 lua 这一方面就相对比较难模拟了。
+
+in 在 python 中，含义是属于，这一点在 lua 中可能通过函数来模拟，暂时不支持。
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
@@ -207,38 +215,58 @@ python 同时内建了位运算，在 lua 5.1 版本，无论是内建还是标�
 |小于等于|`1 <= 2`|`1 <= 2`|:heavy_check_mark:|
 |大于|`1 > 2`|`1 > 2`|:heavy_check_mark:|
 |大于等于|`1 >= 2`|`1 >= 2`|:heavy_check_mark:|
-|is|`1 is 2`|` `|:x:|
-|is not|`1 is not 2`|` `|:x:|
-|in|`1 in {}`|` `|:x:|
-|not in|`1 not in {}`|` `|:x:|
+|is|`1 is 2`|:x:|:x:|
+|is not|`1 is not 2`|:x:|:x:|
+|in|`1 in {}`|:x:|:x:|
+|not in|`1 not in {}`|:x:|:x:|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[compare.py](./../codeblock/compare.py)|[compare.py.lua](./../codeblock/compare.py.lua)|
 
 
 
 
+### List 字面量
+
+list 是 python 内建的数据结构，应用广泛。
+lua 中不存在相应的概念，需要编写相应代码来模拟（用元表来模拟魔术方法）。
+
+创建 list 有两种方式，字面量 `l = []` 和函数 `l = list()` 的方式，这里指的是字面量的方式，`list()` 被当作函数对待。
+
+创建得到的 list 是一个对象，其中包含自己的数据和方法。
+
+|feature|python|lua|支持|
+|:-:|:-:|:-:|:-:|
+|空列表|`l = []`|`[local] l = list {}`|:heavy_check_mark:|
+|重载`==`|`[] == []`|` `|:x:|
 
 
-### dict 字面量
 
-dict 是 python 中内建的数据结构，应用广泛。
-在 lua 中没有相应的结构，需要编写相应的 lua 代码来做模拟。
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[list.py](./../codeblock/list.py)|[list.py.lua](./../codeblock/list.py.lua)|
 
-创建 dict 有两种方式，字面量 `d = {}` 和函数 `d = dict()` 的方式，这里指的是字面量的方式。
 
-TODO：支持示例
+### Dict 字面量
 
-### set 字面量
+dict 是 python 中内建的数据结构，使用非常广泛。
+在 lua 中没有内建相应的结构，需要编写相应的 lua 代码来做模拟（用元表来模拟魔术方法）。
 
-同 dict，set 也是 python 内建的数据结构。
-在 lua 中需要编写相应代码来模拟。
+创建 dict 有两种方式，字面量 `d = {}` 和函数 `d = dict()` 的方式，这里指的是字面量的方式，`dict()` 被当作函数对待。
 
-TODO：支持示例
+创建得到的 dict 是一个对象，其中包含自己的数据和方法。
 
-### list 字面量
+|feature|python|lua|支持|
+|:-:|:-:|:-:|:-:|
+|空字典|`d = {}`|`[local] d = dict {}`|:heavy_check_mark:|
+|重载`==`|`{} == {}`|` `|:x:|
 
-list 是 python 内建的数据结构。
-在 lua 中需要编写相应代码来模拟。
 
-TODO：支持示例
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[dict.py](./../codeblock/dict.py)|[dict.py.lua](./../codeblock/dict.py.lua)|
 
 
 ### tuple 字面量
@@ -247,6 +275,22 @@ tuple 是 python 内建的数据结构。
 在 lua 中需要编写相应代码来模拟。
 
 TODO：支持示例
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[tuple.py](./../codeblock/tuple.py)|[tuple.py.lua](./../codeblock/tuple.py.lua)|
+
+
+### set 字面量
+
+同 dict，set 也是 python 内建的数据结构。
+在 lua 中需要编写相应代码来模拟。
+
+TODO：支持示例
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[set.py](./../codeblock/set.py)|[set.py.lua](./../codeblock/set.py.lua)|
+
+
 
 ### Subscript
 
@@ -254,6 +298,10 @@ python 中有 3 种下标，Index, Slice 和 ExtSlice。
 在 lua 中，默认只有 Index 对应的概念，`d[1]`。
 
 TODO：支持示例
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[subscript.py](./../codeblock/subscript.py)|[subscript.py.lua](./../codeblock/subscript.py.lua)|
+
 
 
 
@@ -429,7 +477,20 @@ lua 中不支持异常。
 涉及到作用域的问题
 
 
+### Builtin 内建函数
 
+python 语言环境中除了引用标准库，其中有不少有用的内建函数。
+这些函数都需要在 lua 中进行同义模拟。
+
+
+|feature|python|lua|supported|
+|:-:|:-:|:-:|:-:|
+|`len`|`len([1, 2])`|`len(list {1, 2})`|:heavy_check_mark:|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[builtin.py](./../codeblock/builtin.py)|[builtin.py.lua](./../codeblock/builtin.py.lua)|
 
 
 

@@ -8,7 +8,9 @@ verify_ssl = true
 [packages]
 jedi = "*"
 epc = "*"
+ipython = "*"
 ipdb = "*"
 
+
 [requires]
-python_version = "3.7.4"
+python_version = "3.4.3"
