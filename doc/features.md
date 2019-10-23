@@ -271,18 +271,28 @@ dict 是 python 中内建的数据结构，使用非常广泛。
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
-|空字典|`d = {}`|`[local] d = dict {}`|:heavy_check_mark:|
+|创建字典|`d = {'name': 'john', 1: 26}`|`[local] d = dict {['name'] = 'john', [1] = 26}`|:heavy_check_mark:|
+|`clear`|`d.clear()`|`d.clear()`|:heavy_check_mark:|
+|`copy`|`d.copy()`|`d.copy()`|:heavy_check_mark:|
+|`fromkeys`|`d.fromkeys(['height'], 40)`|`d.fromkeys(['height'], 40)`|:heavy_check_mark:|
+|`get`|`d.get('home', 'cn')`|`d.get('home', 'cn')`|:heavy_check_mark:|
+|`items`|`d.items()`|`d.items()`|:heavy_check_mark:|
+|`keys`|`d.keys()`|`d.keys()`|:heavy_check_mark:|
+|`pop`|`d.pop('name', 'jane')`|`d.pop('name', 'jane')`|:heavy_check_mark:|
+|`popitem`|`d.popitem()`|`d.popitem()`|:heavy_check_mark:|
+|`setdefault`|`d.setdefault('hair', 'black')`|`d.setdefault('hair', 'black')`|:heavy_check_mark:|
+|`update`|`d.update({'age': 22})`|`d.update(dict {['age'] = 22})`|:heavy_check_mark:|
+|`values`|`d.values()`|`d.values()`|:heavy_check_mark:|
+|索引`[k]`|`d[k]`|`d[k]`|:heavy_check_mark:|
 |重载`==`|`{} == {}`|` `|:x:|
 
-<!--
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
 |[dict.py](./../codeblock/dict.py)|[dict.py.lua](./../codeblock/dict.py.lua)|
 
--->
 
-### tuple 字面量
+### Tuple 字面量
 
 tuple 是 python 内建的数据结构。
 在 lua 中需要编写相应代码来模拟。
@@ -299,7 +309,7 @@ TODO：支持示例
 -->
 
 
-### set 字面量
+### Set 字面量
 
 同 dict，set 也是 python 内建的数据结构。
 在 lua 中需要编写相应代码来模拟。

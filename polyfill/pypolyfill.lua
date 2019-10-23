@@ -402,7 +402,11 @@ end
 
 function len(t)
    if type(t._data) == "table" then
-      return #t._data
+      local l = 0
+      for k, v in pairs(t._data) do
+	 l = l + 1
+      end
+      return l
    end
 
    return #t
@@ -706,14 +710,18 @@ setmetatable(dict, {
 
 		   local key_index = nil
 
+		   -- D.clear() -> None.  Remove all items from D.
 		   methods.clear = function()
 		      result._data = {}
 		   end
 
+		   -- D.copy() -> a shallow copy of D
 		   methods.copy = function()
 		      return dict(result._data)
 		   end
 
+		   -- d.fromkeys(iterable, value=None, /)
+		   -- returns a new dict with keys from iterable and values equal to value.
 		   methods.fromkeys = function(keys, value)
 		      value = value or nil
 		      d = {}
@@ -723,20 +731,19 @@ setmetatable(dict, {
 
 		      return dict(d)
 		   end
-		   
-		   methods.get = function(key, default)
-		      default = default or nil
-		      if result._data[key] == nil then
-			 return default
-		      end
 
-		      return result._data[key]
+		   -- D.get(k[,d]) -> D[k] if k in D, else d.  d defaults to None.
+		   methods.get = function(key, default)
+		      value = result._data[key] or default or nil
+		      return value
 		   end
 
+		   -- D.items() -> a set-like object providing a view on D's items
 		   methods.items = function()
 		      return pairs(result._data)
 		   end
 
+		   -- D.keys() -> a set-like object providing a view on D's keys
 		   methods.keys = function()
 		      return function(self, idx, _) 
 			 if idx == nil and key_index ~= nil then
@@ -748,18 +755,18 @@ setmetatable(dict, {
 		      end
 		   end
 
-		   methods.pop = function(key, default)
-		      default = default or nil
-		      if result._data[key] ~= nil then
-			 local value = result._data[key]
-			 result._data[key] = nil 
-			 return value
-		      end
+		   -- D.pop(k[,d]) -> v, remove specified key and return the corresponding value.
+		   -- if key is not found, d is returned if given, otherwise KeyError is raised
 
-		      return default
+		   methods.pop = function(key, default)
+		      value = result._data[key] or default or nil
+		      result._data[key] = nil
+
+		      return value
 		   end
 
-		   -- amazing! the python pop seq is same with lua table!
+		   -- D.popitem() -> (k, v), remove and return some (key, value) pair as a
+		   -- 2-tuple; but raise KeyError if D is empty.
 		   methods.popitem = function()
 		      local key, value = next(result._data)
 		      if key ~= nil then
@@ -769,6 +776,7 @@ setmetatable(dict, {
 		      return key, value
 		   end
 
+		   -- D.setdefault(k[,d]) -> D.get(k,d), also set D[k]=d if k not in D
 		   methods.setdefault = function(key, default)
 		      if result._data[key] == nil then
 			 result._data[key] = default
@@ -777,14 +785,21 @@ setmetatable(dict, {
 		      return result._data[key]
 		   end
 
+		   -- D.update([E, ]**F) -> None.  Update D from dict/iterable E and F.
+		   -- if E is present and has a .keys() method, then does:  for k in E: D[k] = E[k]
+		   -- if E is present and lacks a .keys() method, then does:  for k, v in E: D[k] = v
+		   -- in either case, this is followed by: for k in F:  D[k] = F[k]
 		   methods.update = function(t)
-		      assert(t._is_dict)
+		      if not t._is_dict then
+			 return
+		      end
 
 		      for k, v in t.items() do
 			 result._data[k] = v
 		      end
 		   end
 
+		   -- D.values() -> an object providing a view on D's values
 		   methods.values = function()
 		      return function(self, idx, _) 
 			 if idx == nil and key_index ~= nil then
