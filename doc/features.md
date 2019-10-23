@@ -594,7 +594,7 @@ TODO：支持示例
 在 python 3.4 版本之后（3.5, 3.6, 3.7）添加的 `新语法和 builtin 函数`，当前**不支持**。
 
 
-### [python 3.5](https://docs.python.org/3/whatsnew/3.5.html)
+#### [python 3.5](https://docs.python.org/3/whatsnew/3.5.html)
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
@@ -602,7 +602,7 @@ TODO：支持示例
 |矩阵乘法操作|`a @ b`|` `|:x:|
 |在函数调用中，不限制 `* **` 解压的数量，同时 tuple list set dict 都支持解压|`f(*args1, *args2)`|` `|:x:|
 
-### [python 3.6](https://docs.python.org/3/whatsnew/3.6.html)
+#### [python 3.6](https://docs.python.org/3/whatsnew/3.6.html)
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
@@ -612,7 +612,7 @@ TODO：支持示例
 |异步生成器|`await and yield`|` `|:x:|
 |异步生成表达式|`await and for`|` `|:x:|
 
-### [python 3.7](https://docs.python.org/3/whatsnew/3.7.html)
+#### [python 3.7](https://docs.python.org/3/whatsnew/3.7.html)
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
