@@ -385,21 +385,40 @@ lua 中也有 for in 的语法，和 python 的实现非常类似。
 
 ### While 语句
 
-while 语句在 python 和 lua 中概念相似。
+同样的，while 语句也是一个通用概念，在 python 和 lua 中非常相似。
 
-TODO：支持示例
+|feature|python|lua|支持|
+|:-:|:-:|:-:|:-:|
+|while true|`while True: ...`|`while true do ... end`|:heavy_check_mark:|
+|while condition|`while condition: ...`|`while condition do ... end`|:heavy_check_mark:|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[while.py](./../codeblock/while.py)|[while.py.lua](./../codeblock/while.py.lua)|
+
+
+### Break 语句
+
+在 python 和 lua 中相同，用于跳出最内层的循环。
+
+|feature|python|lua|支持|
+|:-:|:-:|:-:|:-:|
+|while true|`while True: ...`|`while true do ... end`|:heavy_check_mark:|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[while.py](./../codeblock/while.py)|[while.py.lua](./../codeblock/while.py.lua)|
+
+### Continue 语句
+
+也许难以相信，lua 不支持 Continue 语句，很难模拟 :(
 
 ### Pass 语句
 
 在 python 中需要用来占位，但是 lua 中不需要，对应空语句
 
-### Break 语句
-
-在 python 和 lua 中相同，用于跳出循环。
-
-### Continue 语句
-
-也许难以相信，lua 不支持 Continue 语句，很难模拟 :(
 
 
 
