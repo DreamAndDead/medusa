@@ -133,9 +133,6 @@ python 中 del 语句用于解除一个值，lua 中没有 del 的概念，可�
 ---
 
 
-
-
-
 ### Bool 布尔运算
 
 python 和 lua 本身都支持 and or 二元运算，都为短路求值，且 and or 的优先级（and 高于 or，先结合）相同。
@@ -227,6 +224,8 @@ in 在 python 中，含义是属于，这一点在 lua 中可能通过函数来�
 
 
 
+-----
+
 
 ### List 字面量
 
@@ -239,9 +238,21 @@ lua 中不存在相应的概念，需要编写相应代码来模拟（用元表�
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
-|空列表|`l = []`|`[local] l = list {}`|:heavy_check_mark:|
+|初始化|`l = [1, 2, 3]`|`[local] l = list {1, 2, 3}`|:heavy_check_mark:|
+|`append`|`l.append(4)`|`l.append(4)`|:heavy_check_mark:|
+|`clear`|`l.clear()`|`l.clear()`|:heavy_check_mark:|
+|`copy`|`l.copy()`|`l.copy()`|:heavy_check_mark:|
+|`count`|`l.count(4)`|`l.count(4)`|:heavy_check_mark:|
+|`extend`|`l.extend([5, 6, 7])`|`l.extend(list {5, 6, 7})`|:heavy_check_mark:|
+|`index`|`l.index(4)`|`l.index(4)`|:heavy_check_mark:|
+|`insert`|`l.insert(0, -1)`|`l.insert(0, -1)`|:heavy_check_mark:|
+|`pop`|`l.pop()`|`l.pop()`|:heavy_check_mark:|
+|`remove`|`l.remove(-1)`|`l.remove(-1)`|:heavy_check_mark:|
+|`reverse`|`l.reverse()`|`l.reverse()`|:heavy_check_mark:|
+|`sort`|`l.sort()`|`l.sort()`|:heavy_check_mark:，因为当前函数不支持键值参数，所以 key 和 reverse 参数无法传递，有待调整|
+|索引`[n]`|`l[0]`|`l[0]`|:heavy_check_mark:|
+|切片`[m:n]`|`l[0:3]`|` `|:x:|
 |重载`==`|`[] == []`|` `|:x:|
-
 
 
 |python示例代码|lua转换代码|
@@ -263,11 +274,13 @@ dict 是 python 中内建的数据结构，使用非常广泛。
 |空字典|`d = {}`|`[local] d = dict {}`|:heavy_check_mark:|
 |重载`==`|`{} == {}`|` `|:x:|
 
+<!--
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
 |[dict.py](./../codeblock/dict.py)|[dict.py.lua](./../codeblock/dict.py.lua)|
 
+-->
 
 ### tuple 字面量
 
@@ -275,9 +288,15 @@ tuple 是 python 内建的数据结构。
 在 lua 中需要编写相应代码来模拟。
 
 TODO：支持示例
+
+
+
+<!--
+
 |python示例代码|lua转换代码|
 |:-:|:-:|
 |[tuple.py](./../codeblock/tuple.py)|[tuple.py.lua](./../codeblock/tuple.py.lua)|
+-->
 
 
 ### set 字面量
@@ -286,10 +305,15 @@ TODO：支持示例
 在 lua 中需要编写相应代码来模拟。
 
 TODO：支持示例
-|python示例代码|lua转换代码|
+
+
+<!--
+
+python示例代码|lua转换代码|
 |:-:|:-:|
 |[set.py](./../codeblock/set.py)|[set.py.lua](./../codeblock/set.py.lua)|
 
+-->
 
 
 ### Subscript
@@ -298,10 +322,14 @@ python 中有 3 种下标，Index, Slice 和 ExtSlice。
 在 lua 中，默认只有 Index 对应的概念，`d[1]`。
 
 TODO：支持示例
+
+<!--
+
 |python示例代码|lua转换代码|
 |:-:|:-:|
 |[subscript.py](./../codeblock/subscript.py)|[subscript.py.lua](./../codeblock/subscript.py.lua)|
 
+-->
 
 
 
