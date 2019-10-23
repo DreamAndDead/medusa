@@ -1,13 +1,11 @@
 # supported features
 
-transpiler 支持的 python 语言以 3.4 为基准，支持大部分语言功能。
+py2lua 支持的 python 语言以 3.4 为基准，支持大部分语言功能。
+转换为 lua 语言，支持 lua 5.1 版本。
 
 ## transpile 的核心
 
-粗略的讲，是运行得到同样的结果。
-
-本质是用 lua 实现了 python，（这里不是 100%），表达同样的语义。
-
+transpile 的本质在于，用 lua 实现 python 语言所表现的语义，相当于用 lua 实现了 python。
 
 ## python features supported
 
@@ -129,7 +127,6 @@ python 中 del 语句用于解除一个值，lua 中没有 del 的概念，可�
 |[augassign.py](./../codeblock/augassign.py)|[augassign.py.lua](./../codeblock/augassign.py.lua)|
 
 
-
 ---
 
 
@@ -179,7 +176,7 @@ python 和 lua 本身都支持 and or 二元运算，都为短路求值，且 an
 
 ### Bit 位运算
 
-**FIXME: 这部分函数的运行结果还在调整，以期和 python 的表现相同（python 的底层不仅是 32 位的，从 << 可以看出来）**
+**TODO: 这部分函数的运行结果还在调整，以期和 python 的表现相同（python 的底层不仅是 32 位的，从 << 可以看出来）**
 
 python 同时内建了位运算，在 lua 5.1 版本，无论是内建还是标准库，都不包含位运算，所以需要函数来模拟。
 
@@ -195,6 +192,7 @@ python 同时内建了位运算，在 lua 5.1 版本，无论是内建还是标�
 |python示例代码|lua转换代码|
 |:-:|:-:|
 |[bit.py](./../codeblock/bit.py)|[bit.py.lua](./../codeblock/bit.py.lua)|
+
 
 ### Compare 比较运算
 
@@ -221,7 +219,6 @@ in 在 python 中，含义是属于，这一点在 lua 中可能通过函数来�
 |python示例代码|lua转换代码|
 |:-:|:-:|
 |[compare.py](./../codeblock/compare.py)|[compare.py.lua](./../codeblock/compare.py.lua)|
-
 
 
 -----
@@ -294,11 +291,7 @@ dict 是 python 中内建的数据结构，使用非常广泛。
 
 ### Tuple 字面量
 
-tuple 是 python 内建的数据结构。
-在 lua 中需要编写相应代码来模拟。
-
 TODO：支持示例
-
 
 
 <!--
@@ -310,9 +303,6 @@ TODO：支持示例
 
 
 ### Set 字面量
-
-同 dict，set 也是 python 内建的数据结构。
-在 lua 中需要编写相应代码来模拟。
 
 TODO：支持示例
 
@@ -342,9 +332,7 @@ TODO：支持示例
 -->
 
 
-
 ------
-
 
 
 ### If 语句
@@ -440,8 +428,7 @@ break 的含义在 python 和 lua 中相同，用于跳出最内层的循环。
 ---
 
 
-
-### lambda 表达式
+### Lambda 表达式
 
 在 python 中，lambda 是匿名函数，但是其中只能包含一个简单的返回值。
 而在 lua 中，天生支持匿名函数，且其中的语句没有限制。
@@ -449,7 +436,7 @@ break 的含义在 python 和 lua 中相同，用于跳出最内层的循环。
 TODO: 支持示例
 
 
-### 函数定义
+### Function 函数定义
 
 python 的函数定义有装饰器，普通参数，默认值参数，vararg，键值参数，kwarg
 
@@ -458,13 +445,6 @@ python 的函数定义有装饰器，普通参数，默认值参数，vararg，�
 TODO：支持示例
 
 
-### Starred
-
-`*d` 存在在 python 中的许多地方。
-在 lua 中没有相应的概念，需要再思考。
-
-TODO：支持示例
-
 ### Call 函数调用
 
 函数调用在 python lua 以及其它语言中是一个通用概念。
@@ -472,6 +452,7 @@ TODO：支持示例
 TODO：支持示例
 
 在 python 的函数调用中，除了普通函数，还有 列表参数和字典参数。
+
 
 ### Return 语句
 
@@ -492,6 +473,7 @@ lua 中不存在类的概念，只能用 table 和 metatable 来模拟。
 
 TODO：支持示例
 
+
 ### 属性
 
 python 中一切都是对象，获取对象的属性是常用操作。
@@ -500,32 +482,29 @@ python 中一切都是对象，获取对象的属性是常用操作。
 TODO：支持示例
 
 
+---
 
 
-
-
-
-
-### if 表达式
+### If 表达式
 
 python 从 perl 借鉴来的语法，将 if 判断作为表达式，而不是语句块。
 而在 lua 中，没有这种类型的语法，只能将其转化为普通的 if 语句块来运行。
 
-
 TODO：支持示例
 
-### list 生成式
+
+### List 生成式
 
 list 生成式也是 python 中的创新，用表达式来生成列表，本质是循环（+判断）的表达式写法。
 在 lua 中没有相应结构，需要用函数调用来模拟。
 
 TODO：支持示例
 
-### set 生成式
+### Set 生成式
 
 TODO：支持示例
 
-### dict 生成式
+### Dict 生成式
 
 TODO：支持示例
 
@@ -533,7 +512,10 @@ TODO：支持示例
 
 语法和列表生成类似，不过使用的是 () ，得到一个 generator 对象，而不是即时的列表。
 
+TODO：支持示例
 
+
+---
 
 
 ### Assert 断言
@@ -550,13 +532,26 @@ python 和 lua 都内建了 assert 函数，进行真值的断言，如果为假
 |:-:|:-:|
 |[assert.py](./../codeblock/assert.py)|[assert.py.lua](./../codeblock/assert.py.lua)|
 
+
+### Starred
+
+`*d` 存在在 python 中的许多地方。
+在 lua 中没有相应的概念，需要再思考。
+
+TODO：支持示例
+
+
 ### With 语句
 
 上下文操作，暂时不支持。
 
+TODO：支持示例
+
+
 ### Raise， Try
 
 lua 中不支持异常。
+
 
 ### Import ImportFrom
 
@@ -564,15 +559,23 @@ lua 中不支持异常。
 
 如果后续可以兼容大部分库的话。
 
+TODO：支持示例
+
+
 ### Global Nonlocal
 
 涉及到作用域的问题
+
+TODO：支持示例
 
 
 ### Builtin 内建函数
 
 python 语言环境中除了引用标准库，其中有不少有用的内建函数。
 这些函数都需要在 lua 中进行同义模拟。
+
+
+TODO：支持示例
 
 
 |feature|python|lua|supported|
@@ -586,22 +589,33 @@ python 语言环境中除了引用标准库，其中有不少有用的内建函�
 
 
 
-## python newer than 3.4
+### Python newer than 3.4
 
 在 python 3.4 版本之后（3.5, 3.6, 3.7）添加的 `新语法和 builtin 函数`，当前**不支持**。
 
-[python 3.5](https://docs.python.org/3/whatsnew/3.5.html)
-- 新增了 async, await 语法
-- 新的矩阵乘法操作符 `a @ b`
-- 在函数调用中，不限制 `* **` 解压的数量，同时 tuple list set dict 都支持解压
 
-[python 3.6](https://docs.python.org/3/whatsnew/3.6.html)
-- 添加新的字符串字面量 formatted string literals `f"He said his name"`
-- 增加了变量类型提示 type hints
-- 数字字面量支持 _ 
-- 异步的生成器 await + yield
-- 异步的生成表达式 await + for
+### [python 3.5](https://docs.python.org/3/whatsnew/3.5.html)
 
-[python 3.7](https://docs.python.org/3/whatsnew/3.7.html)
-- type hints 的延时执行
-- builtin breakpoint
+|feature|python|lua|supported|
+|:-:|:-:|:-:|:-:|
+|async, await异步|`async/await`|` `|:x:|
+|矩阵乘法操作|`a @ b`|` `|:x:|
+|在函数调用中，不限制 `* **` 解压的数量，同时 tuple list set dict 都支持解压|`f(*args1, *args2)`|` `|:x:|
+
+### [python 3.6](https://docs.python.org/3/whatsnew/3.6.html)
+
+|feature|python|lua|supported|
+|:-:|:-:|:-:|:-:|
+|格式化字面量|`f"He said his name"`|` `|:x:|
+|变量类型提示 type hints|`captain: str`|` `|:x:|
+|数字字面量支持 `_`|`1_000_000`|` `|:x:|
+|异步生成器|`await and yield`|` `|:x:|
+|异步生成表达式|`await and for`|` `|:x:|
+
+### [python 3.7](https://docs.python.org/3/whatsnew/3.7.html)
+
+|feature|python|lua|supported|
+|:-:|:-:|:-:|:-:|
+|type hints 的延时执行|` `|` `|:x:|
+|builtin breakpoint()|`breakpoint()`|` `|:x:|
+
