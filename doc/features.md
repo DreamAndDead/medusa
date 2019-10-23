@@ -349,12 +349,17 @@ TODO：支持示例
 
 ### If 语句
 
-同 while，if 是一个比较协同的概念。
+if 是一个比较协同的概念。
 
 elif 和 else if 等价。
 
-TODO：支持示例
+<!--
 
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[if.py](./../codeblock/if.py)|[if.py.lua](./../codeblock/if.py.lua)|
+
+-->
 
 ### For 语句
 
