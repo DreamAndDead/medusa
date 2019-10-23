@@ -400,29 +400,44 @@ lua 中也有 for in 的语法，和 python 的实现非常类似。
 
 ### Break 语句
 
-在 python 和 lua 中相同，用于跳出最内层的循环。
+break 的含义在 python 和 lua 中相同，用于跳出最内层的循环。
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
-|while true|`while True: ...`|`while true do ... end`|:heavy_check_mark:|
+|break|`break`|`break`|:heavy_check_mark:|
 
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[while.py](./../codeblock/while.py)|[while.py.lua](./../codeblock/while.py.lua)|
+|[break.py](./../codeblock/break.py)|[break.py.lua](./../codeblock/break.py.lua)|
+
 
 ### Continue 语句
 
-也许难以相信，lua 不支持 Continue 语句，很难模拟 :(
+也许难以相信，lua5.1 不支持 Continue 语句，而且这一特性很难模拟 :scream:
+
+
+|feature|python|lua|支持|
+|:-:|:-:|:-:|:-:|
+|continue|`continue`|` `|:x:|
+
 
 ### Pass 语句
 
-在 python 中需要用来占位，但是 lua 中不需要，对应空语句
+在 python 中空的语句块需要 pass 来占位，没有任何含义。
+但是 lua 中不需要，对应空语句。
+
+|feature|python|lua|支持|
+|:-:|:-:|:-:|:-:|
+|pass|`pass`|` `|:heavy_check_mark:|
 
 
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[pass.py](./../codeblock/pass.py)|[pass.py.lua](./../codeblock/pass.py.lua)|
 
 
-
+---
 
 
 
