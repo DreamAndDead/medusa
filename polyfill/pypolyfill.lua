@@ -412,21 +412,25 @@ function len(t)
    return #t
 end
 
-function range(from, to, step)
-   assert(from ~= nil)
+-- range(stop) -> range object
+-- range(start, stop[, step]) -> range object
+-- return a sequence of numbers from start to stop by step.
+function range(start, stop, step)
+   assert(start ~= nil, 'range() expected 1 arguments, got 0')
    
-   if to == nil then
-      to = from
-      from = 0        
+   if stop == nil then
+      stop = start
+      start = 0        
    end
 
    step = step or 1
+   assert(step ~= 0, 'range() arg 3 must not be zero')
 
-   local i = from
+   local i = start
    
    return function()
       ret = i
-      if (step > 0 and i >= to) or (step < 0 and i <= to) then
+      if (step > 0 and i >= stop) or (step < 0 and i <= stop) then
          return nil
       end
       

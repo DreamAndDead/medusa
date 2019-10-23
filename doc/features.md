@@ -343,30 +343,45 @@ TODO：支持示例
 
 
 
-
+------
 
 
 
 ### If 语句
 
-if 是一个比较协同的概念。
+分支在编程语言中是一个通用概念，而且几乎所有语言的分支关键字都是 if。
 
-elif 和 else if 等价。
+python 和 lua 的分支结构是非常相似的。
 
-<!--
+|feature|python|lua|支持|
+|:-:|:-:|:-:|:-:|
+|if...|`if True: ...`|`if true then end`|:heavy_check_mark:|
+|if...else...|`if True: ... else: ...`|`if true then else end`|:heavy_check_mark:|
+|if...elif...|`if True: ... elif True: ...`|`if true then else if true end`|:heavy_check_mark:|
+|if...elif...else...|`if True: ... elif True: ... else: ...`|`if true then else if true then else end end`|:heavy_check_mark:|
+
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
 |[if.py](./../codeblock/if.py)|[if.py.lua](./../codeblock/if.py.lua)|
 
--->
 
 ### For 语句
 
-for in 是 python 中常用的迭代方法。
-lua 中也有 for 写法，需要模拟迭代器。
+for in 是 python 中常用的迭代方法，其核心是迭代器。
+lua 中也有 for in 的语法，和 python 的实现非常类似。
 
-TODO：支持示例
+|feature|python|lua|支持|
+|:-:|:-:|:-:|:-:|
+|for in list|`for i in [1, 2]`|`for i in list {1, 2}`|:heavy_check_mark:|
+|for in dict|`for k, v in d.items()`|`for k, v in d.items()`|:heavy_check_mark:|
+|for in range|`for i in range(1, 10, 2)`|`for i in range(1, 10, 2)`|:heavy_check_mark:|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[for.py](./../codeblock/for.py)|[for.py.lua](./../codeblock/for.py.lua)|
+
 
 ### While 语句
 
