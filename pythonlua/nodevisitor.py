@@ -615,6 +615,7 @@ class NodeVisitor(ast.NodeVisitor):
 
     def visit_Subscript(self, node):
         """Visit subscript"""
+        # TODO: other situations
         line = "{name}[{index}]"
         values = {
             "name": self.visit_all(node.value, inline=True),

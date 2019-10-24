@@ -498,6 +498,15 @@ return 语句在 python 和 lua 中是相同的，用于从函数中返回值。
 |[lambda.py](./../codeblock/lambda.py)|[lambda.py.lua](./../codeblock/lambda.py.lua)|
 
 
+### Yield
+
+不支持
+
+虽然 lua 中有协程，但是和 python 中的 yield 不是一个概念。
+
+
+-----
+
 ### 类定义
 
 类是 python 中的关键概念。
@@ -512,14 +521,6 @@ python 中一切都是对象，获取对象的属性是常用操作。
 在 lua 中，没有对象的概念，对应的 `.` 是索引的概念。
 
 TODO：支持示例
-
-
-
-### Yield
-
-不支持
-
-虽然 lua 中有协程，但是和 python 中的 yield 不是一个概念。
 
 
 
@@ -554,6 +555,29 @@ TODO：支持示例
 语法和列表生成类似，不过使用的是 () ，得到一个 generator 对象，而不是即时的列表。
 
 TODO：支持示例
+
+
+----
+
+
+### Builtin 内建函数
+
+python 语言环境中除了引用标准库，其中有不少有用的内建函数。
+这些函数都需要在 lua 中进行同义模拟。
+
+
+TODO：支持示例
+
+
+|feature|python|lua|supported|
+|:-:|:-:|:-:|:-:|
+|`len`|`len([1, 2])`|`len(list {1, 2})`|:heavy_check_mark:|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[builtin.py](./../codeblock/builtin.py)|[builtin.py.lua](./../codeblock/builtin.py.lua)|
+
 
 
 ---
@@ -591,8 +615,7 @@ TODO：支持示例
 
 ### Raise， Try
 
-lua 中不支持异常。
-
+:x: lua 中不支持异常 :x:
 
 ### Import ImportFrom
 
@@ -610,24 +633,7 @@ TODO：支持示例
 TODO：支持示例
 
 
-### Builtin 内建函数
-
-python 语言环境中除了引用标准库，其中有不少有用的内建函数。
-这些函数都需要在 lua 中进行同义模拟。
-
-
-TODO：支持示例
-
-
-|feature|python|lua|supported|
-|:-:|:-:|:-:|:-:|
-|`len`|`len([1, 2])`|`len(list {1, 2})`|:heavy_check_mark:|
-
-
-|python示例代码|lua转换代码|
-|:-:|:-:|
-|[builtin.py](./../codeblock/builtin.py)|[builtin.py.lua](./../codeblock/builtin.py.lua)|
-
+----
 
 
 ### Python newer than 3.4
