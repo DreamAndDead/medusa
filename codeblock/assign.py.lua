@@ -11,9 +11,3 @@ assert((e == 3))
 d, e = e, d
 assert((d == 3))
 assert((e == 2))
-local a, unpack(b) = 1, 2
-assert((a == 1))
-assert((b == list {2}))
-a, unpack(b) = 1, 2, 3, 4
-assert((a == 1))
-assert((b == list {2, 3, 4}))

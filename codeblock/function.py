@@ -1,100 +1,118 @@
-# function test
-#
-# not support
-# - function keyword parameter
+# Function and Call 函数定义和调用
 
-# normal
-def move(direction, distance):
-    """move dist to a direction"""
-    print("move to direction")
-    print(direction)
-    print("with distance")
-    print(distance)
+## 位置参数
+def mul(a, b):
+    """simple multiplication"""
+    return a * b
 
-move("north", 10)
+## 只使用位置参数进行调用，位置参数的数量要和定义中匹配，这是语言要求
+assert mul(10, 2) == 20
+assert mul(-2, 32) == -64
 
 
-# default value
-def say(word, time=2):
-    """say word in time seconds"""
-    print(word)
-    print("wait")
-    print(time)
-    print("seconds")
+## 默认值参数
+def sub(a, b=2):
+    """minus function"""
+    return a - b
 
-say("hello python", 1)
-say("hello lua", 2)
+## 默认值参数也是一种位置参数，不过在调用时，如果不传位置参数，则会自动赋值默认值
+assert sub(10, 10) == 0
+assert sub(10) == 8
 
 
-# var args
-# TODO: there's an interesting detail
-# if use end=1000, it will cause syntax error because end is considered as keyword end in lua
-def play(start=0, finish=1000, *other):
-    print(start)
-    print(finish)
-    for a in other:
-        print(a)
+## vararg，在 python 中如 *args 的写法，写在位置参数的最后，分隔位置参数和键值参数
+## 多余的位置参数都由它来吸收
+def sum(first, second, *more):
+    """sum of the parameters"""
+    s = first + second
+    for i in more:
+        s += i
+    return s
 
-play(20, 40, "hello python", "hello lua")
-
-
-# nested functions
-def plus_factory(plus_num):
-    def plus_func(n):
-        return n + plus_num
-    return plus_func
-
-print(plus_factory(10)(1))
+## 调用有 vararg 定义的函数时，不需要限定位置参数的数量，因为多余的会被 vararg 吸收
+assert sum(1, 2) == 3
+assert sum(1, 2, 3) == 6
+assert sum(1, 2, 3, 4) == 10
 
 
-# decorators
-def output_wrapper(func):
-    def wrapper(*params):
-        print("function start")
-        func(*params)
-        print("function end")
-    return wrapper
+
+## 键值参数
+## TODO，暂时不支持
 
 
-@output_wrapper
-def wait(second):
-    print("wait")
-    print(second)
-    print("seconds")
-
-wait(20)
-
-
-def output_wrapper_with(beginning, finish):
-    def output_wrapper(func):
-        def wrapper(*params):
-            print(beginning)
-            func(*params)
-            print(finish)
-        return wrapper
-    return output_wrapper
-        
-@output_wrapper_with("begin wait", "end wait")
-def wait(second):
-    print("wait")
-    print(second)
-    print("seconds")
-
-wait(40)
-
-# callbacks
-# 在 lua 中，可以直接在函数调用时，定义匿名函数作为参数，就像
-# registerClickEvent(function () ... end)
-# 在 python 中，不存在对应的机制，由于缩进严格，要做到将函数作为参数，只能先定义一个函数，再将函数名作为参数进行传参
-
+## 函数作为参数
+## 在 python 中，函数作为一等公民，可以作为其它函数的参数
 def registerClickEvent(callback):
-    """register click event"""
+    """register a function as callback"""
     event = { "id": "click" }
     callback(event)
 
 def callback(event):
-    """callback function"""
-    print(event["id"])
+    """simple callback"""
+    assert event["id"] == "click"
 
+## 调用
 registerClickEvent(callback)
+
+
+## 嵌套函数定义，并返回一个函数
+## 函数作为一等公民，也可以作为返回值
+def plus_factory(plus_num):
+    """plus factory"""
+    def plus_func(n):
+        """plus function"""
+        return n + plus_num
+    return plus_func
+
+## 调用
+plus_10 = plus_factory(10)
+assert plus_10(20) == 30
+assert plus_10(-10) == 0
+
+
+## 装饰器
+def clamp_wrapper(func):
+    """a clamp decorator"""
+    def wrapper(*params):
+        res = func(*params)
+        if res < 0:
+            res = 0
+        return res
+    return wrapper
+
+@clamp_wrapper
+def minus(a, b = 10):
+    return a - b
+
+## 调用
+assert minus(10, 1) == 9
+assert minus(10, 20) == 0
+assert minus(1) == 0
+
+
+## 多层装饰器
+def clamp_wrapper_with(left, right):
+    """a clamp decorator with left and right limit"""
+    def clamp_wrapper(func):
+        def wrapper(*params):
+            res = func(*params)
+            if res < left:
+                res = left
+            elif res > right:
+                res = right
+            return res
+        return wrapper
+    return clamp_wrapper
+        
+@clamp_wrapper_with(1, 10)
+def sum(*n):
+    t = 0
+    for i in n:
+        t += i
+    return t
+
+## 调用
+assert sum(1, 2, 3) == 6
+assert sum(-1, -2, -3) == 1
+assert sum(4, 5, 6) == 10
 

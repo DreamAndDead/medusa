@@ -1,3 +1,4 @@
+dofile('./polyfill/pypolyfill.lua')
 local a = (1 + 2)
 assert((a == 3))
 a = (a - 4)

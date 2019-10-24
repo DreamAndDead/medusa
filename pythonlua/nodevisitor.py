@@ -188,14 +188,17 @@ class NodeVisitor(ast.NodeVisitor):
         Visit function call
 
         TODO:
-        - 这里忽略了所有 keywords
-        - 在 3.4 和 3.5 以上有一些变化 https://greentreesnakes.readthedocs.io/en/latest/nodes.html#Call
+        - 暂时不支持键值参数，忽略了所有 keywords
         """
-        # 当函数调用中有 *o 这样的形式，解析出来是 unpack，用于将列表展开，传递参数
         line = "{name}({arguments})"
 
         name = self.visit_all(node.func, inline=True)
         arguments = [self.visit_all(arg, inline=True) for arg in node.args]
+
+        # 当函数调用中有 *o 这样的形式，解析出来是 unpack，用于将列表展开，传递参数
+        if node.starargs:
+            starargs = self.visit_all(node.starargs, inline=True)
+            arguments.append("unpack(%s)" % starargs)
 
         self.emit(line.format(name=name, arguments=", ".join(arguments)))
 
@@ -500,18 +503,37 @@ class NodeVisitor(ast.NodeVisitor):
 
     def visit_Lambda(self, node):
         """Visit lambda"""
-        line = "function({arguments}) return"
+        # TODO: ignore key-value parameters
+        
+        line = "function({arguments}) "
 
         arguments = [arg.arg for arg in node.args.args]
+        if node.args.vararg is not None:
+            arguments.append("...")
 
         function_def = line.format(arguments=", ".join(arguments))
 
-        output = []
-        output.append(function_def)
-        output.append(self.visit_all(node.body, inline=True))
-        output.append("end")
+        body = []
+        if node.args.vararg is not None:
+            line = "local {name} = list {{...}}".format(name=node.args.vararg.arg)
+            body.insert(0, line)
 
-        self.emit(" ".join(output))
+        arg_index = -1
+        for d in reversed(node.args.defaults):
+            line = "{name} = {name} or {value}"
+            arg = node.args.args[arg_index]
+            values = {
+                "name": arg.arg,
+                "value": self.visit_all(d, inline=True),
+            }
+            body.insert(0, line.format(**values))
+
+        return_line = "return {} end"
+        body.append(return_line.format(self.visit_all(node.body, inline=True)))
+
+        output = function_def + "; ".join(body)
+        
+        self.emit(output)
 
     def visit_List(self, node):
         """Visit list"""
@@ -569,7 +591,9 @@ class NodeVisitor(ast.NodeVisitor):
     def visit_Return(self, node):
         """Visit return"""
         line = "return "
-        line += self.visit_all(node.value, inline=True)
+        if node.value:
+            line += self.visit_all(node.value, inline=True)
+            
         self.emit(line)
 
     def visit_Starred(self, node):

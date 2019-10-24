@@ -428,42 +428,74 @@ break 的含义在 python 和 lua 中相同，用于跳出最内层的循环。
 ---
 
 
-### Lambda 表达式
+### Function and Call 函数定义和调用
 
-在 python 中，lambda 是匿名函数，但是其中只能包含一个简单的返回值。
-而在 lua 中，天生支持匿名函数，且其中的语句没有限制。
+python 的函数定义的关键有 位置参数，默认值参数，vararg，键值参数，kwarg，装饰器。
+相比之下，lua 的函数定义就更加简单，只有位置参数。
+如果需要同样的效果就要更多的代码工作。
 
-TODO: 支持示例
-
-
-### Function 函数定义
-
-python 的函数定义有装饰器，普通参数，默认值参数，vararg，键值参数，kwarg
-
-相比之下，lua 的函数定义就更加纯粹。如果需要同样的效果就要更多的代码工作。
-
-TODO：支持示例
+而函数调用在 python lua 以及其它语言中是一个通用概念，使用已经定义的函数。
+在 python 的函数调用中，除了位置参数，还有列表参数和字典参数。
 
 
-### Call 函数调用
+|feature|python|lua|支持|
+|:-:|:-:|:-:|:-:|
+|函数定义|`def func(): ...`|`function func() do ... end`|:heavy_check_mark:|
+|函数调用|`func()`|`func()`|:heavy_check_mark:|
+|函数定义，位置参数|`def func(m, n): ...`|`function func(m, n) do ... end`|:heavy_check_mark:|
+|函数调用，位置参数|`func(10, 20)`|`func(10, 20)`|:heavy_check_mark:|
+|函数定义，默认值参数|`def func(m, n=30): ...`|`function func(m, n) do local n = n or 30 ... end`|:heavy_check_mark:|
+|函数调用，默认值参数|`func(10[, 40])`|`func(10[, 40])`|:heavy_check_mark:|
+|函数定义，可变长参数|`def func(m, n, *rest): ...`|`function func(m, n, ...) do local rest = list {...} ... end`|:heavy_check_mark:|
+|函数调用，可变长参数|`func(10, 20[, 30, 40])`|`func(10, 20[, 30, 40])`|:heavy_check_mark:|
+|函数定义，键值参数|`def func(*args, a=1, b=2): ...`|`function func(...) do local args = list {...} ... end`|:x:，目前函数定义不支持键值参数，所有键值参数会被过滤|
+|函数调用，键值参数|`func(a=2, b=3)`|` `|:x:|
+|函数定义，可变长键值参数|`def func(*args, **kwargs): ...`|`function func(...) do local args = list {...} ... end`|:x:，所有可变长键值参数会被过滤|
+|函数调用，可变长键值参数|`func(10, 20, a=30, b=40)`|` `|:x:|
 
-函数调用在 python lua 以及其它语言中是一个通用概念。
 
-TODO：支持示例
-
-在 python 的函数调用中，除了普通函数，还有 列表参数和字典参数。
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[function.py](./../codeblock/function.py)|[function.py.lua](./../codeblock/function.py.lua)|
 
 
 ### Return 语句
 
-return 语句的概念是相同的
+return 语句在 python 和 lua 中是相同的，用于从函数中返回值。
 
 
-### Yield
+|feature|python|lua|支持|
+|:-:|:-:|:-:|:-:|
+|返回空值|`return`|`return`|:heavy_check_mark:|
+|返回单个值|`return m`|`return m`|:heavy_check_mark:|
+|返回多个值|`return m, n`|`return m, n`|:heavy_check_mark:|
 
-不支持
 
-虽然 lua 中有协程，但是和 python 中的 yield 不是一个概念。
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[return.py](./../codeblock/return.py)|[return.py.lua](./../codeblock/return.py.lua)|
+
+
+### Lambda 表达式
+
+在 python 中，lambda 是匿名函数，但是其中不能包含语句，只能包含一个简单的返回值。
+而在 lua 中，天生支持匿名函数，并且其中的语句没有限制，在这一点，lua 优于 python。
+
+这一点让人惊奇，lambda 虽然是简单的函数，但是也支持复杂的参数定义，像 Function 定义一样。
+
+
+|feature|python|lua|支持|
+|:-:|:-:|:-:|:-:|
+|匿名函数，位置参数|`lambda x: x + 1`|`function(x) return (x + 1) end`|:heavy_check_mark:|
+|匿名函数，默认值参数|`lambda x=1: x + 1`|`function(x) x = x or 1; return (x + 1) end`|:heavy_check_mark:|
+|匿名函数，可变长参数|`lambda *n: n`|`function(...) local n = list {...}; return n end`|:heavy_check_mark:|
+|匿名函数，键值参数|`lambda *n, a=1: n[0] + a`|`function(...) local n = list {...}; return n[0] + a end`|:x:，同函数定义，键值参数的部分被过滤|
+|匿名函数，可变长键值参数|`lambda *args, **kwargs: args`|`function(...) local args = list {...}; return args end`|:x:，同函数定义，键值参数的部分被过滤|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[lambda.py](./../codeblock/lambda.py)|[lambda.py.lua](./../codeblock/lambda.py.lua)|
 
 
 ### 类定义
@@ -480,6 +512,15 @@ python 中一切都是对象，获取对象的属性是常用操作。
 在 lua 中，没有对象的概念，对应的 `.` 是索引的概念。
 
 TODO：支持示例
+
+
+
+### Yield
+
+不支持
+
+虽然 lua 中有协程，但是和 python 中的 yield 不是一个概念。
+
 
 
 ---
