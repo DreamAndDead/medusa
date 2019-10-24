@@ -500,10 +500,7 @@ return 语句在 python 和 lua 中是相同的，用于从函数中返回值。
 
 ### Yield
 
-不支持
-
-虽然 lua 中有协程，但是和 python 中的 yield 不是一个概念。
-
+:x: 虽然 lua 中有协程，但是和 python 中的 yield 不是一个概念 :x:
 
 -----
 
@@ -566,7 +563,8 @@ python 语言环境中除了引用标准库，其中有不少有用的内建函�
 这些函数都需要在 lua 中进行同义模拟。
 
 
-TODO：支持示例
+TODO：
+- 补充支持示例
 
 
 |feature|python|lua|supported|
@@ -608,9 +606,7 @@ TODO：支持示例
 
 ### With 语句
 
-上下文操作，暂时不支持。
-
-TODO：支持示例
+:x: 上下文操作，暂时不支持 :x:
 
 
 ### Raise， Try
@@ -638,7 +634,7 @@ TODO：支持示例
 
 ### Python newer than 3.4
 
-在 python 3.4 版本之后（3.5, 3.6, 3.7）添加的 `新语法和 builtin 函数`，当前**不支持**。
+:x: 在 python 3.4 版本之后（3.5, 3.6, 3.7）添加的 `新语法和 builtin 函数`，当前不支持 :x:
 
 
 #### [python 3.5](https://docs.python.org/3/whatsnew/3.5.html)
