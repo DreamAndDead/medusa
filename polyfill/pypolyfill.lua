@@ -914,22 +914,19 @@ end
 
 
 
+
+
+
 --[[
-   classes
+   class
 
    TODO：
-   - inherit
-   - base object，全部的类都继承于它
-   - magic methods
    - MRO机制
+   - base object，全部的类都继承于它（旧式类）
+   - magic methods
    - metaclass
    - @property, @staticmethod, @classmethod
-   - super()
 --]]
-
-function super(cls, obj)
-end
-
 function class(class_init, bases)
    bases = bases or {}
 
@@ -951,17 +948,20 @@ function class(class_init, bases)
       
       setmetatable(object, {
 		      __index = function(tbl, idx)
-			 local method = c[idx]
-			 if type(method) == "function" then
+			 local attr = c[idx]
+			 if type(attr) == "function" then
 			    return function(...)
+			       -- attr is function, object is self
 			       return c[idx](object, ...) 
 			    end
 			 end
-			 
-			 return method
+
+			 -- attr is attribute
+			 return attr
 		      end,
       })
-      
+
+      -- search in the metatable
       if type(object.__init__) == "function" then
 	 object.__init__(...)
       end
@@ -973,3 +973,31 @@ function class(class_init, bases)
    
    return c
 end
+
+
+function isinstance()
+end
+
+function issubclass()
+end
+
+--[[
+super() -> same as super(__class__, <first argument>)
+super(type) -> unbound super object
+super(type, obj) -> bound super object; requires isinstance(obj, type)
+super(type, type2) -> bound super object; requires issubclass(type2, type)
+
+Typical use to call a cooperative superclass method:
+class C(B):
+    def meth(self, arg):
+        super().meth(arg)
+
+This works for class methods too:
+class C(B):
+    @classmethod
+    def cmeth(cls, arg):
+        super().cmeth(arg)
+--]]
+function super(cls, obj)
+end
+

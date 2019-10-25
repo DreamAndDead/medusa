@@ -500,16 +500,31 @@ return 语句在 python 和 lua 中是相同的，用于从函数中返回值。
 
 ### Yield
 
-:x: 虽然 lua 中有协程，但是和 python 中的 yield 不是一个概念 :x:
+虽然 lua 中有协程，但是和 python 中的 yield 不是一个概念。
+
+|feature|python|lua|支持|
+|:-:|:-:|:-:|:-:|
+|yield|`yield`|` `|:x:|
+
 
 -----
 
-### 类定义
 
-类是 python 中的关键概念。
-lua 中不存在类的概念，只能用 table 和 metatable 来模拟。
+### Class 类的定义和使用
 
-TODO：支持示例
+在 python 中一切都是对象，类是 python 中的关键概念。
+lua 中不存在类的概念，对于类只能用 table 和 metatable 来模拟。
+
+|feature|python|lua|支持|
+|:-:|:-:|:-:|:-:|
+|类|`class`|` `|:heavy_check_mark:|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[class.py](./../codeblock/class.py)|[class.py.lua](./../codeblock/class.py.lua)|
+
+
 
 
 ### 属性
@@ -606,12 +621,13 @@ TODO：支持示例
 
 ### With 语句
 
-:x: 上下文操作，暂时不支持 :x:
+上下文操作，暂时不支持 :x:
 
 
 ### Raise， Try
 
-:x: lua 中不支持异常 :x:
+非常遗憾的是，lua 中不支持异常 :x:
+
 
 ### Import ImportFrom
 
@@ -634,7 +650,7 @@ TODO：支持示例
 
 ### Python newer than 3.4
 
-:x: 在 python 3.4 版本之后（3.5, 3.6, 3.7）添加的 `新语法和 builtin 函数`，当前不支持 :x:
+在 python 3.4 版本之后（3.5, 3.6, 3.7）添加的 `新语法和 builtin 函数`，当前都不支持。
 
 
 #### [python 3.5](https://docs.python.org/3/whatsnew/3.5.html)
