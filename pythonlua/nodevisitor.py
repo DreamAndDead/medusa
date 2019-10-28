@@ -204,8 +204,6 @@ class NodeVisitor(ast.NodeVisitor):
 
     def visit_ClassDef(self, node):
         """Visit class definition"""
-        # TODO, 在 python 3.5 之后有些变化 https://greentreesnakes.readthedocs.io/en/latest/nodes.html#ClassDef
-        
         bases = [self.visit_all(base, inline=True) for base in node.bases]
 
         local_keyword = ""
@@ -232,7 +230,7 @@ class NodeVisitor(ast.NodeVisitor):
 
         self.output[-1].append("return {node_name}".format(**values))
 
-        self.emit("end, {{{}}})".format(", ".join(bases)))
+        self.emit("end, {{{}}}, \"{}\")".format(", ".join(bases), node.name))
 
         # Return class object only in the top-level classes.
         # Not in the nested classes.

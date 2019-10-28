@@ -914,7 +914,11 @@ end
 
 
 
-
+-- object class
+local object = {}
+object.__name__ = 'object'
+object.__base__ = nil
+object.__mro__ = list {object}
 
 
 --[[
@@ -922,12 +926,13 @@ end
 
    TODO：
    - MRO机制
-   - base object，全部的类都继承于它（旧式类）
+   - object class
    - magic methods
    - metaclass
    - @property, @staticmethod, @classmethod
+   - multi inherit
 --]]
-function class(class_init, bases)
+function class(class_init, bases, class_name)
    bases = bases or {}
 
    local c = {}
@@ -937,22 +942,25 @@ function class(class_init, bases)
 	 c[k] = v
       end
    end
-
-   c._bases = bases
+   
+   c.__name__ = class_name
+   c.__base__ = bases
+   -- todo: __mro__ ?
+   -- https://www.python.org/download/releases/2.3/mro/
    
    c = class_init(c)
    
    local mt = getmetatable(c) or {}
    mt.__call = function(_, ...)
-      local object = {}
+      local obj = {}
       
-      setmetatable(object, {
+      setmetatable(obj, {
 		      __index = function(tbl, idx)
 			 local attr = c[idx]
 			 if type(attr) == "function" then
 			    return function(...)
-			       -- attr is function, object is self
-			       return c[idx](object, ...) 
+			       -- attr is function, obj is self
+			       return c[idx](obj, ...) 
 			    end
 			 end
 
@@ -961,6 +969,8 @@ function class(class_init, bases)
 		      end,
       })
 
+      object.__class__ = c
+      
       -- search in the metatable
       if type(object.__init__) == "function" then
 	 object.__init__(...)
@@ -975,7 +985,11 @@ function class(class_init, bases)
 end
 
 
-function isinstance()
+function isinstance(obj, cls)
+   local c = obj.__class__
+
+   -- if cls in c's parent classes
+   -- base on __mro__
 end
 
 function issubclass()

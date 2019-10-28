@@ -11,7 +11,7 @@ local Point = class(function(Point)
         return self.y
     end
     return Point
-end, {})
+end, {}, "Point")
 local p = Point(5, 10)
 assert((p.get_x() == 5))
 assert((p.get_y() == 10))
@@ -24,7 +24,7 @@ local Dog = class(function(Dog)
         self.age = age
     end
     return Dog
-end, {})
+end, {}, "Dog")
 local d = Dog("roster", 18)
 assert((Dog.species == "mammal"))
 assert((d.name == "roster"))
@@ -38,7 +38,7 @@ local Person = class(function(Person)
         return "person talks"
     end
     return Person
-end, {})
+end, {}, "Person")
 local Chinese = class(function(Chinese)
     function Chinese.__init__(self, name, age, country)
         Person.__init__(self, name, age)
@@ -48,13 +48,13 @@ local Chinese = class(function(Chinese)
         return "chinese walks"
     end
     return Chinese
-end, {Person})
+end, {Person}, "Chinese")
 local American = class(function(American)
     function American.talk(self)
         return "I love talk show"
     end
     return American
-end, {Person})
+end, {Person}, "American")
 local c = Chinese("john", 18, "China")
 assert((c.name == "john"))
 assert((c.age == 18))
