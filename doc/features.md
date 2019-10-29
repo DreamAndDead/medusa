@@ -559,7 +559,7 @@ python 从 perl 借鉴来的语法，将 if 判断作为表达式，而不是语
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
-|if 表达式|`1 if True else 0`|`true and 1 or 0`|:x:|
+|if 表达式|`1 if True else 0`|`true and 1 or 0`|:heavy_check_mark:|
 
 
 |python示例代码|lua转换代码|
@@ -574,7 +574,11 @@ list 生成式也是 python 中的创新，用表达式来生成列表，本质�
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
-|if 表达式|`1 if True else 0`|`true and 1 or 0`|:x:|
+|列表生成式|`[i for i in a]`|`(function() local result = list {} for i in a do result.append((i + 1)) end return result end)()`|:heavy_check_mark:|
+|配合if，作为map|`[i if i%2 == 1 else 0 for i in a]`|见示例代码|:heavy_check_mark:|
+|配合if，作为filter|`[i for i in a if i%2 == 1]`|见示例代码|:heavy_check_mark:|
+|多个列表|`[m+n for m in a for n in b]`|见示例代码|:heavy_check_mark:|
+|嵌套列表|`[j for i in a for j in i]`|见示例代码|:heavy_check_mark:|
 
 
 |python示例代码|lua转换代码|
@@ -592,7 +596,7 @@ TODO
 
 ### 生成表达式
 
-语法和列表生成类似，不过使用的是 () ，得到一个 generator 对象，而不是即时的列表。
+语法和列表生成类似，不过使用的是 () ，得到一个惰性的 generator 对象，而不是即时的列表。
 
 TODO
 

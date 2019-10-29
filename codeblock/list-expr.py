@@ -55,7 +55,7 @@ assert b[2] == 2
 assert b[3] == 3
 
 
-## random if and for?
+## random if and for
 a = [
         [0, 1, 2],
         [0, 1],
