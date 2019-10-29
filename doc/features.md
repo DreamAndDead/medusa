@@ -216,6 +216,8 @@ in 在 python 中，含义是属于，这一点在 lua 中可能通过函数来�
 |not in|`1 not in {}`|:x:|:x:|
 
 
+*TODO: 对于 is 和 in，后续在实现数据结构之后，可能会加以支持*
+
 |python示例代码|lua转换代码|
 |:-:|:-:|
 |[compare.py](./../codeblock/compare.py)|[compare.py.lua](./../codeblock/compare.py.lua)|
@@ -251,6 +253,7 @@ lua 中不存在相应的概念，需要编写相应代码来模拟（用元表�
 |切片`[m:n]`|`l[0:3]`|` `|:x:|
 |重载`==`|`[] == []`|` `|:x:|
 
+*TODO：切片和重载，后续可能会支持，也可能整个 list 部分用 class 重写*
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
@@ -284,6 +287,9 @@ dict 是 python 中内建的数据结构，使用非常广泛。
 |重载`==`|`{} == {}`|` `|:x:|
 
 
+*TODO：重载后续可能会支持，也可能整体用 class 重写*
+
+
 |python示例代码|lua转换代码|
 |:-:|:-:|
 |[dict.py](./../codeblock/dict.py)|[dict.py.lua](./../codeblock/dict.py.lua)|
@@ -291,7 +297,7 @@ dict 是 python 中内建的数据结构，使用非常广泛。
 
 ### Tuple 字面量
 
-TODO：支持示例
+TODO
 
 
 <!--
@@ -304,7 +310,7 @@ TODO：支持示例
 
 ### Set 字面量
 
-TODO：支持示例
+TODO
 
 
 <!--
@@ -321,7 +327,7 @@ python示例代码|lua转换代码|
 python 中有 3 种下标，Index, Slice 和 ExtSlice。
 在 lua 中，默认只有 Index 对应的概念，`d[1]`。
 
-TODO：支持示例
+TODO
 
 <!--
 
@@ -537,8 +543,9 @@ lua 中不存在类的概念，对于类只能用 table 和 metatable 来模拟�
 python 中一切都是对象，获取对象的属性是常用操作。
 在 lua 中，没有对象的概念，对应的 `.` 是索引的概念。
 
-TODO：支持示例
+所以属性的实现核心在于 lua 中如何实现 python 中的对象。
 
+TODO
 
 
 ---
@@ -549,7 +556,7 @@ TODO：支持示例
 python 从 perl 借鉴来的语法，将 if 判断作为表达式，而不是语句块。
 而在 lua 中，没有这种类型的语法，只能将其转化为普通的 if 语句块来运行。
 
-TODO：支持示例
+TODO
 
 
 ### List 生成式
@@ -557,21 +564,21 @@ TODO：支持示例
 list 生成式也是 python 中的创新，用表达式来生成列表，本质是循环（+判断）的表达式写法。
 在 lua 中没有相应结构，需要用函数调用来模拟。
 
-TODO：支持示例
-
-### Set 生成式
-
-TODO：支持示例
+TODO
 
 ### Dict 生成式
 
-TODO：支持示例
+TODO
+
+### Set 生成式
+
+TODO
 
 ### 生成表达式
 
 语法和列表生成类似，不过使用的是 () ，得到一个 generator 对象，而不是即时的列表。
 
-TODO：支持示例
+TODO
 
 
 ----
@@ -579,18 +586,83 @@ TODO：支持示例
 
 ### Builtin 内建函数
 
-python 语言环境中除了引用标准库，其中有不少有用的内建函数。
+python 语言环境中除了引用标准库，其中有不少有用的[内建函数](https://docs.python.org/3.4/library/functions.html)。
 这些函数都需要在 lua 中进行同义模拟。
-
-
-TODO：
-- 补充支持示例
 
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
+|`abs`|` `|` `|:x:|
+|`all`|` `|` `|:x:|
+|`any`|` `|` `|:x:|
+|`ascii`|` `|` `|:x:|
+|`bin`|` `|` `|:x:|
+|`bool`|` `|` `|:x:|
+|`bytearray`|` `|` `|:x:|
+|`bytes`|` `|` `|:x:|
+|`callable`|` `|` `|:x:|
+|`chr`|` `|` `|:x:|
+|`classmethod`|` `|` `|:x:|
+|`compile`|` `|` `|:x:|
+|`complex`|` `|` `|:x:|
+|`delattr`|` `|` `|:x:|
+|`dict`|` `|` `|:x:|
+|`dir`|` `|` `|:x:|
+|`divmod`|` `|` `|:x:|
+|`enumerate`|` `|` `|:x:|
+|`eval`|` `|` `|:x:|
+|`exec`|` `|` `|:x:|
+|`filter`|` `|` `|:x:|
+|`float`|` `|` `|:x:|
+|`format`|` `|` `|:x:|
+|`frozenset`|` `|` `|:x:|
+|`getattr`|` `|` `|:x:|
+|`globals`|` `|` `|:x:|
+|`hasattr`|` `|` `|:x:|
+|`hash`|` `|` `|:x:|
+|`help`|` `|` `|:x:|
+|`hex`|` `|` `|:x:|
+|`id`|` `|` `|:x:|
+|`input`|` `|` `|:x:|
+|`int`|` `|` `|:x:|
+|`isinstance`|` `|` `|:x:|
+|`issubclass`|` `|` `|:x:|
+|`iter`|` `|` `|:x:|
 |`len`|`len([1, 2])`|`len(list {1, 2})`|:heavy_check_mark:|
+|`list`|` `|` `|:x:|
+|`locals`|` `|` `|:x:|
+|`map`|` `|` `|:x:|
+|`max`|` `|` `|:x:|
+|`memoryview`|` `|` `|:x:|
+|`min`|` `|` `|:x:|
+|`next`|` `|` `|:x:|
+|`object`|` `|` `|:x:|
+|`oct`|` `|` `|:x:|
+|`open`|` `|` `|:x:|
+|`ord`|` `|` `|:x:|
+|`pow`|` `|` `|:x:|
+|`print`|` `|` `|:x:|
+|`property`|` `|` `|:x:|
+|`range`|` `|` `|:x:|
+|`repr`|` `|` `|:x:|
+|`reversed`|` `|` `|:x:|
+|`round`|` `|` `|:x:|
+|`set`|` `|` `|:x:|
+|`setattr`|` `|` `|:x:|
+|`slice`|` `|` `|:x:|
+|`sorted`|` `|` `|:x:|
+|`staticmethod`|` `|` `|:x:|
+|`str`|` `|` `|:x:|
+|`sum`|` `|` `|:x:|
+|`super`|` `|` `|:x:|
+|`tuple`|` `|` `|:x:|
+|`type`|` `|` `|:x:|
+|`vars`|` `|` `|:x:|
+|`zip`|` `|` `|:x:|
+|`__import__`|` `|` `|:x:|
 
+
+*TODO：完善更多内建函数*`|` `|` `|:x:|
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
@@ -604,6 +676,7 @@ TODO：
 ### Assert 断言
 
 python 和 lua 都内建了 assert 函数，进行真值的断言，如果为假，则程序 exit，附加 assert message。
+transpile 的测试就是通过 assert 来实现的。
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
@@ -616,38 +689,36 @@ python 和 lua 都内建了 assert 函数，进行真值的断言，如果为假
 |[assert.py](./../codeblock/assert.py)|[assert.py.lua](./../codeblock/assert.py.lua)|
 
 
-### Starred
-
-`*d` 存在在 python 中的许多地方。
-在 lua 中没有相应的概念，需要再思考。
-
-TODO：支持示例
-
-
 ### With 语句
 
-上下文操作，暂时不支持 :x:
+python 中独有的上下文操作，目前不支持。
+
+|feature|python|lua|supported|
+|:-:|:-:|:-:|:-:|
+|with 上下文|`with ...:`|` `|:x:|
 
 
 ### Raise， Try
 
-非常遗憾的是，lua 中不支持异常 :x:
+和 continue 一样遗憾的是，lua 中不支持异常。
+
+|feature|python|lua|supported|
+|:-:|:-:|:-:|:-:|
+|异常操作|`raise, try`|` `|:x:|
 
 
 ### Import ImportFrom
 
-需要配合 Module 概念的引入，将单个文件作为一个 Module。
+import 的实现需要配合 Module 概念的引入，将单个文件作为一个 Module。
 
-如果后续可以兼容大部分库的话。
-
-TODO：支持示例
+TODO
 
 
 ### Global Nonlocal
 
-涉及到作用域的问题
+涉及到作用域的问题，之后再详细讨论
 
-TODO：支持示例
+TODO
 
 
 ----

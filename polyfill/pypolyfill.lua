@@ -270,7 +270,7 @@ end
 
 --[[
    builtin functions
-   ref: https://docs.python.org/3/library/functions.html
+   ref: https://docs.python.org/3.4/library/functions.html
 
    - abs
    - all
