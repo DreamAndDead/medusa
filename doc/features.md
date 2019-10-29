@@ -512,19 +512,24 @@ return 语句在 python 和 lua 中是相同的，用于从函数中返回值。
 
 ### Class 类的定义和使用
 
-在 python 中一切都是对象，类是 python 中的关键概念。
+在 python 中一切都是对象，类是 python 中的关键概念，所有其它的功能几乎都可以用类功能重写。
 lua 中不存在类的概念，对于类只能用 table 和 metatable 来模拟。
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
-|类|`class`|` `|:heavy_check_mark:|
+|类定义|`class Point:`|`class(function(Point) end, {}, "Point")`|:heavy_check_mark:|
+|成员方法|`def get_x(self):`|`function Point.get_x(self) end`|:heavy_check_mark:|
+|`__init__`|`def __init__(self):`|`function Point.__init__(self) end`|:heavy_check_mark:|
+|成员属性|`self.x`|`self.x`|:heavy_check_mark:|
+|类属性|`Point.x`|`Point.x`|:heavy_check_mark:|
+|类继承|`class Chinese(Person):`|`class(function(Chinese) end, {Person}, "Chinese")`|:heavy_check_mark:|
+|`super()`|`super()`|` `|:x:|
+|`__mro__`|`Chinese.__mro__`|``|:x:|
 
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
 |[class.py](./../codeblock/class.py)|[class.py.lua](./../codeblock/class.py.lua)|
-
-
 
 
 ### 属性
