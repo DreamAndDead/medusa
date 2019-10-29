@@ -553,10 +553,18 @@ TODO
 
 ### If 表达式
 
-python 从 perl 借鉴来的语法，将 if 判断作为表达式，而不是语句块。
-而在 lua 中，没有这种类型的语法，只能将其转化为普通的 if 语句块来运行。
+python 从 perl 借鉴来的语法，将 if 判断作为表达式，而不是语句块，很像 C 语言中的三元表达式。
+而在 lua 中，没有这种类型的语法，可以通过二元逻辑的短路特性来模拟。
 
-TODO
+
+|feature|python|lua|支持|
+|:-:|:-:|:-:|:-:|
+|if 表达式|`1 if True else 0`|`true and 1 or 0`|:x:|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[if-expr.py](./../codeblock/if-expr.py)|[if-expr.py.lua](./../codeblock/if-expr.py.lua)|
 
 
 ### List 生成式
@@ -564,7 +572,15 @@ TODO
 list 生成式也是 python 中的创新，用表达式来生成列表，本质是循环（+判断）的表达式写法。
 在 lua 中没有相应结构，需要用函数调用来模拟。
 
-TODO
+|feature|python|lua|支持|
+|:-:|:-:|:-:|:-:|
+|if 表达式|`1 if True else 0`|`true and 1 or 0`|:x:|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[list-expr.py](./../codeblock/list-expr.py)|[list-expr.py.lua](./../codeblock/list-expr.py.lua)|
+
 
 ### Dict 生成式
 

@@ -5,6 +5,13 @@ assert((l[0] == 4))
 assert((l[1] == 3))
 assert((l[2] == 2))
 assert((l[3] == 1))
+l = list {list {0, 1}, list {2, 3}}
+assert((len(l) == 2))
+assert((l[0][0] == 0))
+assert((l[0][1] == 1))
+assert((l[1][0] == 2))
+assert((l[1][1] == 3))
+l = list {4, 3, 2, 1}
 l.append(5)
 assert((len(l) == 5))
 assert((l[(-1)] == 5))

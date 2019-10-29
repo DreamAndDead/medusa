@@ -10,6 +10,20 @@ assert l[1] == 3
 assert l[2] == 2
 assert l[3] == 1
 
+## nested
+
+l = [
+        [0, 1],
+        [2, 3]
+    ]
+
+assert len(l) == 2
+assert l[0][0] == 0
+assert l[0][1] == 1
+assert l[1][0] == 2
+assert l[1][1] == 3
+
+
 # 运算
 
 ## not support ==
@@ -21,6 +35,8 @@ assert l[3] == 1
 
 
 # 方法
+
+l = [ 4, 3, 2, 1 ]
 
 ## append
 
@@ -170,5 +186,6 @@ l.sort()
 
 assert l[0] == 0
 assert l[4] == 4
+
 
 
