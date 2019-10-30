@@ -969,14 +969,14 @@ function class(class_init, bases, class_name)
 		      end,
       })
 
-      object.__class__ = c
+      obj.__class__ = c
       
       -- search in the metatable
-      if type(object.__init__) == "function" then
-	 object.__init__(...)
+      if type(obj.__init__) == "function" then
+	 obj.__init__(...)
       end
       
-      return object
+      return obj
    end
    
    setmetatable(c, mt)
