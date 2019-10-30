@@ -574,11 +574,11 @@ list 生成式也是 python 中的创新，用表达式来生成列表，本质�
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
-|列表生成式|`[i for i in a]`|`(function() local result = list {} for i in a do result.append((i + 1)) end return result end)()`|:heavy_check_mark:|
+|list 生成式|`[i for i in a]`|`(function() local result = list {} for i in a do result.append((i + 1)) end return result end)()`|:heavy_check_mark:|
 |配合if，作为map|`[i if i%2 == 1 else 0 for i in a]`|见示例代码|:heavy_check_mark:|
 |配合if，作为filter|`[i for i in a if i%2 == 1]`|见示例代码|:heavy_check_mark:|
-|多个列表|`[m+n for m in a for n in b]`|见示例代码|:heavy_check_mark:|
-|嵌套列表|`[j for i in a for j in i]`|见示例代码|:heavy_check_mark:|
+|多个 list|`[m+n for m in a for n in b]`|见示例代码|:heavy_check_mark:|
+|嵌套 list|`[j for i in a for j in i]`|见示例代码|:heavy_check_mark:|
 
 
 |python示例代码|lua转换代码|
@@ -588,7 +588,23 @@ list 生成式也是 python 中的创新，用表达式来生成列表，本质�
 
 ### Dict 生成式
 
-TODO
+dict 生成式和 list 生成式相似，只不过使用 `k: v` 形式来生成。
+在 lua 中没有相应结构，需要用函数调用来模拟。
+
+|feature|python|lua|支持|
+|:-:|:-:|:-:|:-:|
+|dict 生成式|`{ k: v for k, v in d.items() }`|`(function() local result = dict {} for k, v in d.items() do result[k] = v end return result end)()`|:heavy_check_mark:|
+|配合if，作为map|`{ k: v if k % 2 == 1 else 10 for k, v in d.items() }`|见示例代码|:heavy_check_mark:|
+|配合if，作为filter|`{ k: v for k, v in d.items() if k > 1 }`|见示例代码|:heavy_check_mark:|
+|多个 list 生成|`{ k: v for k in l for v in a }`|见示例代码|:heavy_check_mark:|
+|嵌套 dict|`{ nk: nv for k, v in d.items() for nk, nv in v.items() }`|见示例代码|:heavy_check_mark:|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[dict-expr.py](./../codeblock/dict-expr.py)|[dict-expr.py.lua](./../codeblock/dict-expr.py.lua)|
+
+
 
 ### Set 生成式
 

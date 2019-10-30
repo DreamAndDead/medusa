@@ -11,6 +11,26 @@ assert d['age'] == 20
 
 assert len(d) == 3
 
+
+## nested dict
+
+d = {
+     0: {
+         'a': 1,
+         'b': 2,
+        },
+     1: {
+         'c': 3,
+         'd': 4,
+        }
+    }
+
+assert d[0]['a'] == 1
+assert d[0]['b'] == 2
+assert d[1]['c'] == 3
+assert d[1]['d'] == 4
+
+
 # 操作符
 
 ## ==

@@ -4,6 +4,11 @@ assert((d["name"] == "john"))
 assert((d[1] == 26))
 assert((d["age"] == 20))
 assert((len(d) == 3))
+d = dict {[0] = dict {["a"] = 1, ["b"] = 2}, [1] = dict {["c"] = 3, ["d"] = 4}}
+assert((d[0]["a"] == 1))
+assert((d[0]["b"] == 2))
+assert((d[1]["c"] == 3))
+assert((d[1]["d"] == 4))
 d.clear()
 assert((len(d) == 0))
 d = dict {["name"] = "john", [1] = 26, ["age"] = 20}
