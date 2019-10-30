@@ -272,16 +272,11 @@ end
    builtin functions
    ref: https://docs.python.org/3.4/library/functions.html
 
-   - abs
-   - all
-   - any
+   todo:
    - ascii
    - bin
-   - bool
-   - breakpoint
    - bytearray
    - bytes
-   - callable
    - chr
    - classmethod
    - compile
@@ -289,8 +284,6 @@ end
    - delattr
    - dict
    - dir
-   - divmod
-   - enumerate
    - eval
    - exec
    - filter
@@ -309,7 +302,6 @@ end
    - isinstance
    - issubclass
    - iter
-   - len
    - list
    - locals
    - map
@@ -341,35 +333,59 @@ end
    - vars
    - zip
    - __import__
-
 --]]
 
+-- abs(number) -> number
+-- return the absolute value of the argument.
 abs = math.abs
-ascii = string.byte
-chr = string.char
-int = tonumber
-str = tostring
 
+-- all(iterable) -> bool
+-- return true if bool(x) is true for all values x in the iterable.
+-- if the iterable is empty, return True.
 function all(iterable)
    for element in iterable do
-      if not element then
+      if not bool(element) then
          return false
       end
    end
    return true
 end
 
+-- any(iterable) -> bool
+-- return true if bool(x) is true for any x in the iterable.
+-- if the iterable is empty, return False.
 function any(iterable)
    for element in iterable do
-      if element then
+      if bool(element) then
          return true
       end
    end
    return false
 end
 
+-- ascii(object) -> string
+-- as repr(), return a string containing a printable representation of an
+-- object, but escape the non-ASCII characters in the string returned by
+-- repr() using \x, \u or \U escapes.  This generates a string similar
+-- to that returned by repr() in Python 2.
+function ascii(obj)
+   -- todo
+end
+
+-- bin(number) -> string
+-- return the binary representation of an integer.
+-- >>> bin(2796202)
+-- '0b1010101010101010101010'
+function bin(num)
+   -- todo, with bit operator
+end
+
+-- bool(x) -> bool
+-- returns True when the argument x is true, False otherwise.
+-- the builtins True and False are the only two instances of the class bool.
+-- the class bool is a subclass of the class int, and cannot be subclassed.
 function bool(x)
-   if x == false or x == nil or x == 0 then
+   if x == false or x == nil or x == 0 or x == '' then
       return false
    end
 
@@ -382,24 +398,66 @@ function bool(x)
    return true
 end 
 
-function callable(x)
-   local x_type = type(x)
-   if x_type == "function" then
+-- callable(object) -> bool
+-- return whether the object is callable (i.e., some kind of function).
+-- note that classes are callable, as are instances of classes with a
+-- __call__() method.
+function callable(obj)
+   local obj_type = type(obj)
+   if obj_type == "function" then
       return true
    end
-   if x_type == "table" then
-      local meta = getmetatable(x)
+   if obj_type == "table" then
+      if obj._is_list or obj._is_dict then
+	 return false
+      end
+      
+      local meta = getmetatable(obj)
       return type(meta.__call) == "function" 
    end
 
    return false
 end
 
+-- divmod(x, y) -> (div, mod)
+-- return the tuple ((x-x%y)/y, x%y).  Invariant: div*y + mod == x.
 function divmod(a, b)
-   local res = { math.floor(a / b), math.fmod(a, b) }
-   return unpack(res)
+   local d = math.floor(a / b)
+   local m = a - d * b
+   return d, m
 end
 
+
+-- enumerate(iterable[, start]) -> iterator for index, value of iterable
+-- return an enumerate object.  iterable must be another object that supports
+-- iteration.  The enumerate object yields pairs containing a count (from
+-- start, which defaults to zero) and a value yielded by the iterable argument.
+-- enumerate is useful for obtaining an indexed list:
+--     (0, seq[0]), (1, seq[1]), (2, seq[2]), ...
+function enumerate(t, start)
+   start = start or 0
+
+   local data = t
+   if t._is_list then
+      data = t._data
+   end
+
+   local i, v = next(data, nil)
+   return function()
+      local index, value = i, v
+      i, v = next(data, i)
+
+      if index == nil then
+         return nil
+      end
+
+      return index + start - 1, value
+   end
+end
+
+
+-- len(object)
+-- return the number of items of a sequence or collection.
 function len(t)
    if type(t._data) == "table" then
       local l = 0
@@ -439,43 +497,9 @@ function range(start, stop, step)
    end
 end
 
-function enumerate(t, start)
-   start = start or 0
 
-   local data = t
-   if t._is_list then
-      data = t._data
-   end
-
-   local i, v = next(data, nil)
-   return function()
-      local index, value = i, v
-      i, v = next(data, i)
-
-      if index == nil then
-         return nil
-      end
-
-      return index + start - 1, value
-   end
-end
-
-
---[[
-   list methods:
-   - append
-   - clear
-   - copy
-   - count
-   - extend
-   - index
-   - insert
-   - pop
-   - remove
-   - reverse
-   - sort
---]]
-
+-- list() -> new empty list
+-- list(iterable) -> new list initialized from iterable's items
 list = {}
 setmetatable(list, {
                 __call = function(_, t)

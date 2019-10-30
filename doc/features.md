@@ -628,15 +628,15 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
-|`abs`|` `|` `|:x:|
-|`all`|` `|` `|:x:|
-|`any`|` `|` `|:x:|
+|`abs`|`abs(-10)`|`abs(-10)`|:heavy_check_mark:|
+|`all`|`all([1, 2])`|`all(list {1, 2})`|:heavy_check_mark:|
+|`any`|`any([0, 1])`|`any(list {0, 1})`|:heavy_check_mark:|
 |`ascii`|` `|` `|:x:|
 |`bin`|` `|` `|:x:|
-|`bool`|` `|` `|:x:|
+|`bool`|`bool(True)`|`bool(true)`|:heavy_check_mark:|
 |`bytearray`|` `|` `|:x:|
 |`bytes`|` `|` `|:x:|
-|`callable`|` `|` `|:x:|
+|`callable`|`callable(all)`|`callable(all)`|:heavy_check_mark:|
 |`chr`|` `|` `|:x:|
 |`classmethod`|` `|` `|:x:|
 |`compile`|` `|` `|:x:|
@@ -644,8 +644,8 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`delattr`|` `|` `|:x:|
 |`dict`|` `|` `|:x:|
 |`dir`|` `|` `|:x:|
-|`divmod`|` `|` `|:x:|
-|`enumerate`|` `|` `|:x:|
+|`divmod`|`divmod(10, 3)`|`divmod(10, 3)`|:heavy_check_mark:|
+|`enumerate`|`for i, n in enumerate([1, 2]):`|`for i, n in enumerate(list {1, 2})`|:heavy_check_mark:|
 |`eval`|` `|` `|:x:|
 |`exec`|` `|` `|:x:|
 |`filter`|` `|` `|:x:|
@@ -679,7 +679,7 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`pow`|` `|` `|:x:|
 |`print`|` `|` `|:x:|
 |`property`|` `|` `|:x:|
-|`range`|` `|` `|:x:|
+|`range`|`for i in range(1, 10):`|`for i in range(10):`|:heavy_check_mark:|
 |`repr`|` `|` `|:x:|
 |`reversed`|` `|` `|:x:|
 |`round`|` `|` `|:x:|
