@@ -1,5 +1,6 @@
 # builtin 函数
 
+
 ## abs
 
 assert abs(10) == 10
@@ -24,6 +25,8 @@ assert any([1, 2]) == True
 assert any([0, 1, 2]) == True
 assert any([0, 0]) == False
 
+## ascii
+## bin
 
 ## bool
 
@@ -36,6 +39,8 @@ assert not bool([])
 assert not bool('')
 assert not bool(0)
 
+## bytearray
+## bytes
 
 ## callable
 
@@ -45,6 +50,13 @@ assert not callable(0)
 assert not callable('abc')
 assert not callable([])
 
+## chr
+## classmethod
+## compile
+## complex
+## delattr
+## dict
+## dir
 
 ## divmod
 
@@ -69,6 +81,34 @@ for i, n in enumerate(l):
 # d = { 'a': 1, 'b': 'z' }
 # for i, k in enumerate(d):
 
+## eval
+## exec
+
+## filter
+
+## float
+
+assert float(10) == 10.0
+assert float(10.4) == 10.4
+assert float('12') == 12.0
+assert float('10.8') == 10.8
+
+
+
+## format
+## frozenset
+## getattr
+## globals
+## hasattr
+## hash
+## help
+## hex
+## id
+## input
+## int
+## isinstance
+## issubclass
+## iter
 
 ## len
 
@@ -78,6 +118,45 @@ assert len([]) == 0
 assert len([1, 2, 3]) == 3
 assert len({}) == 0
 assert len({ 0: 0, 'a': 'z' }) == 2
+
+
+## list
+
+assert len(list()) == 0
+
+#l = list([1, 2, 3])
+#assert len(l) == 3
+
+
+
+## locals
+## map
+
+## max
+### todo
+
+
+## memoryview
+
+
+## min
+### todo
+
+
+## next
+## object
+## oct
+## open
+## ord
+
+## pow
+
+assert pow(2, 10) == 1024
+assert pow(2, 9, 3) == 2
+
+
+## print
+## property
 
 
 ## range
@@ -104,5 +183,36 @@ assert l[1] == 3
 assert l[2] == 5
 assert l[3] == 7
 
+
+## repr
+## reversed
+
+
+## round
+### todo
+
+
+
+## set
+## setattr
+## slice
+## sorted
+## staticmethod
+## str
+
+## sum
+
+assert sum([1, 2, 3]) == 6
+assert sum([]) == 0
+assert sum([1, 2, 3], 0) == 6
+assert sum([1, 2, 3], 4) == 10
+
+
+## super
+## tuple
+## type
+## vars
+## zip
+## __import__
 
 

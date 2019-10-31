@@ -456,6 +456,15 @@ function enumerate(t, start)
 end
 
 
+-- float(x) -> floating point number
+-- convert a string or number to a floating point number, if possible.
+function float(x)
+   local n = tonumber(x)
+   assert(n ~= nil, "could not convert string to float " .. tostring(x))
+   return n
+end
+
+
 -- len(object)
 -- return the number of items of a sequence or collection.
 function len(t)
@@ -470,33 +479,6 @@ function len(t)
    return #t
 end
 
--- range(stop) -> range object
--- range(start, stop[, step]) -> range object
--- return a sequence of numbers from start to stop by step.
-function range(start, stop, step)
-   assert(start ~= nil, 'range() expected 1 arguments, got 0')
-   
-   if stop == nil then
-      stop = start
-      start = 0        
-   end
-
-   step = step or 1
-   assert(step ~= 0, 'range() arg 3 must not be zero')
-
-   local i = start
-   
-   return function()
-      ret = i
-      if (step > 0 and i >= stop) or (step < 0 and i <= stop) then
-         return nil
-      end
-      
-      i = i + step
-      return ret
-   end
-end
-
 
 -- list() -> new empty list
 -- list(iterable) -> new list initialized from iterable's items
@@ -508,9 +490,11 @@ setmetatable(list, {
                    result._is_list = true
                    result._data = {}
 
-                   for _, v in ipairs(t) do
-                      table.insert(result._data, v)
-                   end
+		   if t ~= nil then
+		      for _, v in ipairs(t) do
+			 table.insert(result._data, v)
+		      end
+		   end
 
 		   local py_to_lua_idx = function(i, size)
 		      if i >= 0 then
@@ -695,6 +679,64 @@ setmetatable(list, {
                    return result
                 end,
 })
+
+
+-- max(iterable, *[, default=obj, key=func]) -> value
+-- max(arg1, arg2, *args, *[, key=func]) -> value
+-- with a single iterable argument, return its biggest item. The
+-- default keyword-only argument specifies an object to return if
+-- the provided iterable is empty.
+-- with two or more arguments, return the largest argument.
+function max(arg1, ...)
+   -- todo
+end
+
+
+-- memoryview(object)
+-- create a new memoryview object which references the given object.
+function memoryview(object)
+   -- not support
+end
+
+
+-- min(iterable, *[, default=obj, key=func]) -> value
+-- min(arg1, arg2, *args, *[, key=func]) -> value
+-- with a single iterable argument, return its smallest item. The
+-- default keyword-only argument specifies an object to return if
+-- the provided iterable is empty.
+-- with two or more arguments, return the smallest argument.
+function min(arg1, ...)
+   -- todo
+end
+
+
+
+-- range(stop) -> range object
+-- range(start, stop[, step]) -> range object
+-- return a sequence of numbers from start to stop by step.
+function range(start, stop, step)
+   assert(start ~= nil, 'range() expected 1 arguments, got 0')
+   
+   if stop == nil then
+      stop = start
+      start = 0        
+   end
+
+   step = step or 1
+   assert(step ~= 0, 'range() arg 3 must not be zero')
+
+   local i = start
+   
+   return function()
+      ret = i
+      if (step > 0 and i >= stop) or (step < 0 and i <= stop) then
+         return nil
+      end
+      
+      i = i + step
+      return ret
+   end
+end
 
 
 
@@ -943,6 +985,53 @@ local object = {}
 object.__name__ = 'object'
 object.__base__ = nil
 object.__mro__ = list {object}
+
+
+
+-- pow(x, y[, z]) -> number
+-- with two arguments, equivalent to x**y.  With three arguments,
+-- equivalent to (x**y) % z, but may be more efficient (e.g. for ints).
+function pow(x, y, z)
+   local p = math.pow(x, y)
+   if z == nil then
+      return p
+   else
+      return math.fmod(p, z)
+   end
+end
+
+
+-- round(number[, ndigits]) -> number
+-- round a number to a given precision in decimal digits (default 0 digits).
+-- this returns an int when called with one argument, otherwise the
+-- same type as the number. ndigits may be negative.
+function round(number, ndigits)
+   -- todo
+end
+
+
+-- sum(iterable[, start]) -> value
+-- return the sum of an iterable of numbers (NOT strings) plus the value
+-- of parameter 'start' (which defaults to 0).  When the iterable is
+-- empty, return start.
+function sum(iterable, start)
+   local start = start or 0
+   local s = 0
+
+   for i in iterable do
+      s = s + i
+   end
+
+   return s + start
+end
+
+
+
+
+
+
+
+------------------------------------------------
 
 
 --[[

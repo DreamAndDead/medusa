@@ -649,7 +649,7 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`eval`|`eval()`|` `|:x:，动态执行 python 代码，属于元编程的范畴，难以支持|
 |`exec`|`exec()`|` `|:x:，和 `eval` 类似，难以支持|
 |`filter`|`todo`|` `|:x:|
-|`float`|`todo`|` `|:x:|
+|`float`|`float('10.4')`|`float('10.4')`|:heavy_check_mark:|
 |`format`|`todo`|` `|:x:|
 |`frozenset`|`todo`|` `|:x:|
 |`getattr`|`todo`|` `|:x:|
@@ -676,7 +676,7 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`oct`|`todo`|` `|:x:|
 |`open`|`todo`|` `|:x:|
 |`ord`|`todo`|` `|:x:|
-|`pow`|`todo`|` `|:x:|
+|`pow`|`pow(2, 10)`|`pow(2, 10)`|:heavy_check_mark:|
 |`print`|`todo`|` `|:x:|
 |`property`|`todo`|` `|:x:|
 |`range`|`for i in range(1, 10):`|`for i in range(10):`|:heavy_check_mark:|
@@ -689,7 +689,7 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`sorted`|`todo`|` `|:x:|
 |`staticmethod`|`todo`|` `|:x:|
 |`str`|`todo`|` `|:x:|
-|`sum`|`todo`|` `|:x:|
+|`sum`|`sum([1, 2, 3])`|`sum(list {1, 2, 3})`|:heavy_check_mark:|
 |`super`|`todo`|` `|:x:|
 |`tuple`|`todo`|` `|:x:|
 |`type`|`todo`|` `|:x:|
