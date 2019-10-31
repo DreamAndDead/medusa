@@ -631,71 +631,71 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`abs`|`abs(-10)`|`abs(-10)`|:heavy_check_mark:|
 |`all`|`all([1, 2])`|`all(list {1, 2})`|:heavy_check_mark:|
 |`any`|`any([0, 1])`|`any(list {0, 1})`|:heavy_check_mark:|
-|`ascii`|` `|` `|:x:|
-|`bin`|` `|` `|:x:|
+|`ascii`|`todo`|` `|:x:|
+|`bin`|`todo`|` `|:x:|
 |`bool`|`bool(True)`|`bool(true)`|:heavy_check_mark:|
-|`bytearray`|` `|` `|:x:|
-|`bytes`|` `|` `|:x:|
+|`bytearray`|`todo`|` `|:x:|
+|`bytes`|`todo`|` `|:x:|
 |`callable`|`callable(all)`|`callable(all)`|:heavy_check_mark:|
-|`chr`|` `|` `|:x:|
-|`classmethod`|` `|` `|:x:|
-|`compile`|` `|` `|:x:|
-|`complex`|` `|` `|:x:|
+|`chr`|`todo`|` `|:x:|
+|`classmethod`|`todo`|` `|:x:|
+|`compile`|`compile()`|` `|:x:，python 底层编译原理的上层接口，难以支持|
+|`complex`|`todo`|` `|:x:|
 |`delattr`|` `|` `|:x:|
-|`dict`|` `|` `|:x:|
-|`dir`|` `|` `|:x:|
+|`dict`|`todo`|` `|:x:|
+|`dir`|`dir()`|` `|:x:，python 用来 inspect 对象属性的方法，因为 lua 底层并没有完全用对象模式来模拟，所以不支持|
 |`divmod`|`divmod(10, 3)`|`divmod(10, 3)`|:heavy_check_mark:|
 |`enumerate`|`for i, n in enumerate([1, 2]):`|`for i, n in enumerate(list {1, 2})`|:heavy_check_mark:|
-|`eval`|` `|` `|:x:|
-|`exec`|` `|` `|:x:|
-|`filter`|` `|` `|:x:|
-|`float`|` `|` `|:x:|
-|`format`|` `|` `|:x:|
-|`frozenset`|` `|` `|:x:|
-|`getattr`|` `|` `|:x:|
-|`globals`|` `|` `|:x:|
-|`hasattr`|` `|` `|:x:|
-|`hash`|` `|` `|:x:|
-|`help`|` `|` `|:x:|
-|`hex`|` `|` `|:x:|
-|`id`|` `|` `|:x:|
-|`input`|` `|` `|:x:|
-|`int`|` `|` `|:x:|
-|`isinstance`|` `|` `|:x:|
-|`issubclass`|` `|` `|:x:|
-|`iter`|` `|` `|:x:|
+|`eval`|`eval()`|` `|:x:，动态执行 python 代码，属于元编程的范畴，难以支持|
+|`exec`|`exec()`|` `|:x:，和 `eval` 类似，难以支持|
+|`filter`|`todo`|` `|:x:|
+|`float`|`todo`|` `|:x:|
+|`format`|`todo`|` `|:x:|
+|`frozenset`|`todo`|` `|:x:|
+|`getattr`|`todo`|` `|:x:|
+|`globals`|`todo`|` `|:x:|
+|`hasattr`|`todo`|` `|:x:|
+|`hash`|`hash()`|` `|:x:，python 底层根据对象值的一种哈希方法|
+|`help`|`help()`|` `|:x:，不支持|
+|`hex`|`todo`|` `|:x:|
+|`id`|`id()`|` `|:x:，python 底层用于标识对象的唯一标识符|
+|`input`|`todo`|` `|:x:|
+|`int`|`todo`|` `|:x:|
+|`isinstance`|`todo`|` `|:x:|
+|`issubclass`|`todo`|` `|:x:|
+|`iter`|`todo`|` `|:x:|
 |`len`|`len([1, 2])`|`len(list {1, 2})`|:heavy_check_mark:|
-|`list`|` `|` `|:x:|
-|`locals`|` `|` `|:x:|
-|`map`|` `|` `|:x:|
-|`max`|` `|` `|:x:|
-|`memoryview`|` `|` `|:x:|
-|`min`|` `|` `|:x:|
-|`next`|` `|` `|:x:|
-|`object`|` `|` `|:x:|
-|`oct`|` `|` `|:x:|
-|`open`|` `|` `|:x:|
-|`ord`|` `|` `|:x:|
-|`pow`|` `|` `|:x:|
-|`print`|` `|` `|:x:|
-|`property`|` `|` `|:x:|
+|`list`|`todo`|` `|:x:|
+|`locals`|`locals()`|` `|:x:，返回当前作用域下所有局部变量的信息|
+|`map`|`todo`|` `|:x:|
+|`max`|`todo`|` `|:x:|
+|`memoryview`|`memoryview()`|` `|:x:|
+|`min`|`todo`|` `|:x:|
+|`next`|`todo`|` `|:x:|
+|`object`|`todo`|` `|:x:|
+|`oct`|`todo`|` `|:x:|
+|`open`|`todo`|` `|:x:|
+|`ord`|`todo`|` `|:x:|
+|`pow`|`todo`|` `|:x:|
+|`print`|`todo`|` `|:x:|
+|`property`|`todo`|` `|:x:|
 |`range`|`for i in range(1, 10):`|`for i in range(10):`|:heavy_check_mark:|
-|`repr`|` `|` `|:x:|
-|`reversed`|` `|` `|:x:|
-|`round`|` `|` `|:x:|
-|`set`|` `|` `|:x:|
-|`setattr`|` `|` `|:x:|
-|`slice`|` `|` `|:x:|
-|`sorted`|` `|` `|:x:|
-|`staticmethod`|` `|` `|:x:|
-|`str`|` `|` `|:x:|
-|`sum`|` `|` `|:x:|
-|`super`|` `|` `|:x:|
-|`tuple`|` `|` `|:x:|
-|`type`|` `|` `|:x:|
-|`vars`|` `|` `|:x:|
-|`zip`|` `|` `|:x:|
-|`__import__`|` `|` `|:x:|
+|`repr`|`todo`|` `|:x:|
+|`reversed`|`todo`|` `|:x:|
+|`round`|`todo`|` `|:x:|
+|`set`|`todo`|` `|:x:|
+|`setattr`|`todo`|` `|:x:|
+|`slice`|`todo`|` `|:x:|
+|`sorted`|`todo`|` `|:x:|
+|`staticmethod`|`todo`|` `|:x:|
+|`str`|`todo`|` `|:x:|
+|`sum`|`todo`|` `|:x:|
+|`super`|`todo`|` `|:x:|
+|`tuple`|`todo`|` `|:x:|
+|`type`|`todo`|` `|:x:|
+|`vars`|`vars()`|` `|:x:，返回相应作用域下变量信息，和 `locals` 相似|
+|`zip`|`todo`|` `|:x:|
+|`__import__`|`__import__()`|` `|:x:|
 
 
 *TODO：完善更多内建函数*
