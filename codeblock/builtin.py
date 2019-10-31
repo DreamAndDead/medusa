@@ -124,6 +124,7 @@ assert len({ 0: 0, 'a': 'z' }) == 2
 
 assert len(list()) == 0
 
+#https://stackoverflow.com/questions/1952464/in-python-how-do-i-determine-if-an-object-is-iterable
 #l = list([1, 2, 3])
 #assert len(l) == 3
 

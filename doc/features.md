@@ -679,7 +679,7 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`pow`|`pow(2, 10)`|`pow(2, 10)`|:heavy_check_mark:|
 |`print`|`todo`|` `|:x:|
 |`property`|`todo`|` `|:x:|
-|`range`|`for i in range(1, 10):`|`for i in range(10):`|:heavy_check_mark:|
+|`range`|`for i in range(1, 10):`|`for i in range(1, 10):`|:heavy_check_mark:|
 |`repr`|`todo`|` `|:x:|
 |`reversed`|`todo`|` `|:x:|
 |`round`|`todo`|` `|:x:|
