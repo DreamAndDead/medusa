@@ -377,7 +377,19 @@ end
 -- >>> bin(2796202)
 -- '0b1010101010101010101010'
 function bin(num)
-   -- todo, with bit operator
+   assert(type(num) == 'number', 'num is not a number in bin()')
+   assert(math.floor(num) == num, 'num is a float in bin()')
+
+   local prefix = '0b'
+
+   local b = ''
+   local m = 0
+   repeat
+      num, m = divmod(num, 2)
+      b = tostring(m) .. b
+   until num == 0
+
+   return prefix .. b
 end
 
 -- bool(x) -> bool
@@ -463,6 +475,119 @@ function float(x)
    assert(n ~= nil, "could not convert string to float " .. tostring(x))
    return n
 end
+
+
+-- hex(number) -> string
+-- return the hexadecimal representation of an integer.
+--   >>> hex(3735928559)
+--   '0xdeadbeef'
+function hex(num)
+   assert(type(num) == 'number', 'num is not a number in hex(num)')
+   assert(math.floor(num) == num, 'num is a float in hex(num)')
+
+   local int_hex_map = {
+      [0] = '0',
+      [1] = '1',
+      [2] = '2',
+      [3] = '3',
+      [4] = '4',
+      [5] = '5',
+      [6] = '6',
+      [7] = '7',
+      [8] = '8',
+      [9] = '9',
+      [10] = 'a',
+      [11] = 'b',
+      [12] = 'c',
+      [13] = 'd',
+      [14] = 'e',
+      [15] = 'f',
+   }
+
+   local prefix = '0x'
+   local m = 0
+   local h = ''
+   repeat
+      num, m = divmod(num, 16)
+      h = int_hex_map[m] .. h
+   until num == 0
+
+   return prefix .. h
+end
+
+
+-- int(x=0) -> integer
+-- int(x, base=10) -> integer
+-- convert a number or string to an integer, or return 0 if no arguments
+-- are given.  If x is a number, return x.__int__().  For floating point
+-- numbers, this truncates towards zero.
+-- if x is not a number or if base is given, then x must be a string,
+-- bytes, or bytearray instance representing an integer literal in the
+-- given base.
+-- the literal can be preceded by '+' or '-' and be surrounded
+-- by whitespace. The base defaults to 10.  Valid bases are 0 and 2-36.
+-- base 0 means to interpret the base from the string as an integer literal.
+--   >>> int('0b100', base=0)
+--   4
+function int(x, base)
+   if x == nil then
+      return 0
+   end
+
+   if type(x) == 'number' then
+      if x >= 0 then
+	 return math.floor(x)
+      else
+	 return math.ceil(x)
+      end
+   end
+
+   assert(type(x) == 'string', "int() can't convert non-string with explicit base")
+
+   base = base or 10
+
+   if base == 0 then
+      local is_neg = string.find(x, '-') ~= nil
+      local pos = string.gsub(x, '-', '')
+
+      if string.find(x, '0x') then
+	 base = 16
+	 pos = string.gsub(pos, '0x', '')
+      elseif string.find(x, '0b') then
+	 base = 2
+	 pos = string.gsub(pos, '0b', '')
+      else
+	 base = 10
+      end
+      
+      local n = tonumber(pos, base)
+
+      assert(n ~= nil, "invalid literal for int(): " .. x)
+
+      if is_neg then
+	 n = -n
+      end
+
+      return n
+   else
+      assert(base >= 2 and base <= 40, "int() base must be >= 2 and <= 36")
+      
+      local is_neg = string.find(x, '-') ~= nil
+      local pos = string.gsub(x, '-', '')
+      local n = tonumber(pos, base)
+
+      assert(n ~= nil, "invalid literal for int(): " .. x)
+
+      if is_neg then
+	 n = -n
+      end
+
+      return n
+   end
+    
+end
+
+
 
 
 -- len(object)
@@ -681,6 +806,28 @@ setmetatable(list, {
 })
 
 
+-- oct(number) -> string
+-- return the octal representation of an integer.
+--    >>> oct(342391)
+--    '0o1234567'
+function oct(num)
+   assert(type(num) == 'number', 'num is not a number in hex()')
+   assert(math.floor(num) == num, 'num is a float in hex()')
+
+   local prefix = '0o'
+
+   local b = ''
+   local m = 0
+   repeat
+      num, m = divmod(num, 8)
+      b = tostring(m) .. b
+   until num == 0
+
+   return prefix .. b
+end
+
+
+
 -- max(iterable, *[, default=obj, key=func]) -> value
 -- max(arg1, arg2, *args, *[, key=func]) -> value
 -- with a single iterable argument, return its biggest item. The
@@ -692,8 +839,6 @@ function max(arg1, ...)
 end
 
 
--- memoryview(object)
--- create a new memoryview object which references the given object.
 function memoryview(object)
    -- not support
 end
@@ -1006,7 +1151,17 @@ end
 -- this returns an int when called with one argument, otherwise the
 -- same type as the number. ndigits may be negative.
 function round(number, ndigits)
-   -- todo
+   ndigits = ndigits or 0
+
+   local shift = math.pow(10, ndigits)
+   local n = number * shift
+   local i, f = math.modf(n)
+   if f >= 0.5 then
+      i = i + 1
+   end
+
+   n = i / shift
+   return n
 end
 
 

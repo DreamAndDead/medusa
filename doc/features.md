@@ -632,7 +632,7 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`all`|`all([1, 2])`|`all(list {1, 2})`|:heavy_check_mark:|
 |`any`|`any([0, 1])`|`any(list {0, 1})`|:heavy_check_mark:|
 |`ascii`|`todo`|` `|:x:|
-|`bin`|`todo`|` `|:x:|
+|`bin`|`bin(10)`|`bin(10)`|:heavy_check_mark:|
 |`bool`|`bool(True)`|`bool(true)`|:heavy_check_mark:|
 |`bytearray`|`todo`|` `|:x:|
 |`bytes`|`todo`|` `|:x:|
@@ -657,10 +657,10 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`hasattr`|`todo`|` `|:x:|
 |`hash`|`hash()`|` `|:x:，python 底层根据对象值的一种哈希方法|
 |`help`|`help()`|` `|:x:，不支持|
-|`hex`|`todo`|` `|:x:|
+|`hex`|`hex(10)`|`hex(10)`|:heavy_check_mark:|
 |`id`|`id()`|` `|:x:，python 底层用于标识对象的唯一标识符|
 |`input`|`todo`|` `|:x:|
-|`int`|`todo`|` `|:x:|
+|`int`|`int()`|`int()`|:heavy_check_mark:|
 |`isinstance`|`todo`|` `|:x:|
 |`issubclass`|`todo`|` `|:x:|
 |`iter`|`todo`|` `|:x:|
@@ -673,7 +673,7 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`min`|`todo`|` `|:x:|
 |`next`|`todo`|` `|:x:|
 |`object`|`todo`|` `|:x:|
-|`oct`|`todo`|` `|:x:|
+|`oct`|`oct(10)`|`oct(10)`|:heavy_check_mark:|
 |`open`|`todo`|` `|:x:|
 |`ord`|`todo`|` `|:x:|
 |`pow`|`pow(2, 10)`|`pow(2, 10)`|:heavy_check_mark:|
@@ -682,7 +682,7 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`range`|`for i in range(1, 10):`|`for i in range(1, 10):`|:heavy_check_mark:|
 |`repr`|`todo`|` `|:x:|
 |`reversed`|`todo`|` `|:x:|
-|`round`|`todo`|` `|:x:|
+|`round`|`round(10.49)`|`round(10.49)`|:heavy_check_mark:|
 |`set`|`todo`|` `|:x:|
 |`setattr`|`todo`|` `|:x:|
 |`slice`|`todo`|` `|:x:|

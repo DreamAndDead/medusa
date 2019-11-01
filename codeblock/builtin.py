@@ -26,7 +26,15 @@ assert any([0, 1, 2]) == True
 assert any([0, 0]) == False
 
 ## ascii
+
 ## bin
+
+assert bin(0) == '0b0'
+assert bin(10) == '0b1010'
+assert bin(100) == '0b1100100'
+assert bin(1000) == '0b1111101000'
+
+
 
 ## bool
 
@@ -102,13 +110,46 @@ assert float('10.8') == 10.8
 ## hasattr
 ## hash
 ## help
+
+
 ## hex
+
+assert hex(0) == '0x0'
+assert hex(10) == '0xa'
+assert hex(100) == '0x64'
+assert hex(1000) == '0x3e8'
+assert hex(10000) == '0x2710'
+assert hex(100000) == '0x186a0'
+
+
+
+
 ## id
 ## input
+
+
 ## int
+
+assert int() == 0
+assert int(10) == 10
+assert int(10.5) == 10
+assert int(-10.5) == -10
+assert int('10', 10) == 10
+assert int('10', 16) == 16
+assert int(' 10', 10) == 10
+assert int('10 ', 16) == 16
+assert int('0b10', 0) == 2
+assert int('0x10', 0) == 16
+assert int('-0b10', 0) == -2
+assert int('-0x10', 0) == -16
+
+
+
 ## isinstance
 ## issubclass
 ## iter
+
+
 
 ## len
 
@@ -131,6 +172,9 @@ assert len(list()) == 0
 
 
 ## locals
+### not support
+
+
 ## map
 
 ## max
@@ -146,9 +190,29 @@ assert len(list()) == 0
 
 ## next
 ## object
+
+
 ## oct
+
+assert oct(0) == '0o0'
+assert oct(10) == '0o12'
+assert oct(100) == '0o144'
+assert oct(1000) == '0o1750'
+assert oct(10000) == '0o23420'
+
+
+
+
 ## open
+
+
+
 ## ord
+
+
+
+
+
 
 ## pow
 
@@ -190,8 +254,21 @@ assert l[3] == 7
 
 
 ## round
-### todo
 
+assert round(10) == 10
+assert round(10, 0) == 10
+assert round(10, 1) == 10
+assert round(10, 2) == 10
+assert round(10, -1) == 10
+assert round(10, -2) == 0
+assert round(10.49, 0) == 10
+assert round(10.51, 0) == 11
+assert round(10.49, 1) == 10.5
+assert round(10.51, 1) == 10.5
+
+### in python, that's wired
+#assert round(10.5) == 10
+#assert round(9.5) == 10
 
 
 ## set
