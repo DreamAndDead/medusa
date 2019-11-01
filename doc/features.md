@@ -634,12 +634,12 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`ascii`|`todo`|` `|:x:|
 |`bin`|`bin(10)`|`bin(10)`|:heavy_check_mark:|
 |`bool`|`bool(True)`|`bool(true)`|:heavy_check_mark:|
-|`bytearray`|`todo`|` `|:x:|
-|`bytes`|`todo`|` `|:x:|
+|`bytearray`|` `|` `|:x:，涉及底层二进制编码对象，不支持|
+|`bytes`|` `|` `|:x:，涉及底层二进制编码对象，不支持|
 |`callable`|`callable(all)`|`callable(all)`|:heavy_check_mark:|
 |`chr`|`todo`|` `|:x:|
 |`classmethod`|`todo`|` `|:x:|
-|`compile`|`compile()`|` `|:x:，python 底层编译原理的上层接口，难以支持|
+|`compile`|`compile()`|` `|:x:，python 底层编译原理的上层接口，不支持|
 |`complex`|`todo`|` `|:x:|
 |`delattr`|` `|` `|:x:|
 |`dict`|`todo`|` `|:x:|
@@ -653,7 +653,7 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`format`|`todo`|` `|:x:|
 |`frozenset`|`todo`|` `|:x:|
 |`getattr`|`todo`|` `|:x:|
-|`globals`|`todo`|` `|:x:|
+|`globals`|`globals()`|` `|:x:，返回全局作用域下的变量信息|
 |`hasattr`|`todo`|` `|:x:|
 |`hash`|`hash()`|` `|:x:，python 底层根据对象值的一种哈希方法|
 |`help`|`help()`|` `|:x:，不支持|
@@ -669,7 +669,7 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`locals`|`locals()`|` `|:x:，返回当前作用域下所有局部变量的信息|
 |`map`|`todo`|` `|:x:|
 |`max`|`todo`|` `|:x:|
-|`memoryview`|`memoryview()`|` `|:x:|
+|`memoryview`|`memoryview()`|` `|:x:，涉及底层内存分布，不支持|
 |`min`|`todo`|` `|:x:|
 |`next`|`todo`|` `|:x:|
 |`object`|`todo`|` `|:x:|
@@ -692,7 +692,7 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`sum`|`sum([1, 2, 3])`|`sum(list {1, 2, 3})`|:heavy_check_mark:|
 |`super`|`todo`|` `|:x:|
 |`tuple`|`todo`|` `|:x:|
-|`type`|`todo`|` `|:x:|
+|`type`|`type()`|` `|:x:，python 类体系中的顶层核心，不支持|
 |`vars`|`vars()`|` `|:x:，返回相应作用域下变量信息，和 `locals` 相似|
 |`zip`|`todo`|` `|:x:|
 |`__import__`|`__import__()`|` `|:x:|
