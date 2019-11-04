@@ -616,9 +616,19 @@ setmetatable(list, {
                    result._data = {}
 
 		   if t ~= nil then
-		      for _, v in ipairs(t) do
-			 table.insert(result._data, v)
+		      if t.__iter__ then
+			 -- iterable
+			 for v in t do
+			    table.insert(result._data, v)
+			 end
+		      else
+			 -- list literal
+			 for _, v in ipairs(t) do
+			    table.insert(result._data, v)
+			 end
 		      end
+		   else
+		      -- list()
 		   end
 
 		   local py_to_lua_idx = function(i, size)
@@ -772,7 +782,14 @@ setmetatable(list, {
                       end)
                    end
 
-                   local iterator_index = nil
+
+		   -- __iter__
+		   -- delegate to metatable __call
+		   methods.__iter__ = function()
+		      return result
+		   end
+		   
+                   local iterator_index = 0
 
                    setmetatable(result, {
                                    __index = function(self, index)
@@ -790,13 +807,14 @@ setmetatable(list, {
                                       rawset(result._data, index + 1, value)
                                    end,
                                    __call = function(self, _, idx)
-                                      if idx == nil and iterator_index ~= nil then
-                                         iterator_index = nil
+                                      if idx == nil then
+                                         iterator_index = 0
                                       end
 
-                                      local v = nil
-                                      iterator_index, v = next(result._data, iterator_index)
-
+				      iterator_index = iterator_index + 1
+				      
+                                      local v = result._data[iterator_index]
+				      
                                       return v
                                    end,
                    })
@@ -926,18 +944,18 @@ setmetatable(dict, {
 		   local key_index = nil
 
 		   -- D.clear() -> None.  Remove all items from D.
-		   methods.clear = function()
+		   methods.clear = function(self)
 		      result._data = {}
 		   end
 
 		   -- D.copy() -> a shallow copy of D
-		   methods.copy = function()
+		   methods.copy = function(self)
 		      return dict(result._data)
 		   end
 
 		   -- d.fromkeys(iterable, value=None, /)
 		   -- returns a new dict with keys from iterable and values equal to value.
-		   methods.fromkeys = function(keys, value)
+		   methods.fromkeys = function(self, keys, value)
 		      value = value or nil
 		      d = {}
 		      for k in keys do
@@ -948,19 +966,19 @@ setmetatable(dict, {
 		   end
 
 		   -- D.get(k[,d]) -> D[k] if k in D, else d.  d defaults to None.
-		   methods.get = function(key, default)
+		   methods.get = function(self, key, default)
 		      value = result._data[key] or default or nil
 		      return value
 		   end
 
 		   -- D.items() -> a set-like object providing a view on D's items
-		   methods.items = function()
+		   methods.items = function(self)
 		      return pairs(result._data)
 		   end
 
 		   -- D.keys() -> a set-like object providing a view on D's keys
-		   methods.keys = function()
-		      return function(self, idx, _) 
+		   methods.keys = function(self)
+		      return function(_, idx) 
 			 if idx == nil and key_index ~= nil then
 			    key_index = nil
 			 end
@@ -973,7 +991,7 @@ setmetatable(dict, {
 		   -- D.pop(k[,d]) -> v, remove specified key and return the corresponding value.
 		   -- if key is not found, d is returned if given, otherwise KeyError is raised
 
-		   methods.pop = function(key, default)
+		   methods.pop = function(self, key, default)
 		      value = result._data[key] or default or nil
 		      result._data[key] = nil
 
@@ -982,7 +1000,7 @@ setmetatable(dict, {
 
 		   -- D.popitem() -> (k, v), remove and return some (key, value) pair as a
 		   -- 2-tuple; but raise KeyError if D is empty.
-		   methods.popitem = function()
+		   methods.popitem = function(self)
 		      local key, value = next(result._data)
 		      if key ~= nil then
 			 result._data[key] = nil
@@ -992,7 +1010,7 @@ setmetatable(dict, {
 		   end
 
 		   -- D.setdefault(k[,d]) -> D.get(k,d), also set D[k]=d if k not in D
-		   methods.setdefault = function(key, default)
+		   methods.setdefault = function(self, key, default)
 		      if result._data[key] == nil then
 			 result._data[key] = default
 		      end
@@ -1004,7 +1022,7 @@ setmetatable(dict, {
 		   -- if E is present and has a .keys() method, then does:  for k in E: D[k] = E[k]
 		   -- if E is present and lacks a .keys() method, then does:  for k, v in E: D[k] = v
 		   -- in either case, this is followed by: for k in F:  D[k] = F[k]
-		   methods.update = function(t)
+		   methods.update = function(self, t)
 		      if not t._is_dict then
 			 return
 		      end
@@ -1015,8 +1033,8 @@ setmetatable(dict, {
 		   end
 
 		   -- D.values() -> an object providing a view on D's values
-		   methods.values = function()
-		      return function(self, idx, _) 
+		   methods.values = function(self)
+		      return function(_, idx) 
 			 if idx == nil and key_index ~= nil then
 			    key_index = nil
 			 end
@@ -1025,13 +1043,25 @@ setmetatable(dict, {
 			 return value
 		      end
 		   end
+
+		   -- __iter__()
+		   -- delegate to dict __call
+		   methods.__iter__ = function(self)
+		      return result
+		   end
 		   
 		   setmetatable(result, {
 				   __index = function(self, index)
 				      if result._data[index] ~= nil then
 					 return result._data[index]
 				      end
-				      return methods[index]
+				      if methods[index] ~= nil then
+					 -- method
+					 return function(...)
+					    return methods[index](self, ...)
+					 end
+				      end
+				      return nil
 				   end,
 				   __newindex = function(self, index, value)
 				      result._data[index] = value
