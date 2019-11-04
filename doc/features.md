@@ -665,7 +665,7 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`issubclass`|`todo`|` `|:x:|
 |`iter`|`todo`|` `|:x:|
 |`len`|`len([1, 2])`|`len(list {1, 2})`|:heavy_check_mark:|
-|`list`|`todo`|` `|:x:|
+|`list`|`list([1, 2])`|`list(list {1, 2})`|:heavy_check_mark:|
 |`locals`|`locals()`|` `|:x:，返回当前作用域下所有局部变量的信息|
 |`map`|`todo`|` `|:x:|
 |`max`|`todo`|` `|:x:|

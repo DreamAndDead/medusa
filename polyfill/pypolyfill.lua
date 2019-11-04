@@ -650,22 +650,22 @@ setmetatable(list, {
                    local methods = {}
 
 		   -- L.append(object) -> None -- append object to end
-                   methods.append = function(value)
+                   methods.append = function(self, value)
                       table.insert(result._data, value)
                    end
 
 		   -- L.clear() -> None -- remove all items from L
-                   methods.clear = function()
+                   methods.clear = function(self)
                       result._data = {}
                    end
 
 		   -- L.copy() -> list -- a shallow copy of L
-                   methods.copy = function()
+                   methods.copy = function(self)
                       return list(result._data)
                    end
 
 		   -- L.count(value) -> integer -- return number of occurrences of value
-                   methods.count = function(value)
+                   methods.count = function(self, value)
                       local cnt = 0
                       for _, v in ipairs(result._data) do
                          if v == value then
@@ -677,7 +677,7 @@ setmetatable(list, {
                    end
 
 		   -- L.extend(iterable) -> None -- extend list by appending elements from the iterable
-                   methods.extend = function(iterable)
+                   methods.extend = function(self, iterable)
                       for value in iterable do
                          table.insert(result._data, value)
                       end
@@ -686,7 +686,7 @@ setmetatable(list, {
 		   -- L.index(value, [start, [stop]]) -> integer -- return first index of value.
 		   -- 相当于在 L[start:stop] 中寻找 value
 		   -- 当 start stop 超过开始/结束的界限，算作界限本身
-                   methods.index = function(value, start, stop)
+                   methods.index = function(self, value, start, stop)
 		      local size = #result._data
 		      
 		      if not start then
@@ -713,7 +713,7 @@ setmetatable(list, {
                    end
 
 		   -- L.insert(index, object) -- insert object before index
-                   methods.insert = function(index, value)
+                   methods.insert = function(self, index, value)
 		      local size = #result._data
 
 		      if index + 1 > size then
@@ -726,7 +726,7 @@ setmetatable(list, {
                    end
 
 		   -- L.pop([index]) -> item -- remove and return item at index (default last).
-                   methods.pop = function(index)
+                   methods.pop = function(self, index)
 		      local size = #result._data
 		      
 		      if not index then
@@ -747,7 +747,7 @@ setmetatable(list, {
                    end
 
 		   -- L.remove(value) -> None -- remove first occurrence of value.
-                   methods.remove = function(value)
+                   methods.remove = function(self, value)
                       for i, v in ipairs(result._data) do
                          if value == v then
                             table.remove(result._data, i)
@@ -757,7 +757,7 @@ setmetatable(list, {
                    end
 
 		   -- L.reverse() -- reverse *IN PLACE*
-                   methods.reverse = function()
+                   methods.reverse = function(self)
                       local new_data = {}
                       for i = #result._data, 1, -1 do
                          table.insert(new_data, result._data[i])
@@ -769,7 +769,7 @@ setmetatable(list, {
 		   -- L.sort(key=None, reverse=False) -> None -- stable sort *IN PLACE*
 		   -- TODO: sort 的参数是键值参数，目前暂时不支持，所以还无法传递 key 和 reverse
 		   -- TODO: key is a callable
-                   methods.sort = function(key, reverse)
+                   methods.sort = function(self, key, reverse)
                       key = key or nil
                       reverse = reverse or false
 
@@ -785,7 +785,7 @@ setmetatable(list, {
 
 		   -- __iter__
 		   -- delegate to metatable __call
-		   methods.__iter__ = function()
+		   methods.__iter__ = function(self)
 		      return result
 		   end
 		   
@@ -800,7 +800,9 @@ setmetatable(list, {
                                          return rawget(result._data, index + 1)
                                       end
 
-                                      return methods[index]
+                                      return function(...)
+					 return methods[index](self, ...)
+				      end
                                    end,
 				   -- only number index is permitted in python
                                    __newindex = function(self, index, value)
