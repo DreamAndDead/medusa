@@ -668,9 +668,9 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`list`|`list([1, 2])`|`list(list {1, 2})`|:heavy_check_mark:|
 |`locals`|`locals()`|` `|:x:，返回当前作用域下所有局部变量的信息|
 |`map`|`map(bool, l)`|`map(bool, l)`|:heavy_check_mark:|
-|`max`|`todo`|` `|:x:|
+|`max`|`max(1, 2, 3)`|`max(1, 2, 3)`|:heavy_check_mark:|
 |`memoryview`|`memoryview()`|` `|:x:，涉及底层内存分布，不支持|
-|`min`|`todo`|` `|:x:|
+|`min`|`min(1, 2, 3)`|`min(1, 2, 3)`|:heavy_check_mark:|
 |`next`|`todo`|` `|:x:|
 |`object`|`todo`|` `|:x:|
 |`oct`|`oct(10)`|`oct(10)`|:heavy_check_mark:|

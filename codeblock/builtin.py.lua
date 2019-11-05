@@ -111,6 +111,12 @@ assert((n[1] == 2))
 assert((n[2] == 6))
 assert((n[3] == 12))
 assert((n[4] == 20))
+l = list {1, 2, 3, 4, 5}
+assert((max(l) == 5))
+assert((max(1, 2, 3, 4, 5) == 5))
+l = list {1, 2, 3, 4, 5}
+assert((min(l) == 1))
+assert((min(1, 2, 3, 4, 5) == 1))
 assert((oct(0) == "0o0"))
 assert((oct(10) == "0o12"))
 assert((oct(100) == "0o144"))

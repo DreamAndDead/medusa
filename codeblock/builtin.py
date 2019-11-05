@@ -244,14 +244,24 @@ assert n[4] == 20
 
 
 ## max
-### todo
+
+l = [1, 2, 3, 4, 5]
+
+assert max(l) == 5
+assert max(1, 2, 3, 4, 5) == 5
 
 
 ## memoryview
 
 
 ## min
-### todo
+
+l = [1, 2, 3, 4, 5]
+
+assert min(l) == 1
+assert min(1, 2, 3, 4, 5) == 1
+
+
 
 
 ## next

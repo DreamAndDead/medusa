@@ -901,7 +901,30 @@ end
 -- the provided iterable is empty.
 -- with two or more arguments, return the largest argument.
 function max(arg1, ...)
-   -- todo
+   local rest = list {...}
+   local iterable = arg1
+   if len(rest) ~= 0 then
+      rest.append(arg1)
+      iterable = rest
+   end
+
+   local default = nil
+   if len(iterable) == 0 then
+      return default
+   end
+
+   local m = nil
+   for item in iterable do
+      if m == nil then
+	 m = item
+      else
+	 if item > m then
+	    m = item
+	 end
+      end
+   end
+
+   return m
 end
 
 
@@ -917,7 +940,30 @@ end
 -- the provided iterable is empty.
 -- with two or more arguments, return the smallest argument.
 function min(arg1, ...)
-   -- todo
+   local rest = list {...}
+   local iterable = arg1
+   if len(rest) ~= 0 then
+      rest.append(arg1)
+      iterable = rest
+   end
+
+   local default = nil
+   if len(iterable) == 0 then
+      return default
+   end
+
+   local m = nil
+   for item in iterable do
+      if m == nil then
+	 m = item
+      else
+	 if item < m then
+	    m = item
+	 end
+      end
+   end
+
+   return m
 end
 
 
