@@ -464,6 +464,23 @@ function enumerate(t, start)
 end
 
 
+-- filter(function or None, iterable) --> filter object
+-- return an iterator yielding those items of iterable for which function(item)
+-- is true. If function is None, return the items that are true.
+function filter(func, iterable)
+   func = func or bool
+   -- fixme: use list for now, no lazy
+   local l = list {}
+   for item in iterable do
+      if func(item) then
+	 l.append(item)
+      end
+   end
+   return l
+end
+
+
+
 -- float(x) -> floating point number
 -- convert a string or number to a floating point number, if possible.
 function float(x)
@@ -820,6 +837,39 @@ setmetatable(list, {
                    return result
                 end,
 })
+
+
+-- map(func, *iterables) --> map object
+-- make an iterator that computes the function using arguments from
+-- each of the iterables.  Stops when the shortest iterable is exhausted.
+function map(func, ...)
+   local iterables = list {...}
+   local lists = list {}
+   
+   local iter_num = len(iterables)
+   local min_len = math.huge
+
+   for it in iterables do
+      lists.append(list(it))
+      
+      local l = len(list(it))
+      if l < min_len then
+	 min_len = l
+      end
+   end
+   
+   local res = list {}
+   for nth in range(min_len) do
+      local param = {}
+      for ith in range(iter_num) do
+	 param[#param+1] = lists[ith][nth]
+      end
+      res.append(func(unpack(param)))
+   end
+
+   return res
+end
+
 
 
 -- oct(number) -> string

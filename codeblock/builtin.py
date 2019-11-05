@@ -110,7 +110,31 @@ for i, n in enumerate(l):
 ## eval
 ## exec
 
+
+
 ## filter
+
+l = [0, 1, 2, 3, 4, 5]
+
+f = list(filter(None, l))
+assert len(f) == 5
+assert f[0] == 1
+assert f[4] == 5
+
+f = list(filter(lambda n: n%2 == 0, l))
+assert len(f) == 3
+assert f[0] == 0
+assert f[1] == 2
+assert f[2] == 4
+
+
+d = { 0: 'a', 'x': 'y', '': 'space' }
+
+f = list(filter(None, d))
+assert len(f) == 1
+assert f[0] == 'x'
+
+
 
 ## float
 
@@ -194,7 +218,30 @@ assert l[2] == 3
 ### not support
 
 
+
 ## map
+
+l = [ 0, 1, 2, 3, 4 ]
+m = list(map(lambda x: x**2, l))
+
+assert len(m) == 5
+assert m[0] == 0
+assert m[1] == 1
+assert m[2] == 4
+assert m[3] == 9
+assert m[4] == 16
+
+
+n = list(map(lambda x, y: x+y, l, m))
+
+assert len(n) == 5
+assert n[0] == 0
+assert n[1] == 2
+assert n[2] == 6
+assert n[3] == 12
+assert n[4] == 20
+
+
 
 ## max
 ### todo
