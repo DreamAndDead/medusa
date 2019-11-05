@@ -950,6 +950,32 @@ function range(start, stop, step)
 end
 
 
+-- reduce(function, sequence[, initial]) -> value
+-- apply a function of two arguments cumulatively to the items of a sequence,
+-- from left to right, so as to reduce the sequence to a single value.
+-- for example, reduce(lambda x, y: x+y, [1, 2, 3, 4, 5]) calculates
+-- ((((1+2)+3)+4)+5).  If initial is present, it is placed before the items
+-- of the sequence in the calculation, and serves as a default when the
+-- sequence is empty.
+function reduce(func, seq, init)
+   if len(seq) == 0 then
+      return init
+   end
+
+   local r = init
+   for e in seq do
+      if init == nil then
+	 r = e
+	 init = true -- not nil
+      else
+	 r = func(r, e)
+      end
+   end
+
+   return r
+end
+
+
 
 --[[
    tuple

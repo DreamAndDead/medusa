@@ -42,6 +42,7 @@ class NodeVisitor(ast.NodeVisitor):
         """
         raise RuntimeError("unsupported syntax '%s' at line %d col %d" % (node.__class__.__name__, node.lineno, node.col_offset))
 
+
     def visit_all(self, nodes, inline=False):
         """
         Visit all nodes in the given list
@@ -495,6 +496,10 @@ class NodeVisitor(ast.NodeVisitor):
 
         self.emit(line.format(**values))
 
+    def visit_ImportFrom(self, node):
+        # pass for now
+        pass
+        
     def visit_Index(self, node):
         """Visit index"""
         self.emit(self.visit_all(node.value, inline=True))
