@@ -642,7 +642,7 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`compile`|`compile()`|` `|:x:，python 底层编译原理的上层接口，不支持|
 |`complex`|`todo`|` `|:x:|
 |`delattr`|` `|` `|:x:|
-|`dict`|`todo`|` `|:x:|
+|`dict`|`dict({1: 'a'})`|`dict({1: 'a'})`|:x:|
 |`dir`|`dir()`|` `|:x:，python 用来 inspect 对象属性的方法，因为 lua 底层并没有完全用对象模式来模拟，所以不支持|
 |`divmod`|`divmod(10, 3)`|`divmod(10, 3)`|:heavy_check_mark:|
 |`enumerate`|`for i, n in enumerate([1, 2]):`|`for i, n in enumerate(list {1, 2})`|:heavy_check_mark:|

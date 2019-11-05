@@ -23,10 +23,6 @@
    -- high bits first
    bit.tonumb(bit_tbl) -- convert a bit table into a number 
    -------------------
-
-   Under the MIT license.
-
-   copyright(c) 2006~2007 hanzhao (abrash_han@hotmail.com)
 --]]---------------
 
 ------------------------
@@ -912,23 +908,15 @@ end
 
 
 
---[[
-   dict structure
-
-   methods:
-   - clear
-   - copy
-   - fromkeys
-   - get
-   - items
-   - keys
-   - pop
-   - popitem
-   - setdefault
-   - update
-   - values
---]]
-
+-- dict() -> new empty dictionary
+-- dict(mapping) -> new dictionary initialized from a mapping object's
+--     (key, value) pairs
+-- dict(iterable) -> new dictionary initialized as if via:
+--     d = {}
+--     for k, v in iterable:
+--         d[k] = v
+-- dict(**kwargs) -> new dictionary initialized with the name=value pairs
+--     in the keyword argument list.  For example:  dict(one=1, two=2)
 dict = {}
 setmetatable(dict, {
 		__call = function(_, t)
@@ -937,9 +925,27 @@ setmetatable(dict, {
 		   result._is_dict = true
 		   result._data = {}
 
-		   for k, v in pairs(t) do
-		      result._data[k] = v
+		   if t ~= nil then
+		      if t._is_dict then
+			 -- dict(d)
+			 for k, v in t.items() do
+			    result._data[k] = v
+			 end
+		      elseif t.__iter__ then
+			 -- dict(iterable)
+			 for k, v in t do
+			    result._data[k] = v
+			 end
+		      else
+			 -- dict literal
+			 for k, v in pairs(t) do
+			    result._data[k] = v
+			 end
+		      end
+		   else
+		      -- dict()
 		   end
+		   
 
 		   local methods = {}
 

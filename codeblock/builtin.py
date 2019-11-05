@@ -63,7 +63,24 @@ assert not callable([])
 ## compile
 ## complex
 ## delattr
+
+
 ## dict
+
+d = dict()
+assert len(d) == 0
+
+d[1] = 'a'
+d[2] = 'b'
+e = dict(d)
+assert e[1] == 'a'
+assert e[2] == 'b'
+
+### todo，因为函数不支持键值
+# dict(one=1, two=2)
+
+
+
 ## dir
 
 ## divmod
@@ -88,6 +105,7 @@ for i, n in enumerate(l):
 ### todo: 如果应用于 dict，则只针对 keys() 值进行遍历
 # d = { 'a': 1, 'b': 'z' }
 # for i, k in enumerate(d):
+
 
 ## eval
 ## exec

@@ -29,6 +29,13 @@ assert(callable(function(x) return x end))
 assert(not callable(0))
 assert(not callable("abc"))
 assert(not callable(list {}))
+local d = dict()
+assert((len(d) == 0))
+d[1] = "a"
+d[2] = "b"
+local e = dict(d)
+assert((e[1] == "a"))
+assert((e[2] == "b"))
 local d, m = divmod(10, 3)
 assert(((d == 3) and (m == 1)))
 d, m = divmod((-10), 3)
