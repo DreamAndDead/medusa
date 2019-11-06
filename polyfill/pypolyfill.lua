@@ -1461,3 +1461,37 @@ class C(B):
 function super(cls, obj)
 end
 
+
+-- zip(iter1 [,iter2 [...]]) --> zip object
+-- return a zip object whose .__next__() method returns a tuple where
+-- the i-th element comes from the i-th iterable argument.  The .__next__()
+-- method continues until the shortest iterable in the argument sequence
+-- is exhausted and then it raises StopIteration.
+function zip(iter1, ...)
+   local iters = list {...}
+   iters.insert(0, iter1)
+
+   local lists = list {}
+   local iters_num = len(iters)
+   local min_iter_len = math.huge
+
+   for it in iters do
+      lists.append(list(it))
+      local l = len(list(it))
+      if l < min_iter_len then
+	 min_iter_len = l
+      end
+   end
+
+   local res = list {}
+   for nth in range(min_iter_len) do
+      local item = list {}
+      for ith in range(iters_num) do
+	 item.append(lists[ith][nth])
+      end
+      res.append(item)
+   end
+
+   return res
+end
+

@@ -175,3 +175,16 @@ assert((sum(list {1, 2, 3}) == 6))
 assert((sum(list {}) == 0))
 assert((sum(list {1, 2, 3}, 0) == 6))
 assert((sum(list {1, 2, 3}, 4) == 10))
+local l1 = list {0, 1, 2, 3, 4, 5}
+local l2 = list {"a", "b", "c"}
+local l3 = list {3, ".", 1, 4, 1}
+local z = list(zip(l1, l2, l3))
+assert((z[0][0] == 0))
+assert((z[0][1] == "a"))
+assert((z[0][2] == 3))
+assert((z[1][0] == 1))
+assert((z[1][1] == "b"))
+assert((z[1][2] == "."))
+assert((z[2][0] == 2))
+assert((z[2][1] == "c"))
+assert((z[2][2] == 1))
