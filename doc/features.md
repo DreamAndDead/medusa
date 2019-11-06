@@ -682,12 +682,12 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`range`|`for i in range(1, 10):`|`for i in range(1, 10):`|:heavy_check_mark:|
 |`reduce`|`reduce(add, [1, 2, 3])`|`reduce(add, list {1, 2, 3})`|:heavy_check_mark:|
 |`repr`|`todo`|` `|:x:|
-|`reversed`|`todo`|` `|:x:|
+|`reversed`|`reversed(l)`|`reversed(l)`|:heavy_check_mark:|
 |`round`|`round(10.49)`|`round(10.49)`|:heavy_check_mark:|
 |`set`|`todo`|` `|:x:|
 |`setattr`|`todo`|` `|:x:|
 |`slice`|`todo`|` `|:x:|
-|`sorted`|`todo`|` `|:x:|
+|`sorted`|`sort(l)`|`sort(l)`|:heavy_check_mark:|
 |`staticmethod`|`todo`|` `|:x:|
 |`str`|`todo`|` `|:x:|
 |`sum`|`sum([1, 2, 3])`|`sum(list {1, 2, 3})`|:heavy_check_mark:|

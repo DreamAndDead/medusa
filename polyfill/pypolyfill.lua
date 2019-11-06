@@ -783,15 +783,15 @@ setmetatable(list, {
 		   -- TODO: sort 的参数是键值参数，目前暂时不支持，所以还无法传递 key 和 reverse
 		   -- TODO: key is a callable
                    methods.sort = function(self, key, reverse)
-                      key = key or nil
+                      key = key or function (itself) return itself end
                       reverse = reverse or false
 
                       table.sort(result._data, function(a, b)
                                     if reverse then
-                                       return a > b
+                                       return key(a) > key(b)
                                     end
 
-                                    return a < b
+                                    return key(a) < key(b)
                       end)
                    end
 
@@ -1020,6 +1020,16 @@ function reduce(func, seq, init)
 
    return r
 end
+
+
+-- reversed(sequence) -> reverse iterator over values of the sequence
+-- return a reverse iterator
+function reversed(seq)
+   local l = list(seq)
+   l.reverse()
+   return l
+end
+
 
 
 
@@ -1322,6 +1332,14 @@ function round(number, ndigits)
 
    n = i / shift
    return n
+end
+
+
+-- sorted(iterable, key=None, reverse=False) --> new sorted list
+function sorted(iterable, key, reverse)
+   local l = list(iterable)
+   l.sort(key, reverse)
+   return l
 end
 
 

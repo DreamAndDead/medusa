@@ -339,7 +339,22 @@ assert reduce(lambda x, y: x+y, l, 10) == 25
 
 
 ## repr
+
+
 ## reversed
+
+l = [3, 1, 4, 1, 5, 9]
+rl = list(reversed(l))
+
+assert rl[0] == 9
+assert rl[1] == 5
+assert rl[2] == 1
+assert rl[3] == 4
+assert rl[4] == 1
+assert rl[5] == 3
+
+
+
 
 
 ## round
@@ -363,7 +378,34 @@ assert round(10.51, 1) == 10.5
 ## set
 ## setattr
 ## slice
+
+
 ## sorted
+
+l = [0, 3, -2, 5, 6, 9]
+sl = sorted(l)
+
+assert len(sl) == 6
+assert sl[0] == -2
+assert sl[1] == 0
+assert sl[2] == 3
+assert sl[3] == 5
+assert sl[4] == 6
+assert sl[5] == 9
+
+# FIXME: 因为无法接收键值参数，所以 key reverse 暂时无法使用
+#sl = sorted(l, None, True)
+#
+#assert len(sl) == 6
+#assert sl[5] == -2
+#assert sl[4] == 0
+#assert sl[3] == 3
+#assert sl[2] == 5
+#assert sl[1] == 6
+#assert sl[0] == 9
+
+
+
 ## staticmethod
 ## str
 
