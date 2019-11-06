@@ -175,6 +175,15 @@ assert((sum(list {1, 2, 3}) == 6))
 assert((sum(list {}) == 0))
 assert((sum(list {1, 2, 3}, 0) == 6))
 assert((sum(list {1, 2, 3}, 4) == 10))
+local t = tuple()
+assert((len(t) == 0))
+t = tuple(list {1, 2, 3, 4})
+print(t)
+print(t[0])
+assert((t[0] == 1))
+assert((t[1] == 2))
+assert((t[2] == 3))
+assert((t[3] == 4))
 local l1 = list {0, 1, 2, 3, 4, 5}
 local l2 = list {"a", "b", "c"}
 local l3 = list {3, ".", 1, 4, 1}

@@ -625,6 +625,7 @@ TODO
 python 语言环境中除了引用标准库，其中有不少有用的[内建函数](https://docs.python.org/3.4/library/functions.html)。
 这些函数都需要在 lua 中进行同义模拟。
 
+*TODO：完善更多内建函数*
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
@@ -692,14 +693,12 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`str`|`todo`|` `|:x:|
 |`sum`|`sum([1, 2, 3])`|`sum(list {1, 2, 3})`|:heavy_check_mark:|
 |`super`|`todo`|` `|:x:|
-|`tuple`|`todo`|` `|:x:|
+|`tuple`|`tuple([1, 2, 3])`|`tuple(list {1, 2, 3})`|:heavy_check_mark:|
 |`type`|`type()`|` `|:x:，python 类体系中的顶层核心，不支持|
 |`vars`|`vars()`|` `|:x:，返回相应作用域下变量信息，和 `locals` 相似|
 |`zip`|`zip(l1, l2)`|`zip(l1, l2)`|:heavy_check_mark:|
 |`__import__`|`__import__()`|` `|:x:|
 
-
-*TODO：完善更多内建函数*
 
 |python示例代码|lua转换代码|
 |:-:|:-:|

@@ -1359,6 +1359,135 @@ function sum(iterable, start)
 end
 
 
+-- tuple() -> empty tuple
+-- tuple(iterable) -> tuple initialized from iterable's items
+-- f the argument is a tuple, the return value is the same object.
+tuple = {}
+setmetatable(tuple, {
+                __call = function(_, t)
+                   local result = {}
+
+                   result._is_tuple = true
+                   result._data = {}
+
+		   if t ~= nil then
+		      if t.__iter__ ~= nil then
+			 -- tuple(iterable)
+			 for v in t do
+			    table.insert(result._data, v)
+			 end
+		      else
+			 -- tuple literal
+			 for _, v in ipairs(t) do
+			    table.insert(result._data, v)
+			 end
+		      end
+		   else
+		      -- tuple()
+		   end
+
+		   local py_to_lua_idx = function(i, size)
+		      if i >= 0 then
+			 i = i + 1
+			 if i > size then
+			    i = size
+			 end
+		      else
+			 i = i + size + 1
+			 if i < 1 then
+			    i = 1
+			 end
+		      end
+		      return i
+		   end
+		   
+                   
+                   local methods = {}
+
+		   -- T.count(value) -> integer -- return number of occurrences of value
+                   methods.count = function(self, value)
+                      local cnt = 0
+                      for _, v in ipairs(result._data) do
+                         if v == value then
+                            cnt = cnt + 1
+                         end
+                      end
+
+                      return cnt
+                   end
+
+		   -- T.index(value, [start, [stop]]) -> integer -- return first index of value.
+		   -- raises ValueError if the value is not present.
+		   -- 相当于在 T[start:stop] 中寻找 value
+		   -- 当 start stop 超过开始/结束的界限，算作界限本身
+                   methods.index = function(self, value, start, stop)
+		      local size = #result._data
+		      
+		      if not start then
+			 start = 1
+		      else
+			 start = py_to_lua_idx(start, size)
+		      end
+
+		      if not stop then
+			 stop = size
+		      else
+			 stop = py_to_lua_idx(stop, size)
+		      end
+
+		      if start >= stop then
+			 return nil
+		      end
+		      
+                      for i = start, stop-1, 1 do
+                         if result._data[i] == value then
+                            return i - 1
+                         end
+                      end
+                   end
+
+		   -- __iter__
+		   -- delegate to metatable __call
+		   methods.__iter__ = function(self)
+		      return result
+		   end
+		   
+                   local iterator_index = 0
+
+                   setmetatable(result, {
+                                   __index = function(self, index)
+                                      if type(index) == "number" then
+                                         if index < 0 then
+                                            index = #result._data + index
+                                         end
+                                         return rawget(result._data, index + 1)
+                                      end
+
+                                      return function(...)
+					 return methods[index](self, ...)
+				      end
+                                   end,
+				   -- tuple is read only
+                                   __newindex = function(self, index, value)
+				      assert(false, "'tuple' object does not support item assignment")
+                                   end,
+                                   __call = function(self, _, idx)
+                                      if idx == nil then
+                                         iterator_index = 0
+                                      end
+
+				      iterator_index = iterator_index + 1
+				      
+                                      local v = result._data[iterator_index]
+				      
+                                      return v
+                                   end,
+                   })
+
+                   return result
+                end,
+})
+
 
 
 

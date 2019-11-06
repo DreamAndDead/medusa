@@ -630,6 +630,9 @@ class NodeVisitor(ast.NodeVisitor):
     def visit_Tuple(self, node):
         """Visit tuple"""
         elements = [self.visit_all(item, inline=True) for item in node.elts]
+        # 暂不支持 tuple 字面量
+        #line = "tuple {{{}}}".format(", ".join(elements))
+        #self.emit(line)
         self.emit(", ".join(elements))
 
     def visit_UnaryOp(self, node):

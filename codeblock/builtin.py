@@ -285,6 +285,7 @@ assert oct(10000) == '0o23420'
 
 
 
+
 ## ord
 
 
@@ -371,7 +372,6 @@ assert round(10.49, 0) == 10
 assert round(10.51, 0) == 11
 assert round(10.49, 1) == 10.5
 assert round(10.51, 1) == 10.5
-
 ### TODO: in python, that's wired
 #assert round(10.5) == 10
 #assert round(9.5) == 10
@@ -420,7 +420,29 @@ assert sum([1, 2, 3], 4) == 10
 
 
 ## super
+
+
+
 ## tuple
+
+t = tuple()
+
+assert len(t) == 0
+
+
+t = tuple([1, 2, 3, 4])
+
+assert t[0] == 1
+assert t[1] == 2
+assert t[2] == 3
+assert t[3] == 4
+
+
+
+
+
+
+
 ## type
 ## vars
 
