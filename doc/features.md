@@ -212,11 +212,9 @@ in 在 python 中，含义是属于，这一点在 lua 中可能通过函数来�
 |大于等于|`1 >= 2`|`1 >= 2`|:heavy_check_mark:|
 |is|`1 is 2`|:x:|:x:|
 |is not|`1 is not 2`|:x:|:x:|
-|in|`1 in {}`|:x:|:x:|
-|not in|`1 not in {}`|:x:|:x:|
+|in|`1 in {1, 2}`|`operator_in(1, set {1, 2})`|:heavy_check_mark:|
+|not in|`1 not in {1, 2}`|`not operator_in(1, set {1, 2})`|:heavy_check_mark:|
 
-
-*TODO: 对于 is 和 in，后续在实现数据结构之后，可能会加以支持*
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
@@ -226,18 +224,19 @@ in 在 python 中，含义是属于，这一点在 lua 中可能通过函数来�
 -----
 
 
-### List 字面量
+### List
 
 list 是 python 内建的数据结构，应用广泛。
-lua 中不存在相应的概念，需要编写相应代码来模拟（用元表来模拟魔术方法）。
+lua 中不存在相应的概念，需要编写相应代码来模拟。
 
-创建 list 有两种方式，字面量 `l = []` 和函数 `l = list()` 的方式，这里指的是字面量的方式，`list()` 被当作函数对待。
+创建 list 有两种方式，字面量 `l = []` 和函数 `l = list()` 的方式。
 
 创建得到的 list 是一个对象，其中包含自己的数据和方法。
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
-|初始化|`l = [1, 2, 3]`|`[local] l = list {1, 2, 3}`|:heavy_check_mark:|
+|list字面量|`l = [1, 2, 3]`|`[local] l = list {1, 2, 3}`|:heavy_check_mark:|
+|list函数|`l = list(iterable)`|`[local] l = list(iterable)`|:heavy_check_mark:|
 |`append`|`l.append(4)`|`l.append(4)`|:heavy_check_mark:|
 |`clear`|`l.clear()`|`l.clear()`|:heavy_check_mark:|
 |`copy`|`l.copy()`|`l.copy()`|:heavy_check_mark:|
@@ -253,25 +252,24 @@ lua 中不存在相应的概念，需要编写相应代码来模拟（用元表�
 |切片`[m:n]`|`l[0:3]`|` `|:x:|
 |重载`==`|`[] == []`|` `|:x:|
 
-*TODO：切片和重载，后续可能会支持，也可能整个 list 部分用 class 重写*
-
 |python示例代码|lua转换代码|
 |:-:|:-:|
 |[list.py](./../codeblock/list.py)|[list.py.lua](./../codeblock/list.py.lua)|
 
 
-### Dict 字面量
+### Dict
 
 dict 是 python 中内建的数据结构，使用非常广泛。
-在 lua 中没有内建相应的结构，需要编写相应的 lua 代码来做模拟（用元表来模拟魔术方法）。
+在 lua 中没有内建相应的结构，需要编写相应的 lua 代码来做模拟。
 
-创建 dict 有两种方式，字面量 `d = {}` 和函数 `d = dict()` 的方式，这里指的是字面量的方式，`dict()` 被当作函数对待。
+创建 dict 有两种方式，字面量 `d = {}` 和函数 `d = dict()` 的方式。
 
 创建得到的 dict 是一个对象，其中包含自己的数据和方法。
 
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
-|创建字典|`d = {'name': 'john', 1: 26}`|`[local] d = dict {['name'] = 'john', [1] = 26}`|:heavy_check_mark:|
+|dict字面量|`d = {'name': 'john', 1: 26}`|`[local] d = dict {['name'] = 'john', [1] = 26}`|:heavy_check_mark:|
+|dict函数|`d = dict(m)`|`[local] d = dict(m)`|:heavy_check_mark:|
 |`clear`|`d.clear()`|`d.clear()`|:heavy_check_mark:|
 |`copy`|`d.copy()`|`d.copy()`|:heavy_check_mark:|
 |`fromkeys`|`d.fromkeys(['height'], 40)`|`d.fromkeys(['height'], 40)`|:heavy_check_mark:|
@@ -287,40 +285,76 @@ dict 是 python 中内建的数据结构，使用非常广泛。
 |重载`==`|`{} == {}`|` `|:x:|
 
 
-*TODO：重载后续可能会支持，也可能整体用 class 重写*
-
-
 |python示例代码|lua转换代码|
 |:-:|:-:|
 |[dict.py](./../codeblock/dict.py)|[dict.py.lua](./../codeblock/dict.py.lua)|
 
 
-### Tuple 字面量
+### Tuple
 
-TODO
+tuple 是 list 有只读形式，但是在 python 中 tuple 的存在广泛，比如多变量赋值，多返回值，都作为 tuple 来处理。
 
+所以对于 tuple 的字面量有多种情况，而且和 lua 的表示相冲突，故暂时不支持字面量初始化 tuple 的形式，只支持函数的形式。
 
-<!--
+|feature|python|lua|支持|
+|:-:|:-:|:-:|:-:|
+|tuple字面量|`t = (1, 2, 3)`|`[local] t = tuple {1, 2, 3}`|:x:|
+|tuple函数|`t = tuple([1, 2, 3])`|`[local] t = tuple([1, 2, 3])`|:heavy_check_mark:|
+|`append`|`l.append(4)`|`l.append(4)`|:heavy_check_mark:|
+|`clear`|`l.clear()`|`l.clear()`|:heavy_check_mark:|
+|`copy`|`l.copy()`|`l.copy()`|:heavy_check_mark:|
+|`count`|`l.count(4)`|`l.count(4)`|:heavy_check_mark:|
+|`extend`|`l.extend([5, 6, 7])`|`l.extend(list {5, 6, 7})`|:heavy_check_mark:|
+|`index`|`l.index(4)`|`l.index(4)`|:heavy_check_mark:|
+|`insert`|`l.insert(0, -1)`|`l.insert(0, -1)`|:heavy_check_mark:|
+|`pop`|`l.pop()`|`l.pop()`|:heavy_check_mark:|
+|`remove`|`l.remove(-1)`|`l.remove(-1)`|:heavy_check_mark:|
+|`reverse`|`l.reverse()`|`l.reverse()`|:heavy_check_mark:|
+|`sort`|`l.sort()`|`l.sort()`|:heavy_check_mark:，因为当前函数不支持键值参数，所以 key 和 reverse 参数无法传递，有待调整|
+
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
 |[tuple.py](./../codeblock/tuple.py)|[tuple.py.lua](./../codeblock/tuple.py.lua)|
--->
 
 
-### Set 字面量
+### Set
 
-TODO
+set 同样是 python 中内建的数据结构。
+在 lua 中没有内建相应的结构，需要编写相应的 lua 代码来做模拟。
 
+创建 set 有两种方式，字面量 `s = {1, 2, 1}` 和函数 `s = set([1, 2, 3])` 的方式。
+创建得到的 set 是一个对象，其中包含自己的数据和方法。
 
-<!--
+|feature|python|lua|支持|
+|:-:|:-:|:-:|:-:|
+|set字面量|`s = {1, 2, 1}`|`s = set {1, 2, 1}`|:heavy_check_mark:|
+|set函数|`s = set([1, 2, 1])`|`s = set(list {1, 2, 1})`|:heavy_check_mark:|
+|`add`|`s.add(3)`|`s.add(3)`|:heavy_check_mark:|
+|`clear`|`s.clear()`|`s.clear()`|:heavy_check_mark:|
+|`copy`|`s.copy()`|`s.copy()`|:heavy_check_mark:|
+|`difference`|`s = s.difference(s1, s2)`|`s = s.difference(s1, s2)`|:heavy_check_mark:|
+|`difference_update`|`s.difference_update(s1, s2)`|`s.difference_update(s1, s2)`|:heavy_check_mark:|
+|`discard`|`s.discard(3)`|`s.discard(3)`|:heavy_check_mark:|
+|`intersection`|`s = s.intersection(s1, s2)`|`s = s.intersection(s1, s2)`|:heavy_check_mark:|
+|`intersection_update`|`s.intersection_update(s1, s2)`|`s.intersection_update(s1, s2)`|:heavy_check_mark:|
+|`isdisjoint`|`s.isdisjoint(s1)`|`s.isdisjoint(s1)`|:heavy_check_mark:|
+|`issubset`|`s.issubset(s1)`|`s.issubset(s1)`|:heavy_check_mark:|
+|`issuperset`|`s.issuperset(s1)`|`s.issuperset(s1)`|:heavy_check_mark:|
+|`pop`|`s.pop()`|`s.pop()`|:heavy_check_mark:|
+|`remove`|`s.remove(3)`|`s.remove(3)`|:heavy_check_mark:|
+|`symmetric_difference`|`s = s.symmetric_difference(s1)`|`s = s.symmetric_difference(s1)`|:heavy_check_mark:|
+|`symmetric_difference_update`|`s.symmetric_difference_update(s1)`|`s.symmetric_difference_update(s1)`|:heavy_check_mark:|
+|`union`|`s = s.union(s1, s2)`|`s = s.union(s1, s2)`|:heavy_check_mark:|
+|`update`|`s.update(s1, s2)`|`s.update(s1, s2)`|:heavy_check_mark:|
+
 
 python示例代码|lua转换代码|
 |:-:|:-:|
 |[set.py](./../codeblock/set.py)|[set.py.lua](./../codeblock/set.py.lua)|
 
--->
 
+### FrozenSet
 
 ### Subscript
 
@@ -685,7 +719,7 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`repr`|`todo`|` `|:x:|
 |`reversed`|`reversed(l)`|`reversed(l)`|:heavy_check_mark:|
 |`round`|`round(10.49)`|`round(10.49)`|:heavy_check_mark:|
-|`set`|`todo`|` `|:x:|
+|`set`|`set([1, 2, 1])`|`set([1, 2, 1])`|:heavy_check_mark:|
 |`setattr`|`todo`|` `|:x:|
 |`slice`|`todo`|` `|:x:|
 |`sorted`|`sort(l)`|`sort(l)`|:heavy_check_mark:|

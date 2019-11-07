@@ -1221,53 +1221,6 @@ setmetatable(dict, {
 		end,
 })
 
---[[
-   set structure
-   ref: https://docs.python.org/3/library/stdtypes.html#set-types-set-frozenset
-
-   - add
-   - clear
-   - copy
-   - difference
-   - difference_update
-   - discard
-   - intersection
-   - intersection_update
-   - isdisjoint
-   - issubset
-   - issuperset
-   - pop
-   - remove
-   - symmetric_difference
-   - symmetric_difference_update
-   - union
-   - update
-
---]]
-
-set = {}
-setmetatable(set, {
-		__call = function(_, t)
-		   local result = {}
-
-		   result._is_set = true
-		   result.data = {}
-
-		   local methods = {}
-
-		   methods.clear = function()
-		   end
-		   
-		end
-
-		
-})
-
-
---[[
-   frozenset
---]]
-
 
 
 function staticmethod(old_fun)
@@ -1333,6 +1286,247 @@ function round(number, ndigits)
    n = i / shift
    return n
 end
+
+
+-- set() -> new empty set object
+-- set(iterable) -> new set object
+-- build an unordered collection of unique elements.
+-- ref: https://docs.python.org/3/library/stdtypes.html#set-types-set-frozenset
+set = {}
+setmetatable(set, {
+                __call = function(_, t)
+                   local result = {}
+
+                   result._is_set = true
+                   result._data = {}
+
+		   if t ~= nil then
+		      if t.__iter__ then
+			 -- iterable
+			 for v in t do
+			    result._data[v] = true
+			 end
+		      else
+			 -- set literal
+			 for _, v in pairs(t) do
+			    result._data[v] = true
+			 end
+		      end
+		   else
+		      -- set()
+		   end
+
+		   local py_to_lua_idx = function(i, size)
+		      if i >= 0 then
+			 i = i + 1
+			 if i > size then
+			    i = size
+			 end
+		      else
+			 i = i + size + 1
+			 if i < 1 then
+			    i = 1
+			 end
+		      end
+		      return i
+		   end
+
+                   local methods = {}
+
+		   -- add an element to a set.
+		   -- this has no effect if the element is already present.
+                   methods.add = function(self, elem)
+		      self._data[elem] = true
+                   end
+
+		   -- remove all elements from this set.
+                   methods.clear = function(self)
+                      self._data = {}
+                   end
+
+		   -- return a shallow copy of a set.
+                   methods.copy = function(self)
+                      return set(self)
+                   end
+
+		   -- return the difference of two or more sets as a new set.
+		   -- (i.e. all elements that are in this set but not the others.)
+                   methods.difference = function(self, ...)
+		      local diff_set = self.copy()
+		      
+		      local others = list {...}
+		      for other_set in others do
+			 for elem in other_set do
+			    if operator_in(elem, diff_set) then
+			       diff_set.remove(elem)
+			    end
+			 end
+		      end
+
+		      return diff_set
+                   end
+
+		   -- remove all elements of another set from this set.
+		   methods.difference_update = function(self, ...)
+		      local others = list {...}
+		      for other_set in others do
+			 for elem in other_set do
+			    if operator_in(elem, self) then
+			       self.remove(elem)
+			    end
+			 end
+		      end
+		   end
+
+		   -- remove an element from a set if it is a member.
+		   -- if the element is not a member, do nothing.
+		   methods.discard = function(self, elem)
+		      if operator_in(elem, self) then
+			 self.remove(elem)
+		      end
+		   end
+
+		   -- return the intersection of two sets as a new set.
+		   -- (i.e. all elements that are in both sets.)
+                   methods.intersection = function(self, ...)
+		      local inter_set = self.copy()
+		      
+		      local others = list {...}
+		      for other_set in others do
+			 inter_set.difference_update(inter_set.difference(other_set))
+		      end
+
+		      return inter_set
+		   end
+
+		   -- update a set with the intersection of itself and another.
+                   methods.intersection_update = function(self, ...)
+		      local others = list {...}
+		      for other_set in others do
+			 self.difference_update(self.difference(other_set))
+		      end
+		   end
+
+
+		   -- return True if two sets have a null intersection.
+                   methods.isdisjoint = function(self, other)
+		      local inter_set = self.intersection(other)
+		      return len(inter_set) == 0
+		   end
+
+		   -- report whether another set contains this set.
+                   methods.issubset = function(self, other)
+		      local inter_set = self.intersection(other)
+		      return len(inter_set) == len(self)
+		   end
+
+		   -- report whether this set contains another set.
+                   methods.issuperset = function(self, other)
+		      local inter_set = self.intersection(other)
+		      return len(inter_set) == len(other)
+		   end
+
+		   -- remove and return an arbitrary set element.
+		   -- raises KeyError if the set is empty.
+		   methods.pop = function(self)
+		      assert(len(self) ~= 0, "set is empty")
+		      local elem = nil
+		      for e in self do
+			 elem = e
+		      end
+		      self.remove(elem)
+		      return elem
+		   end
+		   
+		   -- remove an element from a set; it must be a member.
+		   -- if the element is not a member, raise a KeyError.
+		   methods.remove = function(self, elem)
+		      assert(operator_in(elem, self), "elem not in set")
+		      self._data[elem] = nil
+		   end
+
+		   -- return the symmetric difference of two sets as a new set.
+		   -- (i.e. all elements that are in exactly one of the sets.)
+                   methods.symmetric_difference = function(self, other)
+		      local union_set = self.union(other)
+		      local inter_set = self.intersection(other)
+		      return union_set.difference(inter_set)
+                   end
+
+		   -- update a set with the symmetric difference of itself and another.
+                   methods.symmetric_difference_update = function(self, other)
+		      local inter_set = self.intersection(other)
+		      self.update(other)
+		      self.difference_update(inter_set)
+		   end
+
+		   -- return the union of sets as a new set.
+		   -- (i.e. all elements that are in either set.)
+                   methods.union = function(self, ...)
+		      local union_set = self.copy()
+
+		      local others = list {...}
+		      for other_set in others do
+			 for elem in other_set do
+			    union_set.add(elem)
+			 end
+		      end
+
+		      return union_set
+		   end
+
+		   -- Update a set with the union of itself and others.
+                   methods.update = function(self, ...)
+		      local others = list {...}
+		      for other_set in others do
+			 for elem in other_set do
+			    self.add(elem)
+			 end
+		      end
+		   end
+		   
+		   -- __iter__
+		   -- delegate to metatable __call
+		   methods.__iter__ = function(self)
+		      return result
+		   end
+		   
+                   local iterator_index = nil
+
+                   setmetatable(result, {
+                                   __index = function(self, index)
+                                      if type(index) == "number" then
+                                         if index < 0 then
+                                            index = #result._data + index
+                                         end
+                                         return rawget(result._data, index + 1)
+                                      end
+
+                                      return function(...)
+					 return methods[index](self, ...)
+				      end
+                                   end,
+				   -- only number index is permitted in python
+                                   __newindex = function(self, index, value)
+                                      rawset(result._data, index + 1, value)
+                                   end,
+                                   __call = function(self, _, idx)
+                                      if idx == nil then
+                                         iterator_index = nil
+                                      end
+
+				      iterator_index, _ = next(result._data, iterator_index)
+				      
+                                      return iterator_index
+                                   end,
+                   })
+
+                   return result
+                end,
+})
+
+
+
 
 
 -- sorted(iterable, key=None, reverse=False) --> new sorted list

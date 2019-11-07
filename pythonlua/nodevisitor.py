@@ -34,7 +34,6 @@ class NodeVisitor(ast.NodeVisitor):
         - Continue
 
         - NamedExpr
-        - Set
         - SetComp
         - GeneratorExp
         - Yield
@@ -606,6 +605,11 @@ class NodeVisitor(ast.NodeVisitor):
         # https://greentreesnakes.readthedocs.io/en/latest/nodes.html#Starred
         value = self.visit_all(node.value, inline=True)
         line = "unpack({})".format(value)
+        self.emit(line)
+
+    def visit_Set(self, node):
+        elements = [self.visit_all(item, inline=True) for item in node.elts]
+        line = "set {{{}}}".format(", ".join(elements))
         self.emit(line)
 
     def visit_Str(self, node):

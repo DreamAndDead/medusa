@@ -72,6 +72,14 @@ function test_pyfile()
 	echored "fail"
     fi
 
+    if [[ $py_exit -ne 0 ]]; then
+	cat -n $pyfile
+    fi
+
+    if [[ $lua_exit -ne 0 ]]; then
+	cat -n $pyluafile
+    fi
+
     echo
 }
 
