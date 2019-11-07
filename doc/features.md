@@ -198,10 +198,6 @@ python 同时内建了位运算，在 lua 5.1 版本，无论是内建还是标�
 
 对于大于，等于，小于，属于编程语言中通用的元素，python 和 lua 都支持（对于不同的数据类型可能有重载）。
 
-is 是 python 中特别的比较运算，用于判断对象是否在底层相同（python 中一切都是对象），在 lua 这一方面就相对比较难模拟了。
-
-in 在 python 中，含义是属于，这一点在 lua 中可能通过函数来模拟，暂时不支持。
-
 |feature|python|lua|支持|
 |:-:|:-:|:-:|:-:|
 |相同|`1 == 2`|`1 == 2`|:heavy_check_mark:|
@@ -210,8 +206,8 @@ in 在 python 中，含义是属于，这一点在 lua 中可能通过函数来�
 |小于等于|`1 <= 2`|`1 <= 2`|:heavy_check_mark:|
 |大于|`1 > 2`|`1 > 2`|:heavy_check_mark:|
 |大于等于|`1 >= 2`|`1 >= 2`|:heavy_check_mark:|
-|is|`1 is 2`|:x:|:x:|
-|is not|`1 is not 2`|:x:|:x:|
+|is|`1 is 2`|:x:|:heavy_check_mark:|
+|is not|`1 is not 2`|:x:|:heavy_check_mark:|
 |in|`1 in {1, 2}`|`operator_in(1, set {1, 2})`|:heavy_check_mark:|
 |not in|`1 not in {1, 2}`|`not operator_in(1, set {1, 2})`|:heavy_check_mark:|
 

@@ -16,4 +16,10 @@ class CompareOperationDesc:
         ast.NotIn: {
             "format": "not operator_in({left}, {right})",
         },
+        ast.Is: {
+            "format": "operator_is({left}, {right})",
+        },
+        ast.IsNot: {
+            "format": "not operator_is({left}, {right})",
+        },
     }

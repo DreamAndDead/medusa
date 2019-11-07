@@ -1245,7 +1245,21 @@ function operator_in(item, items)
    return false
 end
 
+function operator_is(a, b)
+   local type_a = type(a)
+   local type_b = type(b)
 
+   if type_a ~= type_b then
+      return false
+   end
+
+   if type_a == "table" then
+      -- memory address
+      return tostring(a) == tostring(b)
+   end
+
+   return a == b
+end
 
 
 -- object class
