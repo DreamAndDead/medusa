@@ -663,11 +663,26 @@ dict 生成式和 list 生成式相似，只不过使用 `k: v` 形式来生成�
 
 ### Set 生成式
 
-TODO
+set 生成式类似 list 生成式，只不过生成 set 对象。
+在 lua 中没有相应结构，需要用函数调用来模拟。
 
-### 生成表达式
+|feature|python|lua|supported|
+|:-:|:-:|:-:|:-:|
+|set 生成式|`{i for i in s}`|`(function() local result = set {} for i in s do result.add((i + 1)) end return result end)()`|:heavy_check_mark:|
+|配合if，作为map|`[i if i%2 == 1 else 0 for i in s]`|见示例代码|:heavy_check_mark:|
+|配合if，作为filter|`[i for i in s if i%2 == 1]`|见示例代码|:heavy_check_mark:|
+|多个 set|`[m+n for m in s for n in t]`|见示例代码|:heavy_check_mark:|
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[set-expr.py](./../codeblock/set-expr.py)|[set-expr.py.lua](./../codeblock/set-expr.py.lua)|
+
+
+
+### Generator 表达式
 
 语法和列表生成类似，不过使用的是 () ，得到一个惰性的 generator 对象，而不是即时的列表。
+在 lua 中暂时无法实现惰性，用完全展开的 list 来实现。
 
 TODO
 
