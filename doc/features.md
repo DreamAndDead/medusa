@@ -137,7 +137,7 @@ python 和 lua 本身都支持 and or 二元运算，都为短路求值，且 an
 
 从某种意义上，布尔运算可以无缝转换。
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |与|`1 and 2`|`1 and 2`|:heavy_check_mark:|
 |或|`1 or 2`|`1 or 2`|:heavy_check_mark:|
@@ -156,7 +156,7 @@ python 和 lua 本身都支持 and or 二元运算，都为短路求值，且 an
 
 *对于 lua 没有的算术运算符，用函数来模拟*
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |加法|`1 + 2`|`1 + 2`|:heavy_check_mark:|
 |减法|`1 - 2`|`1 - 2`|:heavy_check_mark:|
@@ -180,7 +180,7 @@ python 和 lua 本身都支持 and or 二元运算，都为短路求值，且 an
 
 python 同时内建了位运算，在 lua 5.1 版本，无论是内建还是标准库，都不包含位运算，所以需要函数来模拟。
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |左移|`1 << 2`|`bit.lshift(1, 2)`|:heavy_check_mark:|
 |右移|`1 >> 2`|`bit.rshift(1, 2)`|:heavy_check_mark:|
@@ -198,7 +198,7 @@ python 同时内建了位运算，在 lua 5.1 版本，无论是内建还是标�
 
 对于大于，等于，小于，属于编程语言中通用的元素，python 和 lua 都支持（对于不同的数据类型可能有重载）。
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |相同|`1 == 2`|`1 == 2`|:heavy_check_mark:|
 |不相同|`1 != 2`|`1 ~= 2`|:heavy_check_mark:|
@@ -229,7 +229,7 @@ lua 中不存在相应的概念，需要编写相应代码来模拟。
 
 创建得到的 list 是一个对象，其中包含自己的数据和方法。
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |list字面量|`l = [1, 2, 3]`|`[local] l = list {1, 2, 3}`|:heavy_check_mark:|
 |list函数|`l = list(iterable)`|`[local] l = list(iterable)`|:heavy_check_mark:|
@@ -262,7 +262,7 @@ dict 是 python 中内建的数据结构，使用非常广泛。
 
 创建得到的 dict 是一个对象，其中包含自己的数据和方法。
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |dict字面量|`d = {'name': 'john', 1: 26}`|`[local] d = dict {['name'] = 'john', [1] = 26}`|:heavy_check_mark:|
 |dict函数|`d = dict(m)`|`[local] d = dict(m)`|:heavy_check_mark:|
@@ -292,7 +292,7 @@ tuple 是 list 有只读形式，但是在 python 中 tuple 的存在广泛，�
 
 所以对于 tuple 的字面量有多种情况，而且和 lua 的表示相冲突，故暂时不支持字面量初始化 tuple 的形式，只支持函数的形式。
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |tuple字面量|`t = (1, 2, 3)`|`[local] t = tuple {1, 2, 3}`|:x:|
 |tuple函数|`t = tuple([1, 2, 3])`|`[local] t = tuple([1, 2, 3])`|:heavy_check_mark:|
@@ -322,7 +322,7 @@ set 同样是 python 中内建的数据结构。
 创建 set 有两种方式，字面量 `s = {1, 2, 1}` 和函数 `s = set([1, 2, 3])` 的方式。
 创建得到的 set 是一个对象，其中包含自己的数据和方法。
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |set字面量|`s = {1, 2, 1}`|`s = set {1, 2, 1}`|:heavy_check_mark:|
 |set函数|`s = set([1, 2, 1])`|`s = set(list {1, 2, 1})`|:heavy_check_mark:|
@@ -352,6 +352,31 @@ python示例代码|lua转换代码|
 
 ### FrozenSet
 
+frozenset 同样是 python 中内建的数据结构，和 set 的区别在于它是只读的。
+在 lua 中没有内建相应的结构，需要编写相应的 lua 代码来做模拟。
+
+创建 frozenset 没有字面量方式，只有函数方式 `s = frozenset([1, 2, 3])`。
+创建得到的 frozenset 是一个对象，其中包含自己的数据和方法。
+
+|feature|python|lua|supported|
+|:-:|:-:|:-:|:-:|
+|frozenset函数|`s = frozenset([1, 2, 1])`|`s = frozenset(list {1, 2, 1})`|:heavy_check_mark:|
+|`copy`|`s.copy()`|`s.copy()`|:heavy_check_mark:|
+|`difference`|`s = s.difference(s1, s2)`|`s = s.difference(s1, s2)`|:heavy_check_mark:|
+|`intersection`|`s = s.intersection(s1, s2)`|`s = s.intersection(s1, s2)`|:heavy_check_mark:|
+|`isdisjoint`|`s.isdisjoint(s1)`|`s.isdisjoint(s1)`|:heavy_check_mark:|
+|`issubset`|`s.issubset(s1)`|`s.issubset(s1)`|:heavy_check_mark:|
+|`issuperset`|`s.issuperset(s1)`|`s.issuperset(s1)`|:heavy_check_mark:|
+|`symmetric_difference`|`s = s.symmetric_difference(s1)`|`s = s.symmetric_difference(s1)`|:heavy_check_mark:|
+|`union`|`s = s.union(s1, s2)`|`s = s.union(s1, s2)`|:heavy_check_mark:|
+
+
+python示例代码|lua转换代码|
+|:-:|:-:|
+|[frozenset.py](./../codeblock/frozenset.py)|[frozenset.py.lua](./../codeblock/frozenset.py.lua)|
+
+
+
 ### Subscript
 
 python 中有 3 种下标，Index, Slice 和 ExtSlice。
@@ -377,7 +402,7 @@ TODO
 
 python 和 lua 的分支结构是非常相似的。
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |if...|`if True: ...`|`if true then end`|:heavy_check_mark:|
 |if...else...|`if True: ... else: ...`|`if true then else end`|:heavy_check_mark:|
@@ -395,7 +420,7 @@ python 和 lua 的分支结构是非常相似的。
 for in 是 python 中常用的迭代方法，其核心是迭代器。
 lua 中也有 for in 的语法，和 python 的实现非常类似。
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |for in list|`for i in [1, 2]`|`for i in list {1, 2}`|:heavy_check_mark:|
 |for in dict|`for k, v in d.items()`|`for k, v in d.items()`|:heavy_check_mark:|
@@ -411,7 +436,7 @@ lua 中也有 for in 的语法，和 python 的实现非常类似。
 
 同样的，while 语句也是一个通用概念，在 python 和 lua 中非常相似。
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |while true|`while True: ...`|`while true do ... end`|:heavy_check_mark:|
 |while condition|`while condition: ...`|`while condition do ... end`|:heavy_check_mark:|
@@ -426,7 +451,7 @@ lua 中也有 for in 的语法，和 python 的实现非常类似。
 
 break 的含义在 python 和 lua 中相同，用于跳出最内层的循环。
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |break|`break`|`break`|:heavy_check_mark:|
 
@@ -441,7 +466,7 @@ break 的含义在 python 和 lua 中相同，用于跳出最内层的循环。
 也许难以相信，lua5.1 不支持 Continue 语句，而且这一特性很难模拟 :scream:
 
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |continue|`continue`|` `|:x:|
 
@@ -451,7 +476,7 @@ break 的含义在 python 和 lua 中相同，用于跳出最内层的循环。
 在 python 中空的语句块需要 pass 来占位，没有任何含义。
 但是 lua 中不需要，对应空语句。
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |pass|`pass`|` `|:heavy_check_mark:|
 
@@ -474,7 +499,7 @@ python 的函数定义的关键有 位置参数，默认值参数，vararg，键
 在 python 的函数调用中，除了位置参数，还有列表参数和字典参数。
 
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |函数定义|`def func(): ...`|`function func() do ... end`|:heavy_check_mark:|
 |函数调用|`func()`|`func()`|:heavy_check_mark:|
@@ -500,7 +525,7 @@ python 的函数定义的关键有 位置参数，默认值参数，vararg，键
 return 语句在 python 和 lua 中是相同的，用于从函数中返回值。
 
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |返回空值|`return`|`return`|:heavy_check_mark:|
 |返回单个值|`return m`|`return m`|:heavy_check_mark:|
@@ -520,7 +545,7 @@ return 语句在 python 和 lua 中是相同的，用于从函数中返回值。
 这一点让人惊奇，lambda 虽然是简单的函数，但是也支持复杂的参数定义，像 Function 定义一样。
 
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |匿名函数，位置参数|`lambda x: x + 1`|`function(x) return (x + 1) end`|:heavy_check_mark:|
 |匿名函数，默认值参数|`lambda x=1: x + 1`|`function(x) x = x or 1; return (x + 1) end`|:heavy_check_mark:|
@@ -538,7 +563,7 @@ return 语句在 python 和 lua 中是相同的，用于从函数中返回值。
 
 虽然 lua 中有协程，但是和 python 中的 yield 不是一个概念。
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |yield|`yield`|` `|:x:|
 
@@ -551,7 +576,7 @@ return 语句在 python 和 lua 中是相同的，用于从函数中返回值。
 在 python 中一切都是对象，类是 python 中的关键概念，所有其它的功能几乎都可以用类功能重写。
 lua 中不存在类的概念，对于类只能用 table 和 metatable 来模拟。
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |类定义|`class Point:`|`class(function(Point) end, {}, "Point")`|:heavy_check_mark:|
 |成员方法|`def get_x(self):`|`function Point.get_x(self) end`|:heavy_check_mark:|
@@ -587,7 +612,7 @@ python 从 perl 借鉴来的语法，将 if 判断作为表达式，而不是语
 而在 lua 中，没有这种类型的语法，可以通过二元逻辑的短路特性来模拟。
 
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |if 表达式|`1 if True else 0`|`true and 1 or 0`|:heavy_check_mark:|
 
@@ -602,7 +627,7 @@ python 从 perl 借鉴来的语法，将 if 判断作为表达式，而不是语
 list 生成式也是 python 中的创新，用表达式来生成列表，本质是循环（+判断）的表达式写法。
 在 lua 中没有相应结构，需要用函数调用来模拟。
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |list 生成式|`[i for i in a]`|`(function() local result = list {} for i in a do result.append((i + 1)) end return result end)()`|:heavy_check_mark:|
 |配合if，作为map|`[i if i%2 == 1 else 0 for i in a]`|见示例代码|:heavy_check_mark:|
@@ -621,7 +646,7 @@ list 生成式也是 python 中的创新，用表达式来生成列表，本质�
 dict 生成式和 list 生成式相似，只不过使用 `k: v` 形式来生成。
 在 lua 中没有相应结构，需要用函数调用来模拟。
 
-|feature|python|lua|支持|
+|feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |dict 生成式|`{ k: v for k, v in d.items() }`|`(function() local result = dict {} for k, v in d.items() do result[k] = v end return result end)()`|:heavy_check_mark:|
 |配合if，作为map|`{ k: v if k % 2 == 1 else 10 for k, v in d.items() }`|见示例代码|:heavy_check_mark:|

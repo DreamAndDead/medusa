@@ -1541,6 +1541,165 @@ setmetatable(set, {
 
 
 
+-- frozenset() -> empty frozenset object
+-- frozenset(iterable) -> frozenset object
+-- build an immutable unordered collection of unique elements.
+frozenset = {}
+setmetatable(frozenset, {
+                __call = function(_, t)
+                   local result = {}
+
+                   result._is_frozenset = true
+                   result._data = {}
+
+		   if t ~= nil then
+		      if t.__iter__ then
+			 -- iterable
+			 for v in t do
+			    result._data[v] = true
+			 end
+		      else
+			 -- set literal
+			 for _, v in pairs(t) do
+			    result._data[v] = true
+			 end
+		      end
+		   else
+		      -- set()
+		   end
+
+		   local py_to_lua_idx = function(i, size)
+		      if i >= 0 then
+			 i = i + 1
+			 if i > size then
+			    i = size
+			 end
+		      else
+			 i = i + size + 1
+			 if i < 1 then
+			    i = 1
+			 end
+		      end
+		      return i
+		   end
+
+                   local methods = {}
+
+		   -- return a shallow copy of a frozenset.
+                   methods.copy = function(self)
+                      return self
+                   end
+
+		   -- return the difference of two or more sets as a new set.
+		   -- (i.e. all elements that are in this set but not the others.)
+                   methods.difference = function(self, ...)
+		      local diff_set = set(self)
+		      
+		      local others = list {...}
+		      for other_set in others do
+			 for elem in other_set do
+			    if operator_in(elem, diff_set) then
+			       diff_set.remove(elem)
+			    end
+			 end
+		      end
+
+		      return frozenset(diff_set)
+                   end
+
+		   -- return the intersection of two sets as a new set.
+		   -- (i.e. all elements that are in both sets.)
+                   methods.intersection = function(self, ...)
+		      local inter_set = set(self)
+		      
+		      local others = list {...}
+		      for other_set in others do
+			 inter_set.difference_update(inter_set.difference(other_set))
+		      end
+
+		      return frozenset(inter_set)
+		   end
+
+		   -- return True if two sets have a null intersection.
+                   methods.isdisjoint = function(self, other)
+		      local inter_set = self.intersection(other)
+		      return len(inter_set) == 0
+		   end
+
+		   -- report whether another set contains this set.
+                   methods.issubset = function(self, other)
+		      local inter_set = self.intersection(other)
+		      return len(inter_set) == len(self)
+		   end
+
+		   -- report whether this set contains another set.
+                   methods.issuperset = function(self, other)
+		      local inter_set = self.intersection(other)
+		      return len(inter_set) == len(other)
+		   end
+
+		   -- return the symmetric difference of two sets as a new set.
+		   -- (i.e. all elements that are in exactly one of the sets.)
+                   methods.symmetric_difference = function(self, other)
+		      local union_set = self.union(other)
+		      local inter_set = self.intersection(other)
+		      return union_set.difference(inter_set)
+                   end
+
+		   -- return the union of sets as a new set.
+		   -- (i.e. all elements that are in either set.)
+                   methods.union = function(self, ...)
+		      local union_set = set(self)
+
+		      local others = list {...}
+		      for other_set in others do
+			 for elem in other_set do
+			    union_set.add(elem)
+			 end
+		      end
+
+		      return frozenset(union_set)
+		   end
+		   
+		   -- __iter__
+		   -- delegate to metatable __call
+		   methods.__iter__ = function(self)
+		      return result
+		   end
+		   
+                   local iterator_index = nil
+
+                   setmetatable(result, {
+                                   __index = function(self, index)
+                                      if type(index) == "number" then
+                                         if index < 0 then
+                                            index = #result._data + index
+                                         end
+                                         return rawget(result._data, index + 1)
+                                      end
+
+                                      return function(...)
+					 return methods[index](self, ...)
+				      end
+                                   end,
+				   -- only number index is permitted in python
+                                   __newindex = function(self, index, value)
+                                      rawset(result._data, index + 1, value)
+                                   end,
+                                   __call = function(self, _, idx)
+                                      if idx == nil then
+                                         iterator_index = nil
+                                      end
+
+				      iterator_index, _ = next(result._data, iterator_index)
+				      
+                                      return iterator_index
+                                   end,
+                   })
+
+                   return result
+                end,
+})
 
 
 -- sorted(iterable, key=None, reverse=False) --> new sorted list
