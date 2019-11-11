@@ -600,9 +600,18 @@ lua 中不存在类的概念，对于类只能用 table 和 metatable 来模拟�
 python 中一切都是对象，获取对象的属性是常用操作。
 在 lua 中，没有对象的概念，对应的 `.` 是索引的概念。
 
-所以属性的实现核心在于 lua 中如何实现 python 中的对象。
+所以属性的核心在于 lua 中如何实现 python 中的对象。
 
-TODO
+
+|feature|python|lua|supported|
+|:-:|:-:|:-:|:-:|
+|属性|`p.x`|`p.x`|:heavy_check_mark:|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[attribute.py](./../codeblock/attribute.py)|[attribute.py.lua](./../codeblock/attribute.py.lua)|
+
 
 
 ---
