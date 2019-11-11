@@ -39,7 +39,6 @@ local function to_bits(n)
    check_int(n)
    if(n < 0) then
       -- negative
-      print(n)
       return to_bits(bit.bnot(math.abs(n)) + 1)
    end
    -- to bits table
@@ -636,8 +635,8 @@ setmetatable(list, {
 			 end
 		      else
 			 -- list literal
-			 for _, v in ipairs(t) do
-			    table.insert(result._data, v)
+			 for k, v in pairs(t) do
+			    result._data[k] = v
 			 end
 		      end
 		   else
@@ -658,7 +657,20 @@ setmetatable(list, {
 		      end
 		      return i
 		   end
-		   
+
+		   local py_idx = function(i, size)
+		      if i >= 0 then
+			 if i > size then
+			    i = size
+			 end
+		      else
+			 i = i + size
+			 if i < 0 then
+			    i = 0
+			 end
+		      end
+		      return i
+		   end
                    
                    local methods = {}
 
@@ -812,6 +824,21 @@ setmetatable(list, {
                                          end
                                          return rawget(result._data, index + 1)
                                       end
+
+				      if type(index) == "table" and index._is_slice then
+					 local s = list()
+					 
+					 local start = index.start or 0
+					 start = py_idx(start, len(self))
+					 local stop = index.stop or len(self)
+					 stop = py_idx(stop, len(self))
+					 local step = index.step or 1
+
+					 for i in range(start, stop, step) do
+					    s.append(self[i])
+					 end
+					 return s
+				      end
 
                                       return function(...)
 					 return methods[index](self, ...)
@@ -971,19 +998,32 @@ end
 -- range(stop) -> range object
 -- range(start, stop[, step]) -> range object
 -- return a sequence of numbers from start to stop by step.
-function range(start, stop, step)
-   assert(start ~= nil, 'range() expected 1 arguments, got 0')
+function range(...)
+   local p, l = {...}, select('#', ...)
+   assert(l ~= 0, 'range() expected 1 arguments, got 0')
+
+   local start = nil
+   local stop = nil
+   local step = nil
    
-   if stop == nil then
-      stop = start
-      start = 0        
+   if l == 1 then
+      stop = p[1]
+   elseif l == 2 then
+      start = p[1]
+      stop = p[2]
+   else
+      start = p[1]
+      stop = p[2]
+      step = p[3]
    end
 
+   start = start or 0
    step = step or 1
+
    assert(step ~= 0, 'range() arg 3 must not be zero')
 
    local i = start
-   
+
    return function()
       ret = i
       if (step > 0 and i >= stop) or (step < 0 and i <= stop) then
@@ -1701,6 +1741,33 @@ setmetatable(frozenset, {
                 end,
 })
 
+
+-- slice(stop)
+-- slice(start, stop[, step])
+-- create a slice object.  This is used for extended slicing (e.g. a[0:10:2]).
+function slice(...)
+   local p, l = {...}, select('#', ...)
+   assert(l ~= 0, 'slice expected at least 1 arguments, got 0')
+
+   local s = {}
+   s._is_slice = true
+
+   if l == 1 then
+      s.start = nil
+      s.stop = p[1]
+      s.step = nil
+   elseif l == 2 then
+      s.start = p[1]
+      s.stop = p[2]
+      s.step = nil
+   else
+      s.start = p[1]
+      s.stop = p[2]
+      s.step = p[3]
+   end
+   
+   return s
+end
 
 -- sorted(iterable, key=None, reverse=False) --> new sorted list
 function sorted(iterable, key, reverse)

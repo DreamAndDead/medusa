@@ -1,3 +1,3 @@
 dofile('./polyfill/pypolyfill.lua')
-local l1 = list {"a", "c", 1, 2, 3}
-local l2 = list(l1)
+local l = list {"a", "c", 1, 2, 3}
+local sl = l[slice(0, nil, nil)]

@@ -30,8 +30,10 @@ class NodeVisitor(ast.NodeVisitor):
         - Raise
         - Try
         - ImportFrom
+        - Global
         - Nonlocal
         - Continue
+        - ExtSlice
 
         - NamedExpr
         - GeneratorExp
@@ -641,6 +643,15 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit("return result")
         self.emit("end)()")
 
+    def visit_Slice(self, node):
+        line = "slice({start}, {stop}, {step})"
+        values = {
+            "start": self.visit_all(node.lower, inline=True) if node.lower is not None else "nil",
+            "stop": self.visit_all(node.upper, inline=True) if node.upper is not None else "nil",
+            "step": self.visit_all(node.step, inline=True) if node.step is not None else "nil",
+        }
+        self.emit(line.format(**values))
+
     def visit_Str(self, node):
         """Visit str"""
         value = node.s
@@ -650,8 +661,10 @@ class NodeVisitor(ast.NodeVisitor):
             self.emit('"{}"'.format(node.s))
 
     def visit_Subscript(self, node):
-        """Visit subscript"""
-        # TODO: other situations
+        """
+        - Index
+        - Slice
+        """
         line = "{name}[{index}]"
         values = {
             "name": self.visit_all(node.value, inline=True),

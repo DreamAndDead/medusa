@@ -379,7 +379,28 @@ assert round(10.51, 1) == 10.5
 
 ## set
 ## setattr
+
+
 ## slice
+
+s = slice(4)
+
+assert s.start == None
+assert s.stop == 4
+assert s.step == None
+
+s = slice(1, 3)
+
+assert s.start == 1
+assert s.stop == 3
+assert s.step == None
+
+s = slice(1, 5, 2)
+
+assert s.start == 1
+assert s.stop == 5
+assert s.step == 2
+
 
 
 ## sorted

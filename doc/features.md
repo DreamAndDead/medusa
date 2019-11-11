@@ -206,8 +206,8 @@ python 同时内建了位运算，在 lua 5.1 版本，无论是内建还是标�
 |小于等于|`1 <= 2`|`1 <= 2`|:heavy_check_mark:|
 |大于|`1 > 2`|`1 > 2`|:heavy_check_mark:|
 |大于等于|`1 >= 2`|`1 >= 2`|:heavy_check_mark:|
-|is|`1 is 2`|:x:|:heavy_check_mark:|
-|is not|`1 is not 2`|:x:|:heavy_check_mark:|
+|is|`1 is 2`|`operator_is(1, 2)`|:heavy_check_mark:|
+|is not|`1 is not 2`|`not operator_is(1, 2)`|:heavy_check_mark:|
 |in|`1 in {1, 2}`|`operator_in(1, set {1, 2})`|:heavy_check_mark:|
 |not in|`1 not in {1, 2}`|`not operator_in(1, set {1, 2})`|:heavy_check_mark:|
 
@@ -245,8 +245,6 @@ lua 中不存在相应的概念，需要编写相应代码来模拟。
 |`reverse`|`l.reverse()`|`l.reverse()`|:heavy_check_mark:|
 |`sort`|`l.sort()`|`l.sort()`|:heavy_check_mark:，因为当前函数不支持键值参数，所以 key 和 reverse 参数无法传递，有待调整|
 |索引`[n]`|`l[0]`|`l[0]`|:heavy_check_mark:|
-|切片`[m:n]`|`l[0:3]`|` `|:x:|
-|重载`==`|`[] == []`|` `|:x:|
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
@@ -278,7 +276,6 @@ dict 是 python 中内建的数据结构，使用非常广泛。
 |`update`|`d.update({'age': 22})`|`d.update(dict {['age'] = 22})`|:heavy_check_mark:|
 |`values`|`d.values()`|`d.values()`|:heavy_check_mark:|
 |索引`[k]`|`d[k]`|`d[k]`|:heavy_check_mark:|
-|重载`==`|`{} == {}`|` `|:x:|
 
 
 |python示例代码|lua转换代码|
@@ -379,19 +376,24 @@ python示例代码|lua转换代码|
 
 ### Subscript
 
-python 中有 3 种下标，Index, Slice 和 ExtSlice。
-在 lua 中，默认只有 Index 对应的概念，`d[1]`。
+python 中有 3 种下标，Index, Slice 和 ExtSlice，分别对应于
+- `l[1]`
+- `l[1:4:2]`
+- `l[1:2, 3]`
 
-TODO
+在 lua 中，默认只有 Index 对应的概念，`l[1]`（对应于 lua 中的 `__index`），其它需要用函数来模拟。
 
-<!--
+
+|feature|python|lua|supported|
+|:-:|:-:|:-:|:-:|
+|Index|`l[1]`|`l[1]`|:heavy_check_mark:|
+|Slice|`l[1:3]`|`l[1:3]`|:heavy_check_mark:|
+|ExtSlice|`l[1:2, 3]`|` `|:x:|
+
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
 |[subscript.py](./../codeblock/subscript.py)|[subscript.py.lua](./../codeblock/subscript.py.lua)|
-
--->
-
 
 ------
 
@@ -682,9 +684,11 @@ set 生成式类似 list 生成式，只不过生成 set 对象。
 ### Generator 表达式
 
 语法和列表生成类似，不过使用的是 () ，得到一个惰性的 generator 对象，而不是即时的列表。
-在 lua 中暂时无法实现惰性，用完全展开的 list 来实现。
+在 lua 中暂时无法实现惰性，推荐暂时使用 list 生成式。
 
-TODO
+|feature|python|lua|supported|
+|:-:|:-:|:-:|:-:|
+|惰性生成式|`(i for i in g)`|` `|:x:|
 
 
 ----
@@ -757,7 +761,7 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 |`round`|`round(10.49)`|`round(10.49)`|:heavy_check_mark:|
 |`set`|`set([1, 2, 1])`|`set([1, 2, 1])`|:heavy_check_mark:|
 |`setattr`|`todo`|` `|:x:|
-|`slice`|`todo`|` `|:x:|
+|`slice`|`slice(1, 4, 2)`|`slice(1, 4, 2)`|:heavy_check_mark:|
 |`sorted`|`sort(l)`|`sort(l)`|:heavy_check_mark:|
 |`staticmethod`|`todo`|` `|:x:|
 |`str`|`todo`|` `|:x:|
