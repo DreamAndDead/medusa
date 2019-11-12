@@ -153,8 +153,7 @@ python 和 lua 本身都支持 and or 二元运算，都为短路求值，且 an
 
 几乎所有语言都有内建基本的算术运算，python lua 也不例外。
 因为算术运算在数学概念上是统一的，所以含义相同。
-
-*对于 lua 没有的算术运算符，用函数来模拟*
+对于 lua 没有的算术运算符，用函数来模拟。
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
@@ -612,10 +611,7 @@ python 中一切都是对象，获取对象的属性是常用操作。
 |:-:|:-:|
 |[attribute.py](./../codeblock/attribute.py)|[attribute.py.lua](./../codeblock/attribute.py.lua)|
 
-
-
 ---
-
 
 ### If 表达式
 
@@ -835,9 +831,25 @@ TODO
 
 ### Global Nonlocal
 
-涉及到作用域的问题，之后再详细讨论
+Global 和 Nonlocal 关键字，核心涉及到 python 的作用域问题。
+python 的作用域和 lua 是有些不同的。
 
-TODO
+在 python 中，最顶层是全局作用域，在内部嵌套的作用域可以访问全局作用域的变量，但是如果对其进行修改，
+需要用 global 来声明。
+
+其次，由于作用域可能有多重嵌套，使用 nonlocal 可以在内部作用域修改外部作用域的变量，顺着嵌套的层次一路向上查找，而不是像 global 一样直接找到全局作用域。
+
+由于这两重查找涉及作用域对象的大量工作，目前尚不支持。
+
+|feature|python|lua|supported|
+|:-:|:-:|:-:|:-:|
+|`global`|`global g`|` `|:x:|
+|`nonlocal`|`nonlocal n`|` `|:x:|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[scope.py](./../codeblock/scope.py)|[scope.py.lua](./../codeblock/scope.py.lua)|
 
 
 ----
