@@ -1,32 +1,4 @@
---[[---------------
-   LuaBit v0.4
-   -------------------
-   a bitwise operation lib for lua.
-
-   http://luaforge.net/projects/bit/
-
-   How to use:
-   -------------------
-   bit.bnot(n) -- bitwise not (~n)
-   bit.band(m, n) -- bitwise and (m & n)
-   bit.bor(m, n) -- bitwise or (m | n)
-   bit.bxor(m, n) -- bitwise xor (m ^ n)
-   bit.brshift(n, bits) -- right shift (n >> bits)
-   bit.blshift(n, bits) -- left shift (n << bits)
-   bit.blogic_rshift(n, bits) -- logic right shift(zero fill >>>)
-   
-   Please note that bit.brshift and bit.blshift only support number within
-   32 bits.
-
-   2 utility functions are provided too:
-   bit.tobits(n) -- convert n into a bit table(which is a 1/0 sequence)
-   -- high bits first
-   bit.tonumb(bit_tbl) -- convert a bit table into a number 
-   -------------------
---]]---------------
-
-------------------------
--- bit lib implementions
+local max_bit_length = 32
 
 local function check_int(n)
    -- checking not float
@@ -35,91 +7,104 @@ local function check_int(n)
    end
 end
 
-local function to_bits(n)
-   check_int(n)
-   if(n < 0) then
-      -- negative
-      return to_bits(bit.bnot(math.abs(n)) + 1)
+local function print_tbl(tbl)
+   local b = ''
+   for i = max_bit_length, 1, -1 do
+      b = b .. tostring(tbl[i])
    end
-   -- to bits table
+   print(b)
+end
+
+local function number_to_tbl(n)
+   check_int(n)
+   
    local tbl = {}
-   local cnt = 1
-   while (n > 0) do
-      local last = math.mod(n,2)
-      if(last == 1) then
-	 tbl[cnt] = 1
-      else
-	 tbl[cnt] = 0
+
+   if n >= 0 then
+      for i = 1, max_bit_length do
+	 local last = math.mod(n, 2)
+	 tbl[i] = last
+	 n = math.floor(n/2)
       end
-      n = (n-last)/2
-      cnt = cnt + 1
+   else -- n < 0
+      local p = -n
+      for i = 1, max_bit_length do
+	 local last = math.mod(p, 2)
+	 tbl[i] = last
+	 p = math.floor(p/2)
+      end
+
+      -- invert
+      local invert_tbl = {}
+      for i = 1, max_bit_length do
+	 local b = tbl[i]
+	 if b == 1 then
+	    invert_tbl[i] = 0
+	 else
+	    invert_tbl[i] = 1
+	 end
+      end
+      -- plus 1
+      local plus_one_tbl = {}
+      local carry = 1
+      for i = 1, max_bit_length do
+	 local b = invert_tbl[i]
+	 local s = b + carry
+	 if s == 2 then
+	    carry = 1
+	    plus_one_tbl[i] = 0
+	 else
+	    carry = 0
+	    plus_one_tbl[i] = s
+	 end
+      end
+
+      tbl = plus_one_tbl
    end
 
    return tbl
 end
 
 local function tbl_to_number(tbl)
-   local n = table.getn(tbl)
-
-   local rslt = 0
    local power = 1
-   for i = 1, n do
-      if i == 32 then
-	 rslt = rslt - tbl[i]*power
+   local n = 0
+   for i = 1, max_bit_length do
+      local b = tbl[i]
+      if i == max_bit_length and b == 1 then
+	 n = n - power
       else
-	 rslt = rslt + tbl[i]*power
+	 n = n + power * b
       end
-      
-      power = power*2
+
+      power = power * 2
    end
-   
-   return rslt
+
+   return n
 end
 
-local function expand(tbl_m, tbl_n)
-   local big = {}
-   local small = {}
-   if(table.getn(tbl_m) > table.getn(tbl_n)) then
-      big = tbl_m
-      small = tbl_n
-   else
-      big = tbl_n
-      small = tbl_m
-   end
-   -- expand small
-   for i = table.getn(small) + 1, table.getn(big) do
-      small[i] = 0
-   end
-
-end
-
-local function bit_or(m, n)
-   local tbl_m = to_bits(m)
-   local tbl_n = to_bits(n)
-   expand(tbl_m, tbl_n)
+local function bit_and(left, right)
+   local left_tbl = number_to_tbl(left)
+   local right_tbl = number_to_tbl(right)
 
    local tbl = {}
-   local rslt = math.max(table.getn(tbl_m), table.getn(tbl_n))
-   for i = 1, rslt do
-      if(tbl_m[i]== 0 and tbl_n[i] == 0) then
+   for i = 1, max_bit_length do
+      if left_tbl[i] == 0 or right_tbl[i] == 0 then
 	 tbl[i] = 0
       else
 	 tbl[i] = 1
       end
    end
-   
+
    return tbl_to_number(tbl)
 end
 
-local function bit_and(m, n)
-   local tbl_m = to_bits(m)
-   local tbl_n = to_bits(n)
-   expand(tbl_m, tbl_n) 
+local function bit_or(left, right)
+   local left_tbl = number_to_tbl(left)
+   local right_tbl = number_to_tbl(right)
 
    local tbl = {}
-   local rslt = math.max(table.getn(tbl_m), table.getn(tbl_n))
-   for i = 1, rslt do
-      if(tbl_m[i]== 0 or tbl_n[i] == 0) then
+   for i = 1, max_bit_length do
+      if left_tbl[i] == 0 and right_tbl[i] == 0 then
 	 tbl[i] = 0
       else
 	 tbl[i] = 1
@@ -130,117 +115,81 @@ local function bit_and(m, n)
 end
 
 local function bit_not(n)
-   
-   local tbl = to_bits(n)
-   local size = math.max(table.getn(tbl), 32)
-   for i = 1, size do
-      if(tbl[i] == 1) then 
-	 tbl[i] = 0
-      else
-	 tbl[i] = 1
-      end
-   end
-   return tbl_to_number(tbl)
-end
-
-local function bit_xor(m, n)
-   local tbl_m = to_bits(m)
-   local tbl_n = to_bits(n)
-   expand(tbl_m, tbl_n) 
+   local n_tbl = number_to_tbl(n)
 
    local tbl = {}
-   local rslt = math.max(table.getn(tbl_m), table.getn(tbl_n))
-   for i = 1, rslt do
-      if(tbl_m[i] ~= tbl_n[i]) then
+   for i = 1, max_bit_length do
+      if n_tbl[i] == 0 then
 	 tbl[i] = 1
       else
 	 tbl[i] = 0
       end
    end
-   
-   --table.foreach(tbl, print)
 
    return tbl_to_number(tbl)
 end
 
-local function bit_rshift(n, bits)
+local function bit_xor(left, right)
+   local left_tbl = number_to_tbl(left)
+   local right_tbl = number_to_tbl(right)
+
+   local tbl = {}
+   for i = 1, max_bit_length do
+      if left_tbl[i] == right_tbl[i] then
+	 tbl[i] = 0
+      else
+	 tbl[i] = 1
+      end
+   end
+
+   return tbl_to_number(tbl)
+end
+
+local function bit_rshift(n, shift)
    check_int(n)
+   assert(shift >= 0, "negative shift count")
+
+   local tbl = number_to_tbl(n)
+   local rshift_tbl = {}
+
+   for i = 1, max_bit_length do
+      local j = i + shift
+      if j > max_bit_length then
+	 j = max_bit_length
+      end
+      rshift_tbl[i] = tbl[j]
+   end
+
+   return tbl_to_number(rshift_tbl)
+end
+
+local function bit_lshift(n, shift)
+   check_int(n)
+   assert(shift >= 0, "negative shift count")
    
-   local high_bit = 0
-   if(n < 0) then
-      -- negative
-      n = bit_not(math.abs(n)) + 1
-      high_bit = 2147483648 -- 0x80000000
+   local tbl = number_to_tbl(n)
+   local lshift_tbl = {}
+
+   for i = 1, max_bit_length do
+      local j = i - shift
+      if j < 1 then
+	 lshift_tbl[i] = 0
+      else
+	 lshift_tbl[i] = tbl[j]
+      end
    end
 
-   for i=1, bits do
-      n = n/2
-      n = bit_or(math.floor(n), high_bit)
-   end
-   return math.floor(n)
+   return tbl_to_number(lshift_tbl)
 end
-
--- logic rightshift assures zero filling shift
-local function bit_logic_rshift(n, bits)
-   check_int(n)
-   if(n < 0) then
-      -- negative
-      n = bit_not(math.abs(n)) + 1
-   end
-   for i=1, bits do
-      n = n/2
-   end
-   return math.floor(n)
-end
-
-local function bit_lshift(n, bits)
-   check_int(n)
-   
-   if(n < 0) then
-      -- negative
-      n = bit_not(math.abs(n)) + 1
-   end
-
-   for i=1, bits do
-      n = n*2
-   end
-   return bit_and(n, 4294967295) -- 0xFFFFFFFF
-end
-
-local function bit_xor2(m, n)
-   local rhs = bit_or(bit_not(m), bit_not(n))
-   local lhs = bit_or(m, n)
-   local rslt = bit_and(lhs, rhs)
-   return rslt
-end
-
-------------------------
--- bit lib interface
 
 bit = {
-   -- bit operations
-   bnot = bit_not,
    band = bit_and,
    bor  = bit_or,
+   bnot = bit_not,
    bxor = bit_xor,
    brshift = bit_rshift,
    blshift = bit_lshift,
-   bxor2 = bit_xor2,
-   blogic_rshift = bit_logic_rshift,
-
-   -- utility func
-   tobits = to_bits,
-   tonumb = tbl_to_number,
 }
-
-
--- bit lib interface end
-------------------------
-
-
-
-
-
 
 --[[
    lua pythonization
@@ -266,68 +215,6 @@ end
 --[[
    builtin functions
    ref: https://docs.python.org/3.4/library/functions.html
-
-   todo:
-   - ascii
-   - bin
-   - bytearray
-   - bytes
-   - chr
-   - classmethod
-   - compile
-   - complex
-   - delattr
-   - dict
-   - dir
-   - eval
-   - exec
-   - filter
-   - float
-   - format
-   - frozenset
-   - getattr
-   - globals
-   - hasattr
-   - hash
-   - help
-   - hex
-   - id
-   - input
-   - int
-   - isinstance
-   - issubclass
-   - iter
-   - list
-   - locals
-   - map
-   - max
-   - memoryview
-   - min
-   - next
-   - object
-   - oct
-   - open
-   - ord
-   - pow
-   - print
-   - property
-   - range
-   - repr
-   - reversed
-   - round
-   - set
-   - setattr
-   - slice
-   - sorted
-   - staticmethod
-   - str
-   - sum
-   - super
-   - tuple
-   - type
-   - vars
-   - zip
-   - __import__
 --]]
 
 -- abs(number) -> number

@@ -176,18 +176,18 @@ python 和 lua 本身都支持 and or 二元运算，都为短路求值，且 an
 
 ### Bit 位运算
 
-**TODO: 这部分函数的运行结果还在调整，以期和 python 的表现相同（python 的底层不仅是 32 位的，从 << 可以看出来）**
+在 python 底层，整数是无限精度的，随着整数的变大，底层拓展使用更多的字节来存储。而 lua 底层不包含如此的机制，默认 lua 使用 IEEE 64bit 浮点来存储，极值为 2^1024（可能随着编译选项而不同），整数精度为 2^52。
 
-python 同时内建了位运算，在 lua 5.1 版本，无论是内建还是标准库，都不包含位运算，所以需要函数来模拟。
+**对于位运算，这里只模拟 32 位的情况。**
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
-|左移|`1 << 2`|`bit.lshift(1, 2)`|:heavy_check_mark:|
-|右移|`1 >> 2`|`bit.rshift(1, 2)`|:heavy_check_mark:|
-|与|`1 & 2`|`bit.and(1, 2)`|:heavy_check_mark:|
-|或|`1 \| 2`|`bit.or(1, 2)`|:heavy_check_mark:|
-|取反|`~1`|`bit.invert(1)`|:heavy_check_mark:|
-|异或|`1 ^ 2`|`bit.xor(1, 2)`|:heavy_check_mark:|
+|左移|`1 << 2`|`bit.blshift(1, 2)`|:heavy_check_mark:|
+|右移|`1 >> 2`|`bit.brshift(1, 2)`|:heavy_check_mark:|
+|与|`1 & 2`|`bit.band(1, 2)`|:heavy_check_mark:|
+|或|`1 \| 2`|`bit.bor(1, 2)`|:heavy_check_mark:|
+|取反|`~1`|`bit.bnot(1)`|:heavy_check_mark:|
+|异或|`1 ^ 2`|`bit.bxor(1, 2)`|:heavy_check_mark:|
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
