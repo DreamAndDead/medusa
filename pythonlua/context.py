@@ -10,6 +10,7 @@ class Context:
             "globals": SymbolsStack(),  # Not working yet
             "loop_label_name": "",
             "docstring": False,
+            "generator": False,             # if a generator function
         }
 
         self.ctx_stack = [values]
@@ -21,6 +22,7 @@ class Context:
     def push(self, values):
         """Push new context state with new values"""
         value = self.ctx_stack[-1].copy()
+        value.update({"generator": False})
         value.update(values)
         self.ctx_stack.append(value)
 

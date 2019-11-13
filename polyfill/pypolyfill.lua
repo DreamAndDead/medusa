@@ -209,6 +209,21 @@ unpack = function(t)
    return g_real_unpack(t)
 end
 
+local g_real_next = next
+
+-- next(iterator[, default])
+-- return the next item from the iterator. If default is given and the iterator
+-- is exhausted, it is returned instead of raising StopIteration.
+-- fixme: support generator only for now
+next = function(iter, default)
+   local v = nil
+   if iter._is_generator then
+      v = iter.next()
+   end
+   v = v or default
+   return v
+end
+
 
 --[[
    builtin functions
@@ -283,7 +298,7 @@ function bool(x)
 
    if type(x) == "table" then
       if x._is_list or x._is_dict then
-         return next(x._data) ~= nil
+         return g_real_next(x._data) ~= nil
       end
    end
 
@@ -334,10 +349,10 @@ function enumerate(t, start)
       data = t._data
    end
 
-   local i, v = next(data, nil)
+   local i, v = g_real_next(data, nil)
    return function()
       local index, value = i, v
-      i, v = next(data, i)
+      i, v = g_real_next(data, i)
 
       if index == nil then
          return nil
@@ -751,6 +766,53 @@ setmetatable(list, {
 })
 
 
+-- generator (and meta) class
+_generator = {}
+setmetatable(_generator, {
+                __call = function(_, t)
+                   local result = {}
+
+                   result._is_generator = true
+		   result._func = t
+
+		   local methods = {}
+
+                   methods.next = function(self)
+                      local stat, value = coroutine.resume(self._generator)
+		      return value
+                   end
+		   		   
+                   methods.send = function(self, ...)
+                      local stat, value = coroutine.resume(self._generator, ...)
+		      return value
+                   end
+
+		   methods.close = function(self)
+		   end
+
+                   setmetatable(result, {
+                                   __call = function(self)
+				      local g = {}
+				      g._generator = coroutine.create(self._func)
+
+				      setmetatable(g, {
+						      __index = function(self, index)
+							 return function(...)
+							    return methods[index](self, ...)
+							 end
+						      end,
+				      })
+				      
+				      return g
+                                   end,
+                   })
+
+                   return result
+                end,
+})
+
+
+
 -- map(func, *iterables) --> map object
 -- make an iterator that computes the function using arguments from
 -- each of the iterables.  Stops when the shortest iterable is exhausted.
@@ -1048,7 +1110,7 @@ setmetatable(dict, {
 			    key_index = nil
 			 end
 
-			 key_index, _ = next(result._data, key_index)
+			 key_index, _ = g_real_next(result._data, key_index)
 			 return key_index
 		      end
 		   end
@@ -1066,7 +1128,7 @@ setmetatable(dict, {
 		   -- D.popitem() -> (k, v), remove and return some (key, value) pair as a
 		   -- 2-tuple; but raise KeyError if D is empty.
 		   methods.popitem = function(self)
-		      local key, value = next(result._data)
+		      local key, value = g_real_next(result._data)
 		      if key ~= nil then
 			 result._data[key] = nil
 		      end
@@ -1104,7 +1166,7 @@ setmetatable(dict, {
 			    key_index = nil
 			 end
 
-			 key_index, value = next(result._data, key_index)
+			 key_index, value = g_real_next(result._data, key_index)
 			 return value
 		      end
 		   end
@@ -1136,7 +1198,7 @@ setmetatable(dict, {
 					 key_index = nil
 				      end
 
-				      key_index, _ = next(result._data, key_index)
+				      key_index, _ = g_real_next(result._data, key_index)
 
 				      return key_index            
 				   end,
@@ -1454,7 +1516,7 @@ setmetatable(set, {
                                          iterator_index = nil
                                       end
 
-				      iterator_index, _ = next(result._data, iterator_index)
+				      iterator_index, _ = g_real_next(result._data, iterator_index)
 				      
                                       return iterator_index
                                    end,
@@ -1616,7 +1678,7 @@ setmetatable(frozenset, {
                                          iterator_index = nil
                                       end
 
-				      iterator_index, _ = next(result._data, iterator_index)
+				      iterator_index, _ = g_real_next(result._data, iterator_index)
 				      
                                       return iterator_index
                                    end,

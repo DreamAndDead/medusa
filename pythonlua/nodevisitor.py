@@ -36,7 +36,6 @@ class NodeVisitor(ast.NodeVisitor):
         - ExtSlice
 
         - NamedExpr
-        - GeneratorExp
         - Yield
         - YieldFrom
         """
@@ -353,9 +352,6 @@ class NodeVisitor(ast.NodeVisitor):
         self.output.append(output)
 
     def visit_FunctionDef(self, node):
-        """
-        Visit function definition
-        """
         line = "{local}function {name}({arguments})"
 
         last_ctx = self.context.last()
@@ -384,7 +380,7 @@ class NodeVisitor(ast.NodeVisitor):
 
         self.context.push({"class_name": ""})
         self.visit_all(node.body)
-        self.context.pop()
+        body_ctx = self.context.pop()
 
         body = self.output[-1]
 
@@ -408,6 +404,12 @@ class NodeVisitor(ast.NodeVisitor):
 
         self.emit("end")
 
+        # coroutine before decorator
+        # todo: 存在太多层次的 context，可能在 while 循环中，导致检测不到。context 这部分需要优化
+        #if body_ctx["generator"]:
+        #    line = "{name} = _generator({name})"
+        #    self.emit(line.format(name=name))
+
         # 装饰器
         for decorator in reversed(node.decorator_list):
             decorator_name = self.visit_all(decorator, inline=True)
@@ -418,6 +420,15 @@ class NodeVisitor(ast.NodeVisitor):
             line = "{name} = {decorator}({name})".format(**values)
             self.emit(line)
 
+    def visit_Yield(self, node):
+        line = "coroutine.yield({})"
+        if node.value is None:
+            value = ''
+        else:
+            value = self.visit_all(node.value, inline=True)
+            
+        self.emit(line.format(value))
+            
     def visit_For(self, node):
         """Visit for"""
         line = "for {target} in {iter} do"
@@ -432,6 +443,34 @@ class NodeVisitor(ast.NodeVisitor):
         self.visit_all(node.body)
 
         self.emit("end")
+
+    def visit_GeneratorExp(self, node):
+        self.emit("coroutine.wrap(function()")
+
+        ends_count = 0
+
+        for comp in node.generators:
+            line = "for {target} in {iterator} do"
+            values = {
+                "target": self.visit_all(comp.target, inline=True),
+                "iterator": self.visit_all(comp.iter, inline=True),
+            }
+            line = line.format(**values)
+            self.emit(line)
+            ends_count += 1
+
+            for if_ in comp.ifs:
+                line = "if {} then".format(self.visit_all(if_, inline=True))
+                self.emit(line)
+                ends_count += 1
+
+        line = "coroutine.yield({})"
+        line = line.format(self.visit_all(node.elt, inline=True))
+        self.emit(line)
+
+        self.emit(" ".join(["end"] * ends_count))
+
+        self.emit("end)")
 
     def visit_If(self, node):
         """Visit if"""
@@ -567,34 +606,6 @@ class NodeVisitor(ast.NodeVisitor):
 
         self.emit("return result")
         self.emit("end)()")
-
-    def visit_GeneratorExp(self, node):
-        self.emit("coroutine.wrap(function()")
-
-        ends_count = 0
-
-        for comp in node.generators:
-            line = "for {target} in {iterator} do"
-            values = {
-                "target": self.visit_all(comp.target, inline=True),
-                "iterator": self.visit_all(comp.iter, inline=True),
-            }
-            line = line.format(**values)
-            self.emit(line)
-            ends_count += 1
-
-            for if_ in comp.ifs:
-                line = "if {} then".format(self.visit_all(if_, inline=True))
-                self.emit(line)
-                ends_count += 1
-
-        line = "coroutine.yield({})"
-        line = line.format(self.visit_all(node.elt, inline=True))
-        self.emit(line)
-
-        self.emit(" ".join(["end"] * ends_count))
-
-        self.emit("end)")
         
     def visit_Name(self, node):
         """Visit name"""

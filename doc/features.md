@@ -562,12 +562,19 @@ return 语句在 python 和 lua 中是相同的，用于从函数中返回值。
 
 ### Yield
 
-虽然 lua 中有协程，但是和 python 中的 yield 不是一个概念。
+在 python 中，yield 有很多应用，从简单的 generator 到交换控制权的协程。
+python 中的 yield 是对称性协程机制，而 lua 中的协程机制是非对称的，需要相应的模板代码来和 python 协程的使用保持一致。
+
+**TODO：功能依然在调整，经测试可用，需要在 transpiler context 部分修复一些代码**
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
-|yield|`yield`|` `|:x:|
+|generator 机制|`yield i`|`coroutine.yield(i)`|:heavy_check_mark:|
 
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[yield.py](./../codeblock/yield.py)|[yield.py.lua](./../codeblock/yield.py.lua)|
 
 -----
 
