@@ -636,7 +636,7 @@ list 生成式也是 python 中的创新，用表达式来生成列表，本质�
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
-|list 生成式|`[i for i in a]`|`(function() local result = list {} for i in a do result.append((i + 1)) end return result end)()`|:heavy_check_mark:|
+|list 生成式|`[i + 1 for i in a]`|`(function() local result = list {} for i in a do result.append((i + 1)) end return result end)()`|:heavy_check_mark:|
 |配合if，作为map|`[i if i%2 == 1 else 0 for i in a]`|见示例代码|:heavy_check_mark:|
 |配合if，作为filter|`[i for i in a if i%2 == 1]`|见示例代码|:heavy_check_mark:|
 |多个 list|`[m+n for m in a for n in b]`|见示例代码|:heavy_check_mark:|
@@ -675,7 +675,7 @@ set 生成式类似 list 生成式，只不过生成 set 对象。
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
-|set 生成式|`{i for i in s}`|`(function() local result = set {} for i in s do result.add((i + 1)) end return result end)()`|:heavy_check_mark:|
+|set 生成式|`{i + 1 for i in s}`|`(function() local result = set {} for i in s do result.add((i + 1)) end return result end)()`|:heavy_check_mark:|
 |配合if，作为map|`[i if i%2 == 1 else 0 for i in s]`|见示例代码|:heavy_check_mark:|
 |配合if，作为filter|`[i for i in s if i%2 == 1]`|见示例代码|:heavy_check_mark:|
 |多个 set|`[m+n for m in s for n in t]`|见示例代码|:heavy_check_mark:|
@@ -686,14 +686,24 @@ set 生成式类似 list 生成式，只不过生成 set 对象。
 
 
 
-### Generator 表达式
+### Generator 生成式
 
-语法和列表生成类似，不过使用的是 () ，得到一个惰性的 generator 对象，而不是即时的列表。
-在 lua 中暂时无法实现惰性，推荐暂时使用 list 生成式。
+语法和列表生成式类似，不过使用的是 () ，得到一个惰性的 generator 对象，而不是即时的列表。
+在 lua 中通过 coroutine 非对称性协程可以实现惰性生成式。
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
-|惰性生成式|`(i for i in g)`|` `|:x:|
+|generator 生成式|`(i + 1 for i in a)`|`coroutine.wrap(function() for i in a do coroutine.yield(i + 1)) end end)()`|:heavy_check_mark:|
+|配合if，作为map|`(i if i%2 == 1 else 0 for i in a)`|见示例代码|:heavy_check_mark:|
+|配合if，作为filter|`(i for i in a if i%2 == 1)`|见示例代码|:heavy_check_mark:|
+|多个 list|`(m+n for m in a for n in b)`|见示例代码|:heavy_check_mark:|
+|嵌套 list|`(j for i in a for j in i)`|见示例代码|:heavy_check_mark:|
+
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[generator.py](./../codeblock/generator.py)|[generator.py.lua](./../codeblock/generator.py.lua)|
 
 
 ----
@@ -839,7 +849,7 @@ python 的作用域和 lua 是有些不同的。
 
 其次，由于作用域可能有多重嵌套，使用 nonlocal 可以在内部作用域修改外部作用域的变量，顺着嵌套的层次一路向上查找，而不是像 global 一样直接找到全局作用域。
 
-由于这两重查找涉及作用域对象的大量工作，目前尚不支持。
+由于这两重查找涉及作用域对象的大量工作，目前尚不支持，后面涉及到模块时再详细讨论。
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|

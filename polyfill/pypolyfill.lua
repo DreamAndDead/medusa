@@ -191,9 +191,6 @@ bit = {
    blshift = bit_lshift,
 }
 
---[[
-   lua pythonization
---]]
 
 local string_meta = getmetatable("")
 string_meta.__add = function(v1, v2)
@@ -211,6 +208,7 @@ unpack = function(t)
    end
    return g_real_unpack(t)
 end
+
 
 --[[
    builtin functions

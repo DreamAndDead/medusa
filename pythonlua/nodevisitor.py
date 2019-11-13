@@ -539,7 +539,6 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit(line)
 
     def visit_ListComp(self, node):
-        """Visit list comprehension"""
         self.emit("(function()")
         self.emit("local result = list {}")
 
@@ -569,6 +568,34 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit("return result")
         self.emit("end)()")
 
+    def visit_GeneratorExp(self, node):
+        self.emit("coroutine.wrap(function()")
+
+        ends_count = 0
+
+        for comp in node.generators:
+            line = "for {target} in {iterator} do"
+            values = {
+                "target": self.visit_all(comp.target, inline=True),
+                "iterator": self.visit_all(comp.iter, inline=True),
+            }
+            line = line.format(**values)
+            self.emit(line)
+            ends_count += 1
+
+            for if_ in comp.ifs:
+                line = "if {} then".format(self.visit_all(if_, inline=True))
+                self.emit(line)
+                ends_count += 1
+
+        line = "coroutine.yield({})"
+        line = line.format(self.visit_all(node.elt, inline=True))
+        self.emit(line)
+
+        self.emit(" ".join(["end"] * ends_count))
+
+        self.emit("end)")
+        
     def visit_Name(self, node):
         """Visit name"""
         self.emit(node.id)
