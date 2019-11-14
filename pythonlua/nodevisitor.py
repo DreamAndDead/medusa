@@ -352,6 +352,9 @@ class NodeVisitor(ast.NodeVisitor):
         self.output.append(output)
 
     def visit_FunctionDef(self, node):
+        self.scope.push(dict(kind="function", name=node.name))
+        cur_scope = self.scope.last()
+        
         line = "{local}function {name}({arguments})"
 
         last_ctx = self.context.last()
@@ -405,10 +408,9 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit("end")
 
         # coroutine before decorator
-        # todo: 存在太多层次的 context，可能在 while 循环中，导致检测不到。context 这部分需要优化
-        #if body_ctx["generator"]:
-        #    line = "{name} = _generator({name})"
-        #    self.emit(line.format(name=name))
+        if cur_scope["coroutine"]:
+            line = "{name} = meta_generator({name})"
+            self.emit(line.format(name=name))
 
         # 装饰器
         for decorator in reversed(node.decorator_list):
@@ -420,7 +422,13 @@ class NodeVisitor(ast.NodeVisitor):
             line = "{name} = {decorator}({name})".format(**values)
             self.emit(line)
 
+        self.scope.pop()
+
     def visit_Yield(self, node):
+        func_scope = self.scope.trace(kinds=['function'])
+        if func_scope:
+            func_scope["coroutine"] = True
+        
         line = "coroutine.yield({})"
         if node.value is None:
             value = ''

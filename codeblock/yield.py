@@ -24,3 +24,5 @@ e = echo()
 
 assert next(e) == None
 assert e.send(10) == 10
+
+

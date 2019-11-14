@@ -767,8 +767,8 @@ setmetatable(list, {
 
 
 -- generator (and meta) class
-_generator = {}
-setmetatable(_generator, {
+meta_generator = {}
+setmetatable(meta_generator, {
                 __call = function(_, t)
                    local result = {}
 

@@ -4,6 +4,7 @@ local function count()
         coroutine.yield(i)
     end
 end
+count = meta_generator(count)
 local c = count()
 assert((next(c) == 0))
 assert((next(c) == 1))
@@ -15,6 +16,7 @@ local function echo()
         start = line
     end
 end
+echo = meta_generator(echo)
 local e = echo()
 assert((next(e) == nil))
 assert((e.send(10) == 10))
