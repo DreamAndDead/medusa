@@ -29,7 +29,6 @@ class NodeVisitor(ast.NodeVisitor):
         not support:
         - Raise
         - Try
-        - ImportFrom
         - Global
         - Nonlocal
         - Continue
@@ -515,23 +514,36 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit(line.format(**values))
 
     def visit_Import(self, node):
-        """Visit import"""
-        line = 'local {asname} = require "{name}"'
+        line = 'local {asname} = require("{name}")'
         values = {"asname": "", "name": ""}
 
-        if node.names[0].asname is None:
-            values["name"] = node.names[0].name
-            values["asname"] = values["name"]
-            values["asname"] = values["asname"].split(".")[-1]
-        else:
-            values["asname"] = node.names[0].asname
-            values["name"] = node.names[0].name
+        for alias in node.names:
+            if alias.asname is None:
+                values["name"] = alias.name
+                values["asname"] = values["name"]
+                #values["asname"] = values["asname"].split(".")[-1]
+            else:
+                values["name"] = alias.name
+                values["asname"] = alias.asname
 
-        self.emit(line.format(**values))
+            self.emit(line.format(**values))
 
     def visit_ImportFrom(self, node):
-        # pass for now
-        pass
+        line = 'local {asname} = require("{module}").{name}'
+        values = {"asname": "", "module": "", "name": ""}
+
+        values["module"] = node.module
+        
+        for alias in node.names:
+            if alias.asname is None:
+                values["name"] = alias.name
+                values["asname"] = values["name"]
+            else:
+                values["name"] = alias.name
+                values["asname"] = alias.asname
+
+            self.emit(line.format(**values))
+
         
     def visit_Index(self, node):
         """Visit index"""
