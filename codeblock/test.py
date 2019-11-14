@@ -1,4 +1,7 @@
-l = ['a', 'c', 1, 2, None]
+# list can't contain trailing None
 
-assert len(l) == 5
+#l = ['a', 'c', 1, 2, None]
+
+#assert len(l) == 5
+
 

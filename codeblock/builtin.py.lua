@@ -140,6 +140,7 @@ assert((l[0] == 1))
 assert((l[1] == 3))
 assert((l[2] == 5))
 assert((l[3] == 7))
+local reduce = require("functools").reduce
 l = list {0, 1, 2, 3, 4, 5}
 assert((reduce(function(x, y) return (x + y) end, list {}, 10) == 10))
 assert((reduce(function(x, y) return (x + y) end, l) == 15))

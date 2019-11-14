@@ -1,8 +1,7 @@
-"""Class to store the python code context"""
 from .symbolsstack import SymbolsStack
 
 class Context:
-    """Class to store the python code context"""
+    """code context and scope"""
     def __init__(self, values=None):
         values = values if values is not None else {
             "class_name": "",

@@ -14,28 +14,29 @@ from .cmpopdesc import CompareOperationDesc
 from .nameconstdesc import NameConstantDesc
 from .unaryopdesc import UnaryOperationDesc
 from .context import Context
-from .loopcounter import LoopCounter
+from .scope import Scope
 
 class NodeVisitor(ast.NodeVisitor):
     """Node visitor"""
-    def __init__(self, context=None):
+    def __init__(self, context=None, scope=None):
         self.context = context if context is not None else Context()
+        self.scope = scope if scope is not None else Scope()
         self.output = []
 
     def generic_visit(self, node):
         """
-        Unknown nodes handler
+        unsupported nodes
 
         not support:
         - Raise
         - Try
         - Global
+        - ExtSlice
+        - NamedExpr
+
+        maybe support:
         - Nonlocal
         - Continue
-        - ExtSlice
-
-        - NamedExpr
-        - Yield
         - YieldFrom
         """
         raise RuntimeError("unsupported syntax '%s' at line %d col %d" % (node.__class__.__name__, node.lineno, node.col_offset))
@@ -53,7 +54,7 @@ class NodeVisitor(ast.NodeVisitor):
             last_ctx = self.context.last()
             last_ctx["locals"].push()
 
-        visitor = NodeVisitor(context=self.context)
+        visitor = NodeVisitor(context=self.context, scope=self.scope)
 
         if isinstance(nodes, list):
             for node in nodes:
