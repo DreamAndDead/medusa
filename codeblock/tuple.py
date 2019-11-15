@@ -7,24 +7,26 @@
 #字面量暂时不支持
 #t = (1, 2, 3)
 
-t = tuple([1, 2, 3])
+t = tuple([1, 2, 3, None])
 
-assert len(t) == 3
+assert len(t) == 4
 assert t[0] == 1
 assert t[1] == 2
 assert t[2] == 3
+assert t[3] == None
 
 
 ## method
 
 ### count
 
-t = tuple([1, 'a', 'z', 'pi', 'a', 'c', 'c'])
+t = tuple([1, 'a', 'z', 'pi', 'a', 'c', 'c', None])
 
 assert t.count(1) == 1
 assert t.count('a') == 2
 assert t.count('b') == 0
 assert t.count('c') == 2
+assert t.count(None) == 1
 
 
 ### index

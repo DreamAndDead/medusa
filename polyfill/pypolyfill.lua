@@ -510,7 +510,7 @@ end
 -- return the number of items of a sequence or collection.
 function len(t)
    if type(t._data) == "table" then
-      if t._is_list == true then
+      if t._is_list == true or t._is_tuple == true then
 	 return t._len
       else
 	 local l = 0
@@ -1753,18 +1753,24 @@ setmetatable(tuple, {
 
                    result._is_tuple = true
                    result._data = {}
+		   result._len = 0
 
 		   if t ~= nil then
-		      if t.__iter__ ~= nil then
+		      if t.__iter__ then
 			 -- tuple(iterable)
-			 for v in t do
-			    table.insert(result._data, v)
+			 local l = 0
+			 for _, v in t do
+			    l = l + 1
+			    result._data[l] = v
 			 end
+			 result._len = l
 		      else
 			 -- tuple literal
-			 for _, v in ipairs(t) do
-			    table.insert(result._data, v)
+			 for k, v in pairs(t) do
+			    l = l + 1
+			    result._data[k] = _to_nil(v)
 			 end
+			 result._len = l
 		      end
 		   else
 		      -- tuple()
@@ -1791,12 +1797,12 @@ setmetatable(tuple, {
 		   -- T.count(value) -> integer -- return number of occurrences of value
                    methods.count = function(self, value)
                       local cnt = 0
-                      for _, v in ipairs(result._data) do
-                         if v == value then
-                            cnt = cnt + 1
-                         end
-                      end
-
+		      for i = 1, self._len do
+			 local v = self._data[i]
+			 if v == value then
+			    cnt = cnt + 1
+			 end
+		      end
                       return cnt
                    end
 
@@ -1805,7 +1811,7 @@ setmetatable(tuple, {
 		   -- 相当于在 T[start:stop] 中寻找 value
 		   -- 当 start stop 超过开始/结束的界限，算作界限本身
                    methods.index = function(self, value, start, stop)
-		      local size = #result._data
+		      local size = self._len
 		      
 		      if not start then
 			 start = 1
@@ -1833,7 +1839,7 @@ setmetatable(tuple, {
 		   -- __iter__
 		   -- delegate to metatable __call
 		   methods.__iter__ = function(self)
-		      return result
+		      return self
 		   end
 		   
                    local iterator_index = 0
@@ -1841,19 +1847,13 @@ setmetatable(tuple, {
                    setmetatable(result, {
                                    __index = function(self, index)
                                       if type(index) == "number" then
-                                         if index < 0 then
-                                            index = #result._data + index
-                                         end
-                                         return rawget(result._data, index + 1)
+					 index = py_to_lua_idx(index, self._len)
+                                         return rawget(self._data, index)
                                       end
 
                                       return function(...)
 					 return methods[index](self, ...)
 				      end
-                                   end,
-				   -- tuple is read only
-                                   __newindex = function(self, index, value)
-				      assert(false, "'tuple' object does not support item assignment")
                                    end,
                                    __call = function(self, _, idx)
                                       if idx == nil then
@@ -1861,10 +1861,13 @@ setmetatable(tuple, {
                                       end
 
 				      iterator_index = iterator_index + 1
-				      
                                       local v = result._data[iterator_index]
-				      
-                                      return v
+
+				      if iterator_index > self._len then
+					 return nil, nil
+				      else
+					 return iterator_index, v
+				      end
                                    end,
                    })
 
