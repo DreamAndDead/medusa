@@ -26,12 +26,12 @@ assert((sum(1, 2, 3) == 6))
 assert((sum(1, 2, 3, 4) == 10))
 local function registerClickEvent(callback)
     --[[register a function as callback]]
-    local event = dict {["id"] = "click"}
+    local event = dict {[_to_null("id")] = _to_null("click")}
     callback(event)
 end
 local function callback(event)
     --[[simple callback]]
-    assert((event["id"] == "click"))
+    assert((event[_to_null("id")] == "click"))
 end
 registerClickEvent(callback)
 local function plus_factory(plus_num)

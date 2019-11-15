@@ -1,3 +1,3 @@
 dofile('./polyfill/pypolyfill.lua')
-local l = list {_null("a", "c", 1, 2, nil)}
-assert((len(l) == 5))
+local d = dict {}
+d[_to_null(nil)] = 1

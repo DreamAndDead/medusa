@@ -7,5 +7,5 @@ local function add(...)
     end
     return t
 end
-local p = list {_null(1, 2, 3, 4)}
+local p = list {_to_null(1, 2, 3, 4)}
 assert((add(unpack(p)) == 10))

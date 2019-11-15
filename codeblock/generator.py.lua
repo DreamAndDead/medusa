@@ -1,12 +1,12 @@
 dofile('./polyfill/pypolyfill.lua')
-local a = list {_null(0, 1, 2, 3)}
+local a = list {_to_null(0, 1, 2, 3)}
 local b = coroutine.wrap(function() for i in a do coroutine.yield((i + 1)) end end)
 local i = 0
 for _, n in b do
-    assert((n == (a[i] + 1)))
+    assert((n == (a[_to_null(i)] + 1)))
     i = (i + 1)
 end
-a = list {_null(0, 1, 2, 3)}
+a = list {_to_null(0, 1, 2, 3)}
 b = coroutine.wrap(function() for i in a do coroutine.yield(((math.fmod(i, 2)) == 1) and i or 0) end end)
 i = 0
 for _, n in b do
@@ -24,7 +24,7 @@ for _, n in b do
     end
     i = (i + 1)
 end
-a = list {_null(0, 1, 2, 3)}
+a = list {_to_null(0, 1, 2, 3)}
 b = coroutine.wrap(function() for i in a do if ((math.fmod(i, 2)) == 1) then coroutine.yield(i) end end end)
 i = 0
 for _, n in b do
@@ -36,8 +36,8 @@ for _, n in b do
     end
     i = (i + 1)
 end
-a = list {_null(0, 1)}
-b = list {_null(10, 11)}
+a = list {_to_null(0, 1)}
+b = list {_to_null(10, 11)}
 local c = coroutine.wrap(function() for m in a do for n in b do coroutine.yield((n - m)) end end end)
 i = 0
 for _, n in c do
@@ -55,7 +55,7 @@ for _, n in c do
     end
     i = (i + 1)
 end
-a = list {_null(list {_null(0, 1)}, list {_null(2, 3)})}
+a = list {_to_null(list {_to_null(0, 1)}, list {_to_null(2, 3)})}
 b = coroutine.wrap(function() for i in a do for j in i do coroutine.yield(j) end end end)
 i = 0
 for _, n in b do
@@ -73,7 +73,7 @@ for _, n in b do
     end
     i = (i + 1)
 end
-a = list {_null(list {_null(0, 1, 2)}, list {_null(0, 1)}, list {_null(0)})}
+a = list {_to_null(list {_to_null(0, 1, 2)}, list {_to_null(0, 1)}, list {_to_null(0)})}
 b = coroutine.wrap(function() for i in a do if (len(i) == 2) then for j in i do if (j == 0) then coroutine.yield(j) end end end end end)
 i = 0
 for _, n in b do

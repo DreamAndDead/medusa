@@ -1,10 +1,10 @@
 dofile('./polyfill/pypolyfill.lua')
 local n = 0
-for _, i in list {_null(1, 2, 3)} do
+for _, i in list {_to_null(1, 2, 3)} do
     n = (n + 1)
     assert((i == n))
 end
-local d = dict {[1] = 1, [2] = 2, [3] = 3}
+local d = dict {[_to_null(1)] = _to_null(1), [_to_null(2)] = _to_null(2), [_to_null(3)] = _to_null(3)}
 for _, k, v in d.items() do
     assert((k == v))
 end

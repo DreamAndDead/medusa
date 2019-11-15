@@ -282,12 +282,12 @@ class NodeVisitor(ast.NodeVisitor):
 
         for key in node.keys:
             value = self.visit_all(key, inline=True)
-            value = "[{}]".format(value)
+            value = "[_to_null({})]".format(value)
             keys.append(value)
 
         values = [self.visit_all(item, inline=True) for item in node.values]
 
-        elements = ["{} = {}".format(keys[i], values[i]) for i in range(len(keys))]
+        elements = ["{} = _to_null({})".format(keys[i], values[i]) for i in range(len(keys))]
         elements = ", ".join(elements)
         self.emit("dict {{{}}}".format(elements))
 
@@ -562,7 +562,9 @@ class NodeVisitor(ast.NodeVisitor):
         
     def visit_Index(self, node):
         """Visit index"""
-        self.emit(self.visit_all(node.value, inline=True))
+        line = "_to_null({})"
+        value = self.visit_all(node.value, inline=True)
+        self.emit(line.format(value))
 
     def visit_Lambda(self, node):
         """Visit lambda"""

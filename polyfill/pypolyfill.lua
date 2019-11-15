@@ -1093,18 +1093,18 @@ setmetatable(dict, {
 		   if t ~= nil then
 		      if t._is_dict then
 			 -- dict(d)
-			 for k, v in t.items() do
-			    result._data[k] = v
+			 for _, k, v in t.items() do
+			    result._data[_to_null(k)] = _to_null(v)
 			 end
 		      elseif t.__iter__ then
 			 -- dict(iterable)
+			 -- TODO: ?
 			 for k, v in t do
 			    result._data[k] = v
 			 end
 		      else
 			 -- dict literal
-			 -- TODO: store None as key
-			 -- TODO: store None as value, if value is None, in lua, it'll delete the key, then fromkeys will be wrong
+			 -- None has been _null, both in keys and values
 			 for k, v in pairs(t) do
 			    result._data[k] = v
 			 end
@@ -1116,81 +1116,76 @@ setmetatable(dict, {
 
 		   local methods = {}
 
-		   local key_index = nil
-
 		   -- D.clear() -> None.  Remove all items from D.
 		   methods.clear = function(self)
-		      result._data = {}
+		      self._data = {}
 		   end
 
 		   -- D.copy() -> a shallow copy of D
 		   methods.copy = function(self)
-		      return dict(result._data)
+		      return dict(self._data)
 		   end
 
 		   -- d.fromkeys(iterable, value=None, /)
 		   -- returns a new dict with keys from iterable and values equal to value.
 		   methods.fromkeys = function(self, keys, value)
-		      value = value or nil
-		      d = {}
-		      for k in keys do
-			 d[k] = value
-		      end
+		      value = _to_null(value or nil)
 
-		      return dict(d)
+		      local d = dict()
+		      for _, k in keys do
+			 d._data[_to_null(k)] = value
+		      end
+		      return d
 		   end
 
 		   -- D.get(k[,d]) -> D[k] if k in D, else d.  d defaults to None.
 		   methods.get = function(self, key, default)
-		      value = result._data[key] or default or nil
-		      return value
+		      value = self._data[_to_null(key)] or _to_null(default or nil)
+		      return _to_nil(value)
 		   end
 
 		   -- D.items() -> a set-like object providing a view on D's items
 		   methods.items = function(self)
-		      return pairs(result._data)
+		      return function(_, idx)
+			 idx, v = g_real_next(self._data, idx)
+			 return idx, _to_nil(idx), _to_nil(v)
+		      end
 		   end
 
 		   -- D.keys() -> a set-like object providing a view on D's keys
 		   methods.keys = function(self)
 		      return function(_, idx) 
-			 if idx == nil and key_index ~= nil then
-			    key_index = nil
-			 end
-
-			 key_index, _ = g_real_next(result._data, key_index)
-			 return key_index
+			 idx, v = g_real_next(self._data, idx)
+			 return idx, _to_nil(idx)
 		      end
 		   end
 
 		   -- D.pop(k[,d]) -> v, remove specified key and return the corresponding value.
 		   -- if key is not found, d is returned if given, otherwise KeyError is raised
-
 		   methods.pop = function(self, key, default)
-		      value = result._data[key] or default or nil
-		      result._data[key] = nil
-
-		      return value
+		      value = self._data[_to_null(key)] or _to_null(default or nil)
+		      self._data[_to_null(key)] = nil
+		      return _to_nil(value)
 		   end
 
 		   -- D.popitem() -> (k, v), remove and return some (key, value) pair as a
 		   -- 2-tuple; but raise KeyError if D is empty.
 		   methods.popitem = function(self)
-		      local key, value = g_real_next(result._data)
+		      local key, value = g_real_next(self._data)
 		      if key ~= nil then
-			 result._data[key] = nil
+			 self._data[key] = nil
 		      end
 
-		      return key, value
+		      return _to_nil(key), _to_nil(value)
 		   end
 
 		   -- D.setdefault(k[,d]) -> D.get(k,d), also set D[k]=d if k not in D
 		   methods.setdefault = function(self, key, default)
-		      if result._data[key] == nil then
-			 result._data[key] = default
+		      if self._data[_to_null(key)] == nil then
+			 self._data[_to_null(key)] = _to_null(default)
 		      end
 
-		      return result._data[key]
+		      return self._data[_to_null(key)]
 		   end
 
 		   -- D.update([E, ]**F) -> None.  Update D from dict/iterable E and F.
@@ -1198,40 +1193,36 @@ setmetatable(dict, {
 		   -- if E is present and lacks a .keys() method, then does:  for k, v in E: D[k] = v
 		   -- in either case, this is followed by: for k in F:  D[k] = F[k]
 		   methods.update = function(self, t)
-		      if not t._is_dict then
+		      if t._is_dict ~= true then
 			 return
 		      end
 
-		      for k, v in t.items() do
-			 result._data[k] = v
+		      for _, k, v in t.items() do
+			 self._data[_to_null(k)] = _to_null(v)
 		      end
 		   end
 
 		   -- D.values() -> an object providing a view on D's values
 		   methods.values = function(self)
 		      return function(_, idx) 
-			 if idx == nil and key_index ~= nil then
-			    key_index = nil
-			 end
-
-			 key_index, value = g_real_next(result._data, key_index)
-			 return value
+			 idx, v = g_real_next(self._data, idx)
+			 return idx, _to_nil(v)
 		      end
 		   end
 
 		   -- __iter__()
 		   -- delegate to dict __call
 		   methods.__iter__ = function(self)
-		      return result
+		      return self
 		   end
 		   
 		   setmetatable(result, {
 				   __index = function(self, index)
-				      if result._data[index] ~= nil then
-					 return result._data[index]
+				      if self._data[_to_null(index)] ~= nil then
+					 return _to_nil(self._data[_to_null(index)])
 				      end
+				      
 				      if methods[index] ~= nil then
-					 -- method
 					 return function(...)
 					    return methods[index](self, ...)
 					 end
@@ -1239,16 +1230,11 @@ setmetatable(dict, {
 				      return nil
 				   end,
 				   __newindex = function(self, index, value)
-				      result._data[index] = value
+				      self._data[_to_null(index)] = _to_null(value)
 				   end,
 				   __call = function(self, _, idx)
-				      if idx == nil and key_index ~= nil then
-					 key_index = nil
-				      end
-
-				      key_index, _ = g_real_next(result._data, key_index)
-
-				      return key_index            
+				      idx, _ = g_real_next(self._data, idx)
+				      return idx, _to_nil(idx)
 				   end,
 		   })
 		   
@@ -1544,7 +1530,7 @@ setmetatable(set, {
                                          iterator_index = nil
                                       end
 
-				      iterator_index, _ = g_real_next(result._data, iterator_index)
+				      iterator_index, _ = g_real_next(self._data, iterator_index)
 				      
                                       return iterator_index, _to_nil(iterator_index)
                                    end,

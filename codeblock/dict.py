@@ -2,18 +2,16 @@
 
 # 创建
 # python 3.4 不支持 e = { **d } 的方法来创建
+# with None as key and as value
 
-d = { 'name' : 'john', 1 : 26, 'age' : 20 }
+d = { 'name' : 'john', 1 : 26, 'age' : 20, None: None }
 
 assert d['name'] == 'john'
 assert d[1] == 26
 assert d['age'] == 20
+assert d[None] == None
 
-assert len(d) == 3
-
-
-## FIXME: python dict key can be None, but lua table can't have nil key
-# d = { None: '' }
+assert len(d) == 4
 
 
 ## nested dict
@@ -26,6 +24,9 @@ d = {
      1: {
          'c': 3,
          'd': 4,
+        },
+     None: {
+         None: None,
         }
     }
 
@@ -33,6 +34,7 @@ assert d[0]['a'] == 1
 assert d[0]['b'] == 2
 assert d[1]['c'] == 3
 assert d[1]['d'] == 4
+assert d[None][None] == None
 
 
 # 操作符
@@ -53,29 +55,34 @@ assert len(d) == 0
 
 ## copy
 
-d = { 'name' : 'john', 1 : 26, 'age' : 20 }
+d = { 'name' : 'john', 1 : 26, 'age' : 20, None: None }
 m = d.copy()
 
 d['name'] = 'jane'
+d[None] = 'nil'
 m['age'] = 56
 
 assert d['age'] == 20
+assert d[None] == 'nil'
 assert m['name'] == 'john'
+assert m[None] == None
 
 
 ## fromkeys
 
-m = d.fromkeys([1, 2, 'height'])
+m = d.fromkeys([1, 2, 'height', None])
 
 assert m[1] == None
 assert m[2] == None
 assert m['height'] == None
+assert m[None] == None
 
-m = d.fromkeys([1, 2, 'height'], 40)
+m = d.fromkeys([1, 2, 'height', None], 40)
 
 assert m[1] == 40
 assert m[2] == 40
 assert m['height'] == 40
+assert m[None] == 40
 
 
 ## get
@@ -159,9 +166,5 @@ d = { 'name' : 'john', 1 : 26, 'age' : 20 }
 
 for v in d.values():
     assert v == 'john' or v == 26 or v == 20
-
-
-
-
 
 

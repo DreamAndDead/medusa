@@ -1,35 +1,42 @@
 dofile('./polyfill/pypolyfill.lua')
-local d = dict {["name"] = "john", [1] = 26, ["age"] = 20, [nil] = ""}
-assert((d["name"] == "john"))
-assert((d[1] == 26))
-assert((d["age"] == 20))
+local d = dict {[_to_null("name")] = _to_null("john"), [_to_null(1)] = _to_null(26), [_to_null("age")] = _to_null(20), [_to_null(nil)] = _to_null(nil)}
+assert((d[_to_null("name")] == "john"))
+assert((d[_to_null(1)] == 26))
+assert((d[_to_null("age")] == 20))
+assert((d[_to_null(nil)] == nil))
 assert((len(d) == 4))
-d = dict {[0] = dict {["a"] = 1, ["b"] = 2}, [1] = dict {["c"] = 3, ["d"] = 4}}
-assert((d[0]["a"] == 1))
-assert((d[0]["b"] == 2))
-assert((d[1]["c"] == 3))
-assert((d[1]["d"] == 4))
+d = dict {[_to_null(0)] = _to_null(dict {[_to_null("a")] = _to_null(1), [_to_null("b")] = _to_null(2)}), [_to_null(1)] = _to_null(dict {[_to_null("c")] = _to_null(3), [_to_null("d")] = _to_null(4)}), [_to_null(nil)] = _to_null(dict {[_to_null(nil)] = _to_null(nil)})}
+assert((d[_to_null(0)][_to_null("a")] == 1))
+assert((d[_to_null(0)][_to_null("b")] == 2))
+assert((d[_to_null(1)][_to_null("c")] == 3))
+assert((d[_to_null(1)][_to_null("d")] == 4))
+assert((d[_to_null(nil)][_to_null(nil)] == nil))
 d.clear()
 assert((len(d) == 0))
-d = dict {["name"] = "john", [1] = 26, ["age"] = 20}
+d = dict {[_to_null("name")] = _to_null("john"), [_to_null(1)] = _to_null(26), [_to_null("age")] = _to_null(20), [_to_null(nil)] = _to_null(nil)}
 local m = d.copy()
-d["name"] = "jane"
-m["age"] = 56
-assert((d["age"] == 20))
-assert((m["name"] == "john"))
-m = d.fromkeys(list {_null(1, 2, "height")})
-assert((m[1] == nil))
-assert((m[2] == nil))
-assert((m["height"] == nil))
-m = d.fromkeys(list {_null(1, 2, "height")}, 40)
-assert((m[1] == 40))
-assert((m[2] == 40))
-assert((m["height"] == 40))
-d = dict {["name"] = "john", [1] = 26, ["age"] = 20}
+d[_to_null("name")] = "jane"
+d[_to_null(nil)] = "nil"
+m[_to_null("age")] = 56
+assert((d[_to_null("age")] == 20))
+assert((d[_to_null(nil)] == "nil"))
+assert((m[_to_null("name")] == "john"))
+assert((m[_to_null(nil)] == nil))
+m = d.fromkeys(list {_to_null(1, 2, "height", nil)})
+assert((m[_to_null(1)] == nil))
+assert((m[_to_null(2)] == nil))
+assert((m[_to_null("height")] == nil))
+assert((m[_to_null(nil)] == nil))
+m = d.fromkeys(list {_to_null(1, 2, "height", nil)}, 40)
+assert((m[_to_null(1)] == 40))
+assert((m[_to_null(2)] == 40))
+assert((m[_to_null("height")] == 40))
+assert((m[_to_null(nil)] == 40))
+d = dict {[_to_null("name")] = _to_null("john"), [_to_null(1)] = _to_null(26), [_to_null("age")] = _to_null(20)}
 assert((d.get("name") == "john"))
 assert((d.get("home") == nil))
 assert((d.get("home", "cn") == "cn"))
-d = dict {["name"] = "john", [1] = 26, ["age"] = 20}
+d = dict {[_to_null("name")] = _to_null("john"), [_to_null(1)] = _to_null(26), [_to_null("age")] = _to_null(20)}
 for _, k, v in d.items() do
     if (k == "name") then
         assert((v == "john"))
@@ -39,14 +46,14 @@ for _, k, v in d.items() do
         assert((v == 20))
     end
 end
-d = dict {["name"] = "john", [1] = 26, ["age"] = 20}
+d = dict {[_to_null("name")] = _to_null("john"), [_to_null(1)] = _to_null(26), [_to_null("age")] = _to_null(20)}
 for _, k in d.keys() do
     assert(((k == "name") or (k == 1) or (k == "age")))
 end
-d = dict {["name"] = "john", [1] = 26, ["age"] = 20}
+d = dict {[_to_null("name")] = _to_null("john"), [_to_null(1)] = _to_null(26), [_to_null("age")] = _to_null(20)}
 assert((d.pop("name") == "john"))
 assert((d.pop("name", "jane") == "jane"))
-d = dict {["name"] = "john", [1] = 26, ["age"] = 20}
+d = dict {[_to_null("name")] = _to_null("john"), [_to_null(1)] = _to_null(26), [_to_null("age")] = _to_null(20)}
 local k, v = d.popitem()
 if (k == "name") then
     assert((v == "john"))
@@ -55,18 +62,18 @@ elseif (k == 1) then
 elseif (k == "age") then
     assert((v == 20))
 end
-d = dict {["name"] = "john", [1] = 26, ["age"] = 20}
+d = dict {[_to_null("name")] = _to_null("john"), [_to_null(1)] = _to_null(26), [_to_null("age")] = _to_null(20)}
 local v = d.setdefault("name", "bing")
 assert((v == "john"))
-assert((d["name"] == "john"))
+assert((d[_to_null("name")] == "john"))
 v = d.setdefault("hair", "black")
 assert((v == "black"))
-assert((d["hair"] == "black"))
-d = dict {["name"] = "john", [1] = 26, ["age"] = 20}
-d.update(dict {["age"] = 22, ["hair"] = "blond"})
-assert((d["age"] == 22))
-assert((d["hair"] == "blond"))
-d = dict {["name"] = "john", [1] = 26, ["age"] = 20}
+assert((d[_to_null("hair")] == "black"))
+d = dict {[_to_null("name")] = _to_null("john"), [_to_null(1)] = _to_null(26), [_to_null("age")] = _to_null(20)}
+d.update(dict {[_to_null("age")] = _to_null(22), [_to_null("hair")] = _to_null("blond")})
+assert((d[_to_null("age")] == 22))
+assert((d[_to_null("hair")] == "blond"))
+d = dict {[_to_null("name")] = _to_null("john"), [_to_null(1)] = _to_null(26), [_to_null("age")] = _to_null(20)}
 for _, v in d.values() do
     assert(((v == "john") or (v == 26) or (v == 20)))
 end
