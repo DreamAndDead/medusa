@@ -673,7 +673,7 @@ class NodeVisitor(ast.NodeVisitor):
 
     def visit_Set(self, node):
         elements = [self.visit_all(item, inline=True) for item in node.elts]
-        line = "set {{{}}}".format(", ".join(elements))
+        line = "set {{_to_null({})}}".format(", ".join(elements))
         self.emit(line)
 
     def visit_SetComp(self, node):

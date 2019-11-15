@@ -1,3 +1,11 @@
+
+local function inspect(t)
+   local i = require 'inspect'.inspect
+   print(i(t))
+end
+
+
+
 local max_bit_length = 32
 
 local function check_int(n)
@@ -502,7 +510,7 @@ end
 -- return the number of items of a sequence or collection.
 function len(t)
    if type(t._data) == "table" then
-      if t._is_list then
+      if t._is_list == true then
 	 return t._len
       else
 	 local l = 0
@@ -1260,7 +1268,7 @@ end
 
 function operator_in(item, items)
    if type(items) == "table" then
-      for v in items do
+      for _, v in items do
 	 if v == item then
 	    return true
 	 end
@@ -1344,11 +1352,12 @@ setmetatable(set, {
 		   if t ~= nil then
 		      if t.__iter__ then
 			 -- iterable
-			 for v in t do
-			    result._data[v] = true
+			 for _, v in t do
+			    result._data[_to_null(v)] = true
 			 end
 		      else
 			 -- set literal
+			 -- None has passed to _null
 			 for _, v in pairs(t) do
 			    result._data[v] = true
 			 end
@@ -1357,27 +1366,12 @@ setmetatable(set, {
 		      -- set()
 		   end
 
-		   local py_to_lua_idx = function(i, size)
-		      if i >= 0 then
-			 i = i + 1
-			 if i > size then
-			    i = size
-			 end
-		      else
-			 i = i + size + 1
-			 if i < 1 then
-			    i = 1
-			 end
-		      end
-		      return i
-		   end
-
                    local methods = {}
 
 		   -- add an element to a set.
 		   -- this has no effect if the element is already present.
                    methods.add = function(self, elem)
-		      self._data[elem] = true
+		      self._data[_to_null(elem)] = true
                    end
 
 		   -- remove all elements from this set.
@@ -1396,8 +1390,8 @@ setmetatable(set, {
 		      local diff_set = self.copy()
 		      
 		      local others = list {...}
-		      for other_set in others do
-			 for elem in other_set do
+		      for _, other_set in others do
+			 for _, elem in other_set do
 			    if operator_in(elem, diff_set) then
 			       diff_set.remove(elem)
 			    end
@@ -1410,8 +1404,8 @@ setmetatable(set, {
 		   -- remove all elements of another set from this set.
 		   methods.difference_update = function(self, ...)
 		      local others = list {...}
-		      for other_set in others do
-			 for elem in other_set do
+		      for _, other_set in others do
+			 for _, elem in other_set do
 			    if operator_in(elem, self) then
 			       self.remove(elem)
 			    end
@@ -1433,7 +1427,7 @@ setmetatable(set, {
 		      local inter_set = self.copy()
 		      
 		      local others = list {...}
-		      for other_set in others do
+		      for _, other_set in others do
 			 inter_set.difference_update(inter_set.difference(other_set))
 		      end
 
@@ -1443,7 +1437,7 @@ setmetatable(set, {
 		   -- update a set with the intersection of itself and another.
                    methods.intersection_update = function(self, ...)
 		      local others = list {...}
-		      for other_set in others do
+		      for _, other_set in others do
 			 self.difference_update(self.difference(other_set))
 		      end
 		   end
@@ -1472,7 +1466,7 @@ setmetatable(set, {
 		   methods.pop = function(self)
 		      assert(len(self) ~= 0, "set is empty")
 		      local elem = nil
-		      for e in self do
+		      for _, e in self do
 			 elem = e
 		      end
 		      self.remove(elem)
@@ -1483,6 +1477,7 @@ setmetatable(set, {
 		   -- if the element is not a member, raise a KeyError.
 		   methods.remove = function(self, elem)
 		      assert(operator_in(elem, self), "elem not in set")
+		      elem = _to_null(elem)
 		      self._data[elem] = nil
 		   end
 
@@ -1507,8 +1502,8 @@ setmetatable(set, {
 		      local union_set = self.copy()
 
 		      local others = list {...}
-		      for other_set in others do
-			 for elem in other_set do
+		      for _, other_set in others do
+			 for _, elem in other_set do
 			    union_set.add(elem)
 			 end
 		      end
@@ -1519,8 +1514,8 @@ setmetatable(set, {
 		   -- Update a set with the union of itself and others.
                    methods.update = function(self, ...)
 		      local others = list {...}
-		      for other_set in others do
-			 for elem in other_set do
+		      for _, other_set in others do
+			 for _, elem in other_set do
 			    self.add(elem)
 			 end
 		      end
@@ -1529,7 +1524,7 @@ setmetatable(set, {
 		   -- __iter__
 		   -- delegate to metatable __call
 		   methods.__iter__ = function(self)
-		      return result
+		      return self
 		   end
 		   
                    local iterator_index = nil
@@ -1537,19 +1532,12 @@ setmetatable(set, {
                    setmetatable(result, {
                                    __index = function(self, index)
                                       if type(index) == "number" then
-                                         if index < 0 then
-                                            index = #result._data + index
-                                         end
-                                         return rawget(result._data, index + 1)
+					 error("'set' object does not support indexing")
                                       end
 
                                       return function(...)
 					 return methods[index](self, ...)
 				      end
-                                   end,
-				   -- only number index is permitted in python
-                                   __newindex = function(self, index, value)
-                                      rawset(result._data, index + 1, value)
                                    end,
                                    __call = function(self, _, idx)
                                       if idx == nil then
@@ -1558,7 +1546,7 @@ setmetatable(set, {
 
 				      iterator_index, _ = g_real_next(result._data, iterator_index)
 				      
-                                      return iterator_index
+                                      return iterator_index, _to_nil(iterator_index)
                                    end,
                    })
 
