@@ -1570,32 +1570,14 @@ setmetatable(frozenset, {
 		   if t ~= nil then
 		      if t.__iter__ then
 			 -- iterable
-			 for v in t do
-			    result._data[v] = true
+			 for _, v in t do
+			    result._data[_to_null(v)] = true
 			 end
 		      else
-			 -- set literal
-			 for _, v in pairs(t) do
-			    result._data[v] = true
-			 end
+			 -- no frozenset literal
 		      end
 		   else
-		      -- set()
-		   end
-
-		   local py_to_lua_idx = function(i, size)
-		      if i >= 0 then
-			 i = i + 1
-			 if i > size then
-			    i = size
-			 end
-		      else
-			 i = i + size + 1
-			 if i < 1 then
-			    i = 1
-			 end
-		      end
-		      return i
+		      -- frozenset()
 		   end
 
                    local methods = {}
@@ -1611,8 +1593,8 @@ setmetatable(frozenset, {
 		      local diff_set = set(self)
 		      
 		      local others = list {...}
-		      for other_set in others do
-			 for elem in other_set do
+		      for _, other_set in others do
+			 for _, elem in other_set do
 			    if operator_in(elem, diff_set) then
 			       diff_set.remove(elem)
 			    end
@@ -1628,7 +1610,7 @@ setmetatable(frozenset, {
 		      local inter_set = set(self)
 		      
 		      local others = list {...}
-		      for other_set in others do
+		      for _, other_set in others do
 			 inter_set.difference_update(inter_set.difference(other_set))
 		      end
 
@@ -1667,8 +1649,8 @@ setmetatable(frozenset, {
 		      local union_set = set(self)
 
 		      local others = list {...}
-		      for other_set in others do
-			 for elem in other_set do
+		      for _, other_set in others do
+			 for _, elem in other_set do
 			    union_set.add(elem)
 			 end
 		      end
@@ -1679,7 +1661,7 @@ setmetatable(frozenset, {
 		   -- __iter__
 		   -- delegate to metatable __call
 		   methods.__iter__ = function(self)
-		      return result
+		      return self
 		   end
 		   
                    local iterator_index = nil
@@ -1687,19 +1669,12 @@ setmetatable(frozenset, {
                    setmetatable(result, {
                                    __index = function(self, index)
                                       if type(index) == "number" then
-                                         if index < 0 then
-                                            index = #result._data + index
-                                         end
-                                         return rawget(result._data, index + 1)
+					 error("'set' object does not support indexing")
                                       end
 
                                       return function(...)
 					 return methods[index](self, ...)
 				      end
-                                   end,
-				   -- only number index is permitted in python
-                                   __newindex = function(self, index, value)
-                                      rawset(result._data, index + 1, value)
                                    end,
                                    __call = function(self, _, idx)
                                       if idx == nil then
@@ -1708,7 +1683,7 @@ setmetatable(frozenset, {
 
 				      iterator_index, _ = g_real_next(result._data, iterator_index)
 				      
-                                      return iterator_index
+                                      return iterator_index, _to_nil(iterator_index)
                                    end,
                    })
 

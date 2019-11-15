@@ -1,28 +1,29 @@
 # frozenset
 
-s = frozenset({ 0, 1, 2, 3 })
+s = frozenset({ 0, 1, 2, 3, None })
 
-assert len(s) == 4
+assert len(s) == 5
 assert 0 in s
 assert 1 in s
 assert 2 in s
 assert 3 in s
+assert None in s
 
 ## copy
 
-s = frozenset({ 0, 1, 2, 3 })
+s = frozenset({ 0, 1, 2, 3, None })
 
 sc = s.copy()
 
-assert len(s) == 4
-assert len(sc) == 4
+assert len(s) == 5
+assert len(sc) == 5
 # high efficency
 assert s is sc
 
 ## difference
 
-s1 = frozenset({ 1, 2, 3, 4, 5, 6 })
-s2 = frozenset({ 2, 4, 6, 8 })
+s1 = frozenset({ 1, 2, 3, 4, 5, 6, None })
+s2 = frozenset({ 2, 4, 6, 8, None })
 s3 = frozenset({ 0, 10, 3 })
 
 s1_2 = s1.difference(s2)
@@ -41,16 +42,17 @@ assert 5 in s1_2_3
 
 ## intersection
 
-s1 = frozenset({ 1, 2, 3, 4, 5, 6 })
-s2 = frozenset({ 2, 4, 6, 8 })
+s1 = frozenset({ 1, 2, 3, 4, 5, 6, None })
+s2 = frozenset({ 2, 4, 6, 8, None })
 s3 = frozenset({ 0, 10, 3 })
 
 s1and2 = s1.intersection(s2)
 
-assert len(s1and2) == 3
+assert len(s1and2) == 4
 assert 2 in s1and2
 assert 4 in s1and2
 assert 6 in s1and2
+assert None in s1and2
 assert 1 not in s1and2
 assert 3 not in s1and2
 assert 5 not in s1and2
@@ -63,8 +65,8 @@ assert len(s1and2and3) == 0
 
 ## isdisjoint
 
-s1 = frozenset({ 1, 2, 3, 4, 5, 6 })
-s2 = frozenset({ 2, 4, 6, 8 })
+s1 = frozenset({ 1, 2, 3, 4, 5, 6, None })
+s2 = frozenset({ 2, 4, 6, 8, None })
 s3 = frozenset({ 0, 10, 3 })
 
 assert not s1.isdisjoint(s2)
@@ -74,7 +76,7 @@ assert s2.isdisjoint(s3)
 
 ## issubset
 
-s1 = frozenset({ 1, 2, 3, 4, 5, 6 })
+s1 = frozenset({ 1, 2, 3, 4, 5, 6, None })
 s2 = frozenset({ 2, 4, 6, 8 })
 s3 = frozenset({ 0, 10, 3 })
 s4 = frozenset({ 2, 6 })
@@ -90,7 +92,7 @@ assert s4.issubset(s4)
 
 ## issuperset
 
-s1 = frozenset({ 1, 2, 3, 4, 5, 6 })
+s1 = frozenset({ 1, 2, 3, 4, 5, 6, None })
 s2 = frozenset({ 2, 4, 6, 8 })
 s3 = frozenset({ 0, 10, 3 })
 s4 = frozenset({ 2, 6 })
