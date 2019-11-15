@@ -9,9 +9,9 @@ local a = nil
 assert((operator_is(a, nil)))
 assert((operator_is(10, 10)))
 assert((operator_is("str", "str")))
-a = list {}
+a = list {_null()}
 local b = a
-local c = list {}
+local c = list {_null()}
 assert((operator_is(a, b)))
 assert((not operator_is(a, c)))
 assert((operator_in(1, set {1, 2, 3})))

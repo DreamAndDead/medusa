@@ -3,6 +3,14 @@ from copy import deepcopy
 class Scope:
     """code context and scope"""
     def __init__(self):
+        """
+        level: 0 and above
+        kind: global/function/lambda/class/generator
+        name: ""/func name/""/class name/""
+        locals: []
+        nonlocals: []
+        coroutine: True/False
+        """
         self.scope = {
             "level": 0,
             "kind": "",
@@ -14,9 +22,14 @@ class Scope:
         
         self.stack = [deepcopy(self.scope)]
 
-    def last(self):
-        return self.stack[-1]
+    def last(self, kinds=[]):
+        if len(kinds) == 0:
+            return self.stack[-1]
 
+        for s in reversed(self.stack):
+            if s['kind'] in kinds:
+                return s
+    
     def push(self, scope):
         s = deepcopy(self.scope)
         l = s['level']

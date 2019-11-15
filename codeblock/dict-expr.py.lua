@@ -23,8 +23,8 @@ assert((not operator_in(0, e)))
 assert((not operator_in(1, e)))
 assert((operator_in(2, e)))
 assert((e[2] == 2))
-local l = list {0, 1, 2}
-local a = list {"a", "b"}
+local l = list {_null(0, 1, 2)}
+local a = list {_null("a", "b")}
 d = (function() local result = dict {} for k in l do for v in a do result[k] = v end end return result end)()
 assert((d[0] == "b"))
 assert((d[1] == "b"))

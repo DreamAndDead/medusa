@@ -1,9 +1,9 @@
 dofile('./polyfill/pypolyfill.lua')
-local d = dict {["name"] = "john", [1] = 26, ["age"] = 20}
+local d = dict {["name"] = "john", [1] = 26, ["age"] = 20, [nil] = ""}
 assert((d["name"] == "john"))
 assert((d[1] == 26))
 assert((d["age"] == 20))
-assert((len(d) == 3))
+assert((len(d) == 4))
 d = dict {[0] = dict {["a"] = 1, ["b"] = 2}, [1] = dict {["c"] = 3, ["d"] = 4}}
 assert((d[0]["a"] == 1))
 assert((d[0]["b"] == 2))
@@ -17,11 +17,11 @@ d["name"] = "jane"
 m["age"] = 56
 assert((d["age"] == 20))
 assert((m["name"] == "john"))
-m = d.fromkeys(list {1, 2, "height"})
+m = d.fromkeys(list {_null(1, 2, "height")})
 assert((m[1] == nil))
 assert((m[2] == nil))
 assert((m["height"] == nil))
-m = d.fromkeys(list {1, 2, "height"}, 40)
+m = d.fromkeys(list {_null(1, 2, "height")}, 40)
 assert((m[1] == 40))
 assert((m[2] == 40))
 assert((m["height"] == 40))
@@ -30,7 +30,7 @@ assert((d.get("name") == "john"))
 assert((d.get("home") == nil))
 assert((d.get("home", "cn") == "cn"))
 d = dict {["name"] = "john", [1] = 26, ["age"] = 20}
-for k, v in d.items() do
+for _, k, v in d.items() do
     if (k == "name") then
         assert((v == "john"))
     elseif (k == 1) then
@@ -40,7 +40,7 @@ for k, v in d.items() do
     end
 end
 d = dict {["name"] = "john", [1] = 26, ["age"] = 20}
-for k in d.keys() do
+for _, k in d.keys() do
     assert(((k == "name") or (k == 1) or (k == "age")))
 end
 d = dict {["name"] = "john", [1] = 26, ["age"] = 20}
@@ -67,6 +67,6 @@ d.update(dict {["age"] = 22, ["hair"] = "blond"})
 assert((d["age"] == 22))
 assert((d["hair"] == "blond"))
 d = dict {["name"] = "john", [1] = 26, ["age"] = 20}
-for v in d.values() do
+for _, v in d.values() do
     assert(((v == "john") or (v == 26) or (v == 20)))
 end

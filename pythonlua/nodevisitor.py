@@ -105,11 +105,11 @@ class NodeVisitor(ast.NodeVisitor):
 
     def visit_Assign(self, node):
         """
-        Visit assign
-        
         TODO:
         - starred may happens here
         """
+        cur_scope = self.scope.last()
+        
         targets = [self.visit_all(t, inline=True) for t in node.targets]
         value = self.visit_all(node.value, inline=True)
 
@@ -204,6 +204,7 @@ class NodeVisitor(ast.NodeVisitor):
 
     def visit_ClassDef(self, node):
         """Visit class definition"""
+        self.scope.push(dict(kind="class", name=node.name))
         bases = [self.visit_all(base, inline=True) for base in node.bases]
 
         local_keyword = ""
@@ -232,6 +233,7 @@ class NodeVisitor(ast.NodeVisitor):
 
         self.emit("end, {{{}}}, \"{}\")".format(", ".join(bases), node.name))
 
+        self.scope.pop()
         # Return class object only in the top-level classes.
         # Not in the nested classes.
         #if not last_ctx["class_name"]:
@@ -291,6 +293,7 @@ class NodeVisitor(ast.NodeVisitor):
 
     def visit_DictComp(self, node):
         """Visit dictionary comprehension"""
+        self.scope.push(dict(kind="generator"))
         self.emit("(function()")
         self.emit("local result = dict {}")
 
@@ -322,6 +325,7 @@ class NodeVisitor(ast.NodeVisitor):
 
         self.emit("return result")
         self.emit("end)()")
+        self.scope.pop()
 
     def visit_Ellipsis(self, node):
         """Visit ellipsis"""
@@ -439,7 +443,7 @@ class NodeVisitor(ast.NodeVisitor):
             
     def visit_For(self, node):
         """Visit for"""
-        line = "for {target} in {iter} do"
+        line = "for _, {target} in {iter} do"
 
         values = {
             "target": self.visit_all(node.target, inline=True),
@@ -453,6 +457,7 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit("end")
 
     def visit_GeneratorExp(self, node):
+        self.scope.push(dict(kind="generator"))
         self.emit("coroutine.wrap(function()")
 
         ends_count = 0
@@ -479,7 +484,8 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit(" ".join(["end"] * ends_count))
 
         self.emit("end)")
-
+        self.scope.pop()
+        
     def visit_If(self, node):
         """Visit if"""
         test = self.visit_all(node.test, inline=True)
@@ -561,6 +567,7 @@ class NodeVisitor(ast.NodeVisitor):
     def visit_Lambda(self, node):
         """Visit lambda"""
         # TODO: ignore key-value parameters
+        self.scope.push(dict(kind="lambda"))
         
         line = "function({arguments}) "
 
@@ -591,14 +598,16 @@ class NodeVisitor(ast.NodeVisitor):
         output = function_def + "; ".join(body)
         
         self.emit(output)
+        self.scope.pop()
 
     def visit_List(self, node):
         """Visit list"""
         elements = [self.visit_all(item, inline=True) for item in node.elts]
-        line = "list {{{}}}".format(", ".join(elements))
+        line = "list {{_to_null({})}}".format(", ".join(elements))
         self.emit(line)
 
     def visit_ListComp(self, node):
+        self.scope.push(dict(kind="generator"))
         self.emit("(function()")
         self.emit("local result = list {}")
 
@@ -627,6 +636,7 @@ class NodeVisitor(ast.NodeVisitor):
 
         self.emit("return result")
         self.emit("end)()")
+        self.scope.pop()
         
     def visit_Name(self, node):
         """Visit name"""
@@ -667,6 +677,7 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit(line)
 
     def visit_SetComp(self, node):
+        self.scope.push(dict(kind="generator"))
         self.emit("(function()")
         self.emit("local result = set {}")
 
@@ -695,7 +706,8 @@ class NodeVisitor(ast.NodeVisitor):
 
         self.emit("return result")
         self.emit("end)()")
-
+        self.scope.pop()
+        
     def visit_Slice(self, node):
         line = "slice({start}, {stop}, {step})"
         values = {

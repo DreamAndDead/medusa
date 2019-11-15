@@ -238,7 +238,7 @@ abs = math.abs
 -- return true if bool(x) is true for all values x in the iterable.
 -- if the iterable is empty, return True.
 function all(iterable)
-   for element in iterable do
+   for _, element in iterable do
       if not bool(element) then
          return false
       end
@@ -250,7 +250,7 @@ end
 -- return true if bool(x) is true for any x in the iterable.
 -- if the iterable is empty, return False.
 function any(iterable)
-   for element in iterable do
+   for _, element in iterable do
       if bool(element) then
          return true
       end
@@ -342,23 +342,19 @@ end
 -- enumerate is useful for obtaining an indexed list:
 --     (0, seq[0]), (1, seq[1]), (2, seq[2]), ...
 function enumerate(t, start)
+   -- assume t is a list
    start = start or 0
 
-   local data = t
-   if t._is_list then
-      data = t._data
-   end
-
-   local i, v = g_real_next(data, nil)
+   local i, v = t(nil, nil)
    return function()
       local index, value = i, v
-      i, v = g_real_next(data, i)
-
       if index == nil then
          return nil
       end
 
-      return index + start - 1, value
+      i, v = t(nil, i)
+
+      return index, index + start - 1, value
    end
 end
 
@@ -370,7 +366,7 @@ function filter(func, iterable)
    func = func or bool
    -- fixme: use list for now, no lazy
    local l = list {}
-   for item in iterable do
+   for _, item in iterable do
       if func(item) then
 	 l.append(item)
       end
@@ -506,14 +502,42 @@ end
 -- return the number of items of a sequence or collection.
 function len(t)
    if type(t._data) == "table" then
-      local l = 0
-      for k, v in pairs(t._data) do
-	 l = l + 1
+      if t._is_list then
+	 return t._len
+      else
+	 local l = 0
+	 for k, v in pairs(t._data) do
+	    l = l + 1
+	 end
+	 return l
       end
-      return l
    end
 
    return #t
+end
+
+
+-- represent nil in table
+-- https://stackoverflow.com/questions/40441508/how-to-represent-nil-in-a-table
+function _null()
+end
+
+function _to_null(...)
+   local t, n = {...}, select('#', ...)
+   for k = 1, n do
+      local v = t[k]
+      if v == nil then t[k] = _null end
+   end
+   return unpack(t, 1, n)
+end
+
+function _to_nil(...)
+   local t, n = {...}, select('#', ...)
+   for k = 1, n do
+      local v = t[k]
+      if v == _null then t[k] = nil end
+   end
+   return unpack(t, 1, n)
 end
 
 
@@ -526,18 +550,25 @@ setmetatable(list, {
 
                    result._is_list = true
                    result._data = {}
+		   result._len = 0
 
 		   if t ~= nil then
 		      if t.__iter__ then
 			 -- iterable
-			 for v in t do
-			    table.insert(result._data, v)
+			 local l = 0
+			 for _, v in t do
+			    l = l + 1
+			    result._data[l] = v
 			 end
+			 result._len = l
 		      else
 			 -- list literal
+			 local l = 0
 			 for k, v in pairs(t) do
-			    result._data[k] = v
+			    l = l + 1
+			    result._data[k] = _to_nil(v)
 			 end
+			 result._len = l
 		      end
 		   else
 		      -- list()
@@ -576,35 +607,39 @@ setmetatable(list, {
 
 		   -- L.append(object) -> None -- append object to end
                    methods.append = function(self, value)
-                      table.insert(result._data, value)
+		      self._len = self._len + 1
+		      self._data[self._len] = value
                    end
 
 		   -- L.clear() -> None -- remove all items from L
                    methods.clear = function(self)
-                      result._data = {}
+		      self._len = 0
+                      self._data = {}
                    end
 
 		   -- L.copy() -> list -- a shallow copy of L
                    methods.copy = function(self)
-                      return list(result._data)
+                      local c = list(self._data)
+		      c._len = self._len
+		      return c
                    end
 
 		   -- L.count(value) -> integer -- return number of occurrences of value
                    methods.count = function(self, value)
                       local cnt = 0
-                      for _, v in ipairs(result._data) do
-                         if v == value then
-                            cnt = cnt + 1
-                         end
-                      end
-
+		      for i = 1, self._len do
+			 local v = self._data[i]
+			 if v == value then
+			    cnt = cnt + 1
+			 end
+		      end
                       return cnt
                    end
 
 		   -- L.extend(iterable) -> None -- extend list by appending elements from the iterable
                    methods.extend = function(self, iterable)
-                      for value in iterable do
-                         table.insert(result._data, value)
+                      for _, value in iterable do
+                         self.append(value)
                       end
                    end
 
@@ -612,7 +647,7 @@ setmetatable(list, {
 		   -- 相当于在 L[start:stop] 中寻找 value
 		   -- 当 start stop 超过开始/结束的界限，算作界限本身
                    methods.index = function(self, value, start, stop)
-		      local size = #result._data
+		      local size = self._len
 		      
 		      if not start then
 			 start = 1
@@ -639,56 +674,65 @@ setmetatable(list, {
 
 		   -- L.insert(index, object) -- insert object before index
                    methods.insert = function(self, index, value)
-		      local size = #result._data
+		      local size = self._len
 
 		      if index + 1 > size then
 			 index = size + 1
 		      else
-			 index = py_to_lua_idx(index, #result._data)
+			 index = py_to_lua_idx(index, size)
 		      end
 		      
-                      table.insert(result._data, index, value)
+		      self._len = self._len + 1
+		      for i = self._len, 1, -1 do
+			 if i > index then
+			    self._data[i] = self._data[i-1]
+			 end
+		      end
+		      self._data[index] = value
                    end
 
 		   -- L.pop([index]) -> item -- remove and return item at index (default last).
                    methods.pop = function(self, index)
-		      local size = #result._data
+		      local size = self._len
 		      
 		      if not index then
 			 index = size
 		      else
-			 -- out of range, index error
 			 if index + 1 > size or index + 1 + size < 1 then
-			    return nil
+			    error("list pop index out of range")
 			 else
 			    index = py_to_lua_idx(index, size)
 			 end
 		      end
 		      
                       local value = result._data[index]
-                      table.remove(result._data, index)
-		      
+
+		      for i = index + 1, self._len do
+			 self._data[i-1] = self._data[i]
+		      end
+		      self._len = self._len - 1
+
                       return value
                    end
 
 		   -- L.remove(value) -> None -- remove first occurrence of value.
                    methods.remove = function(self, value)
-                      for i, v in ipairs(result._data) do
-                         if value == v then
-                            table.remove(result._data, i)
-                            break
-                         end
-                      end
+		      for i = 1, self._len do
+			 v = self._data[i]
+			 if value == v then
+			    self.pop(i - 1)    -- use py index
+			    break
+			 end
+		      end
                    end
 
 		   -- L.reverse() -- reverse *IN PLACE*
                    methods.reverse = function(self)
-                      local new_data = {}
-                      for i = #result._data, 1, -1 do
-                         table.insert(new_data, result._data[i])
+                      local r = {}
+                      for i = 1, self._len do
+                         r[i] = self._data[self._len + 1 - i]
                       end
-
-                      result._data = new_data
+                      self._data = r
                    end
 
 		   -- L.sort(key=None, reverse=False) -> None -- stable sort *IN PLACE*
@@ -698,7 +742,9 @@ setmetatable(list, {
                       key = key or function (itself) return itself end
                       reverse = reverse or false
 
-                      table.sort(result._data, function(a, b)
+		      assert(self.count(nil) == 0, "unorderable types: NoneType")
+
+                      table.sort(self._data, function(a, b)
                                     if reverse then
                                        return key(a) > key(b)
                                     end
@@ -707,11 +753,10 @@ setmetatable(list, {
                       end)
                    end
 
-
 		   -- __iter__
 		   -- delegate to metatable __call
 		   methods.__iter__ = function(self)
-		      return result
+		      return self
 		   end
 		   
                    local iterator_index = 0
@@ -719,19 +764,17 @@ setmetatable(list, {
                    setmetatable(result, {
                                    __index = function(self, index)
                                       if type(index) == "number" then
-                                         if index < 0 then
-                                            index = #result._data + index
-                                         end
-                                         return rawget(result._data, index + 1)
+					 index = py_to_lua_idx(index, self._len)
+                                         return rawget(self._data, index)
                                       end
 
 				      if type(index) == "table" and index._is_slice then
 					 local s = list()
 					 
 					 local start = index.start or 0
-					 start = py_idx(start, len(self))
-					 local stop = index.stop or len(self)
-					 stop = py_idx(stop, len(self))
+					 start = py_idx(start, self._len)
+					 local stop = index.stop or self._len
+					 stop = py_idx(stop, self._len)
 					 local step = index.step or 1
 
 					 for i in range(start, stop, step) do
@@ -746,7 +789,8 @@ setmetatable(list, {
                                    end,
 				   -- only number index is permitted in python
                                    __newindex = function(self, index, value)
-                                      rawset(result._data, index + 1, value)
+				      index = py_to_lua_idx(index, self._len)
+                                      rawset(self._data, index, value)
                                    end,
                                    __call = function(self, _, idx)
                                       if idx == nil then
@@ -754,10 +798,13 @@ setmetatable(list, {
                                       end
 
 				      iterator_index = iterator_index + 1
-				      
-                                      local v = result._data[iterator_index]
-				      
-                                      return v
+                                      local v = self._data[iterator_index]
+
+				      if iterator_index > self._len then
+					 return nil, nil
+				      else
+					 return iterator_index, v
+				      end
                                    end,
                    })
 
@@ -1018,15 +1065,6 @@ function reversed(seq)
 end
 
 
-
-
---[[
-   tuple
---]]
-
-
-
-
 -- dict() -> new empty dictionary
 -- dict(mapping) -> new dictionary initialized from a mapping object's
 --     (key, value) pairs
@@ -1057,6 +1095,8 @@ setmetatable(dict, {
 			 end
 		      else
 			 -- dict literal
+			 -- TODO: store None as key
+			 -- TODO: store None as value, if value is None, in lua, it'll delete the key, then fromkeys will be wrong
 			 for k, v in pairs(t) do
 			    result._data[k] = v
 			 end

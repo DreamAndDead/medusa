@@ -12,8 +12,8 @@ assert((dec(10, 2) == 8))
 assert((dec(dec(10, 2)) == 7))
 local itself = function(n, ...) local rest = list {...}; return rest end
 local t = 0
-local l = list {1, 2, 3, 4}
-for i in itself(unpack(l)) do
+local l = list {_null(1, 2, 3, 4)}
+for _, i in itself(unpack(l)) do
     t = (t + i)
 end
 assert((t == 9))

@@ -23,14 +23,14 @@ assert((len(c) == 3))
 assert((operator_in(9, c)))
 assert((operator_in(10, c)))
 assert((operator_in(11, c)))
-a = list {set {0, 1}, set {2, 3}}
+a = list {_null(set {0, 1}, set {2, 3})}
 b = (function() local result = set {} for i in a do for j in i do result.add(j) end end return result end)()
 assert((len(b) == 4))
 assert((operator_in(0, b)))
 assert((operator_in(1, b)))
 assert((operator_in(2, b)))
 assert((operator_in(3, b)))
-a = list {set {0, 1, 2}, set {0, 1}, set {0}}
+a = list {_null(set {0, 1, 2}, set {0, 1}, set {0})}
 b = (function() local result = set {} for i in a do if (len(i) == 2) then for j in i do if (j == 0) then result.add(j) end end end end return result end)()
 assert((len(b) == 1))
 assert((operator_in(0, b)))

@@ -16,7 +16,7 @@ local function sum(first, second, ...)
     local more = list {...}
     --[[sum of the parameters]]
     local s = (first + second)
-    for i in more do
+    for _, i in more do
         s = (s + i)
     end
     return s
@@ -85,7 +85,7 @@ end
 function sum(...)
     local n = list {...}
     local t = 0
-    for i in n do
+    for _, i in n do
         t = (t + i)
     end
     return t

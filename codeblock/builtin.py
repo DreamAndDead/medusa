@@ -135,7 +135,6 @@ assert len(f) == 1
 assert f[0] == 'x'
 
 
-
 ## float
 
 assert float(10) == 10.0
@@ -330,13 +329,13 @@ assert l[3] == 7
 
 ## reduce
 
-from functools import reduce
+#from functools import reduce
 
-l = [0, 1, 2, 3, 4, 5]
+#l = [0, 1, 2, 3, 4, 5]
 
-assert reduce(lambda x, y: x+y, [], 10) == 10
-assert reduce(lambda x, y: x+y, l) == 15
-assert reduce(lambda x, y: x+y, l, 10) == 25
+#assert reduce(lambda x, y: x+y, [], 10) == 10
+#assert reduce(lambda x, y: x+y, l) == 15
+#assert reduce(lambda x, y: x+y, l, 10) == 25
 
 
 

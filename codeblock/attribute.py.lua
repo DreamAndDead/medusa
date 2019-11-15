@@ -1,5 +1,5 @@
 dofile('./polyfill/pypolyfill.lua')
-local l = list {1, 2}
+local l = list {_null(1, 2)}
 assert((l.count(1) == 1))
 local T = class(function(T)
     function T.__init__(self)

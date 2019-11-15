@@ -12,6 +12,10 @@ assert d['age'] == 20
 assert len(d) == 3
 
 
+## FIXME: python dict key can be None, but lua table can't have nil key
+# d = { None: '' }
+
+
 ## nested dict
 
 d = {

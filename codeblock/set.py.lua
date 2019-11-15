@@ -125,7 +125,7 @@ assert(not s4.issuperset(s3))
 assert(s4.issuperset(s4))
 s1 = set {1, 2, 3, 4, 5, 6}
 s2 = s1.copy()
-for i in range(len(s1)) do
+for _, i in range(len(s1)) do
     local e = s1.pop()
     assert((not operator_in(e, s1)))
     assert((operator_in(e, s2)))
