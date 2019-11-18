@@ -300,7 +300,7 @@ class NodeVisitor(ast.NodeVisitor):
         ends_count = 0
 
         for comp in node.generators:
-            line = "for {target} in {iterator} do"
+            line = "for _, {target} in {iterator} do"
             values = {
                 "target": self.visit_all(comp.target, inline=True),
                 "iterator": self.visit_all(comp.iter, inline=True),
@@ -458,12 +458,12 @@ class NodeVisitor(ast.NodeVisitor):
 
     def visit_GeneratorExp(self, node):
         self.scope.push(dict(kind="generator"))
-        self.emit("coroutine.wrap(function()")
+        self.emit("coroutine_wrap(function()")
 
         ends_count = 0
 
         for comp in node.generators:
-            line = "for {target} in {iterator} do"
+            line = "for _, {target} in {iterator} do"
             values = {
                 "target": self.visit_all(comp.target, inline=True),
                 "iterator": self.visit_all(comp.iter, inline=True),
@@ -616,7 +616,7 @@ class NodeVisitor(ast.NodeVisitor):
         ends_count = 0
 
         for comp in node.generators:
-            line = "for {target} in {iterator} do"
+            line = "for _, {target} in {iterator} do"
             values = {
                 "target": self.visit_all(comp.target, inline=True),
                 "iterator": self.visit_all(comp.iter, inline=True),
@@ -686,7 +686,7 @@ class NodeVisitor(ast.NodeVisitor):
         ends_count = 0
 
         for comp in node.generators:
-            line = "for {target} in {iterator} do"
+            line = "for _, {target} in {iterator} do"
             values = {
                 "target": self.visit_all(comp.target, inline=True),
                 "iterator": self.visit_all(comp.iter, inline=True),

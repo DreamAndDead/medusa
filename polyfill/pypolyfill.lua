@@ -776,7 +776,7 @@ setmetatable(list, {
                                          return rawget(self._data, index)
                                       end
 
-				      if type(index) == "table" and index._is_slice then
+				      if type(index) == "table" and index._is_slice == true then
 					 local s = list()
 					 
 					 local start = index.start or 0
@@ -785,7 +785,7 @@ setmetatable(list, {
 					 stop = py_idx(stop, self._len)
 					 local step = index.step or 1
 
-					 for i in range(start, stop, step) do
+					 for _, i in range(start, stop, step) do
 					    s.append(self[i])
 					 end
 					 return s
@@ -819,6 +819,31 @@ setmetatable(list, {
                    return result
                 end,
 })
+
+
+-- different from coroutine.wrap
+-- the wrapper return code and res
+function coroutine_wrap(func)
+   local co = coroutine.create(func)
+   local code, res = coroutine.resume(co)
+   local ret_code
+   local ret_res
+   return function()
+      local next_code, next_res = coroutine.resume(co)
+
+      if next_code == false then
+	 ret_code = nil
+      else
+	 ret_code = code
+      end
+      ret_res = res
+      
+      code = next_code
+      res = next_res
+      
+      return ret_code, ret_res
+   end
+end
 
 
 -- generator (and meta) class
@@ -878,7 +903,7 @@ function map(func, ...)
    local iter_num = len(iterables)
    local min_len = math.huge
 
-   for it in iterables do
+   for _, it in iterables do
       lists.append(list(it))
       
       local l = len(list(it))
@@ -888,9 +913,9 @@ function map(func, ...)
    end
    
    local res = list {}
-   for nth in range(min_len) do
+   for _, nth in range(min_len) do
       local param = {}
-      for ith in range(iter_num) do
+      for _, ith in range(iter_num) do
 	 param[#param+1] = lists[ith][nth]
       end
       res.append(func(unpack(param)))
@@ -1029,11 +1054,11 @@ function range(...)
    return function()
       ret = i
       if (step > 0 and i >= stop) or (step < 0 and i <= stop) then
-         return nil
+         return nil, nil
       end
       
       i = i + step
-      return ret
+      return i, ret
    end
 end
 
@@ -1977,7 +2002,7 @@ function zip(iter1, ...)
    local iters_num = len(iters)
    local min_iter_len = math.huge
 
-   for it in iters do
+   for _, it in iters do
       lists.append(list(it))
       local l = len(list(it))
       if l < min_iter_len then
@@ -1986,9 +2011,9 @@ function zip(iter1, ...)
    end
 
    local res = list {}
-   for nth in range(min_iter_len) do
+   for _, nth in range(min_iter_len) do
       local item = list {}
-      for ith in range(iters_num) do
+      for _, ith in range(iters_num) do
 	 item.append(lists[ith][nth])
       end
       res.append(item)
