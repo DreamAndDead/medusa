@@ -21,21 +21,6 @@ function echored()
   echo $(__colortext "$1" "31")
 }
 
-function echoblue() 
-{
-  echo $(__colortext "$1" "34")
-}
-
-function echopurple() 
-{
-  echo $(__colortext "$1" "35")
-}
-
-function echoyellow() 
-{
-  echo $(__colortext "$1" "33")
-}
-
 function echocyan() 
 {
   echo $(__colortext "$1" "36")
@@ -44,10 +29,10 @@ function echocyan()
 #######################################################
 
 
-PYTHON=python3
+PYTHON=python3.4
 LUA=lua5.1
-TEST_FOLDER=./codeblock/
-pylua=./py2lua.py
+TEST_FOLDER=./tests/
+pylua=./medusa.py
 
 pyfile_path=$1
 
@@ -55,7 +40,7 @@ function test_pyfile()
 {
     pyfile=$1
     pyluafile=$pyfile.lua
-    echocyan "test python file $pyfile"
+    echocyan "test $pyfile"
 
     echo "dofile('./polyfill/pypolyfill.lua')" > $pyluafile
     $PYTHON $pylua < $pyfile >> $pyluafile
@@ -79,8 +64,6 @@ function test_pyfile()
     if [[ $lua_exit -ne 0 ]]; then
 	cat -n $pyluafile
     fi
-
-    echo
 }
 
 if [[ "$pyfile_path" == "" ]]; then

@@ -1,17 +1,13 @@
 #!/usr/bin/env python3
 
-"""Entry point to the translator"""
-
 import sys
 import os
 
-from pythonlua.translator import Translator
-from pythonlua.polyfill import polyfill
+from medusa.translator import Translator
+from medusa.polyfill import polyfill
 
 def main():
-    """Entry point function to the translator"""
     content = sys.stdin.read()
-#    content = open('unsupported.txt').read()
     translator = Translator()
     error, result = translator.translate(content)
 
