@@ -1,6 +1,6 @@
 # py2lua
 
-A pyscript for transpiling pycode to luacode and can be distributed as a single executable file.
+A python project for transpiling pycode to luacode and can be distributed as a single executable file for npl mod.
 
 ## usage
 
@@ -12,12 +12,6 @@ A pyscript for transpiling pycode to luacode and can be distributed as a single 
 ### run
 
 执行 tranpiler 程序，从 stdin 读取 python 代码，在 stdout 输出翻译的 lua 代码。
-
-```
-$ python py2lua.py
-```
-
-也可以使用文件重定向的方式读取 python 代码文件
 
 ```
 $ python py2lua.py < pycode.py
@@ -42,8 +36,6 @@ $ python distribute.py
 
 在 `dist` 目录下，生成 `py2lua` 可执行文件。
 
-使用方法和之前相同，默认从 stdin 读取 python 代码，在 stdout 输出翻译的 lua 代码。
-
 
 ## features
 
@@ -51,44 +43,4 @@ $ python distribute.py
 
 具体可见 :point_right: [features](./doc/features.md) :point_left:
 
-
-## development
-
-### file structure
-
-```
-.
-|-build/              # pyinstaller 的中间目录
-|-codeblock/          # 针对 codeblock 功能的 py 测试代码
-|-dist/               # pyinstaller 的生成目录
-|-distribute.py       # 调用 pyinstaller 的入口
-|-exe_version.txt     # 用于给生成的可执行文件设置元数据（针对 windows 平台）
-|-inspect.sh          # 调试脚本，将指定 python 代码打印为 ast 树形结构
-|-py2lua.py           # tranpiler 脚本入口
-|-py2lua.spec         # pyinstaller 生成的中间文件
-|-pyast.py            # py 脚本，由 inspect.sh 调用
-|-pypolyfill.lua      # polyfill 脚本，用 lua 补足相应的 python 功能
-|-pythonlua/          # tranpiler 功能模块代码
-|-README.md           # readme
-+-run_test.sh         # 使用 tranpiler 测试 codeblock 下的测试代码
-```
-
-### test
-
-测试 codeblock 下的代码。
-
-```
-$ ./run_test.sh
-```
-
-脚本会遍历所有 codeblock 下的 py 代码，转换为 lua 代码，并同时运行 py 代码和 lua 代码，比较两者的输出结果。
-
-
-### debug
-
-针对单个 py 文件，可以具体的查看 ast 树形结构
-
-```
-$ ./inspect.sh [py_file_path]
-```
 

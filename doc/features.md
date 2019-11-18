@@ -1,7 +1,7 @@
 # supported features
 
 py2lua 支持的 python 语言以 3.4 为基准，支持大部分语言功能。
-转换为 lua 语言，支持 lua 5.1 版本。
+转换为 lua 语言 5.1 版本。
 
 ## transpile 的核心
 
@@ -29,7 +29,7 @@ transpile 的本质在于，用 lua 实现 python 语言所表现的语义，相
 
 python 和 lua 都是弱类型语言，变量没有类型。
 
-可能存在区别的在于**作用域**，这一点到后面详细讨论。
+存在区别的在于**作用域**，这一点到后面详细讨论。
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
@@ -565,8 +565,6 @@ return 语句在 python 和 lua 中是相同的，用于从函数中返回值。
 在 python 中，yield 有很多应用，从简单的 generator 到交换控制权的协程。
 python 中的 yield 是对称性协程机制，而 lua 中的协程机制是非对称的，需要相应的模板代码来和 python 协程的使用保持一致。
 
-**TODO：功能依然在调整，经测试可用，需要在 transpiler context 部分修复一些代码**
-
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
 |generator 机制|`yield i`|`coroutine.yield(i)`|:heavy_check_mark:|
@@ -844,19 +842,11 @@ python 中独有的上下文操作，目前不支持。
 import 的实现需要配合 module 概念的引入，将单个文件作为一个 module。
 lua 中也有 module 的概念，需要将其与 python 的 module 写法相适配。
 
+暂时不支持。
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
-|`import`|`import module`|`local module = require("module")`|:heavy_check_mark:|
-|`import as`|`import module as new_module`|`local new_module = require("module")`|:heavy_check_mark:|
-|`from import`|`from module import func`|`local func = require("module").func`|:heavy_check_mark:|
-|`from import as`|`from module import func as new_func`|`local new_func = require("module").func`|:heavy_check_mark:|
-
-
-|python示例代码|lua转换代码|
-|:-:|:-:|
-|[import.py](./../codeblock/import.py)|[import.py.lua](./../codeblock/import.py.lua)|
-
+|`import`|`import module`|` `|:x:|
 
 
 ### Global Nonlocal
@@ -882,12 +872,6 @@ def 可以开启闭包作用域，class 不能。使用 nonlocal 同样进行的
 |:-:|:-:|:-:|:-:|
 |`global`|`global g`|` `|:x:|
 |`nonlocal`|`nonlocal n`|` `|:x:|
-
-
-|python示例代码|lua转换代码|
-|:-:|:-:|
-|[scope.py](./../codeblock/scope.py)|[scope.py.lua](./../codeblock/scope.py.lua)|
-
 
 ----
 
