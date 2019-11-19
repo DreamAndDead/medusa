@@ -356,6 +356,9 @@ class NodeVisitor(ast.NodeVisitor):
         self.output.append(output)
 
     def visit_FunctionDef(self, node):
+        last_scope = self.scope.last()
+        last_scope['locals'].append(node.name)
+        
         self.scope.push(dict(kind="function", name=node.name))
         cur_scope = self.scope.last()
         

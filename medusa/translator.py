@@ -38,7 +38,17 @@ class Translator:
             return error, error_msg
 
         self.output = visitor.output
-        return error, self.to_code()
+
+        # export module symbols
+        symbols = []
+        symbols.append('')
+        symbols.append('return {')
+        for symbol in visitor.scope.first()['locals']:
+            symbols.append('    %s = %s,' % (symbol, symbol))
+        symbols.append('}')
+        
+        
+        return error, self.to_code() + '\n'.join(symbols)
 
     def to_code(self, code=None, indent=0):
         """Create a lua code from the compiler output"""
@@ -60,6 +70,7 @@ class Translator:
             elif isinstance(line, list):
                 sub_code = self.to_code(line, indent + 1)
                 lines.append(sub_code)
+
 
         return "\n".join(lines)
 
