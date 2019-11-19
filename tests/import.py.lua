@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local module = require("module")
 local new_module = require("module")
 local module = require("module")

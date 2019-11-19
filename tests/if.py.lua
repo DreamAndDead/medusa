@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local b = 0
 if true then
     b = 1

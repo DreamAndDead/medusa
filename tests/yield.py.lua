@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local function count()
     for _, i in range(10) do
         coroutine.yield(i)

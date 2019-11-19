@@ -33,6 +33,7 @@ PYTHON=python3.4
 LUA=lua5.1
 TEST_FOLDER=./tests/
 pylua=./medusa.py
+luatest=./test.lua
 
 pyfile_path=$1
 
@@ -42,13 +43,12 @@ function test_pyfile()
     pyluafile=$pyfile.lua
     echocyan "test $pyfile"
 
-    echo "dofile('./polyfill/pypolyfill.lua')" > $pyluafile
-    $PYTHON $pylua < $pyfile >> $pyluafile
+    $PYTHON $pylua < $pyfile > $pyluafile
 
     $PYTHON $pyfile
     py_exit=$?
     
-    $LUA $pyluafile
+    $LUA $luatest $pyluafile
     lua_exit=$?
 
     if [[ $py_exit -eq 0 ]] && [[ $lua_exit -eq 0 ]]; then

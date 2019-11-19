@@ -1,10 +1,9 @@
-
+--[[
 local function inspect(t)
    local i = require 'inspect'.inspect
    print(i(t))
 end
-
-
+--]]
 
 local max_bit_length = 32
 
@@ -190,7 +189,7 @@ local function bit_lshift(n, shift)
    return tbl_to_number(lshift_tbl)
 end
 
-bit = {
+local bit = {
    band = bit_and,
    bor  = bit_or,
    bnot = bit_not,
@@ -210,7 +209,7 @@ end
 
 local g_real_unpack = unpack or table.unpack
 
-unpack = function(t)
+local unpack = function(t)
    if type(t) == "table" and t._is_list then
       return g_real_unpack(t._data)
    end
@@ -223,7 +222,7 @@ local g_real_next = next
 -- return the next item from the iterator. If default is given and the iterator
 -- is exhausted, it is returned instead of raising StopIteration.
 -- fixme: support generator only for now
-next = function(iter, default)
+local next = function(iter, default)
    local v = nil
    if iter._is_generator then
       v = iter.next()
@@ -232,305 +231,55 @@ next = function(iter, default)
    return v
 end
 
+-- range(stop) -> range object
+-- range(start, stop[, step]) -> range object
+-- return a sequence of numbers from start to stop by step.
+local function range(...)
+   local p, l = {...}, select('#', ...)
+   assert(l ~= 0, 'range() expected 1 arguments, got 0')
 
---[[
-   builtin functions
-   ref: https://docs.python.org/3.4/library/functions.html
---]]
-
--- abs(number) -> number
--- return the absolute value of the argument.
-abs = math.abs
-
--- all(iterable) -> bool
--- return true if bool(x) is true for all values x in the iterable.
--- if the iterable is empty, return True.
-function all(iterable)
-   for _, element in iterable do
-      if not bool(element) then
-         return false
-      end
-   end
-   return true
-end
-
--- any(iterable) -> bool
--- return true if bool(x) is true for any x in the iterable.
--- if the iterable is empty, return False.
-function any(iterable)
-   for _, element in iterable do
-      if bool(element) then
-         return true
-      end
-   end
-   return false
-end
-
--- ascii(object) -> string
--- as repr(), return a string containing a printable representation of an
--- object, but escape the non-ASCII characters in the string returned by
--- repr() using \x, \u or \U escapes.  This generates a string similar
--- to that returned by repr() in Python 2.
-function ascii(obj)
-   -- todo
-end
-
--- bin(number) -> string
--- return the binary representation of an integer.
--- >>> bin(2796202)
--- '0b1010101010101010101010'
-function bin(num)
-   assert(type(num) == 'number', 'num is not a number in bin()')
-   assert(math.floor(num) == num, 'num is a float in bin()')
-
-   local prefix = '0b'
-
-   local b = ''
-   local m = 0
-   repeat
-      num, m = divmod(num, 2)
-      b = tostring(m) .. b
-   until num == 0
-
-   return prefix .. b
-end
-
--- bool(x) -> bool
--- returns True when the argument x is true, False otherwise.
--- the builtins True and False are the only two instances of the class bool.
--- the class bool is a subclass of the class int, and cannot be subclassed.
-function bool(x)
-   if x == false or x == nil or x == 0 or x == '' then
-      return false
-   end
-
-   if type(x) == "table" then
-      if x._is_list or x._is_dict then
-         return g_real_next(x._data) ~= nil
-      end
-   end
-
-   return true
-end 
-
--- callable(object) -> bool
--- return whether the object is callable (i.e., some kind of function).
--- note that classes are callable, as are instances of classes with a
--- __call__() method.
-function callable(obj)
-   local obj_type = type(obj)
-   if obj_type == "function" then
-      return true
-   end
-   if obj_type == "table" then
-      if obj._is_list or obj._is_dict then
-	 return false
-      end
-      
-      local meta = getmetatable(obj)
-      return type(meta.__call) == "function" 
-   end
-
-   return false
-end
-
--- divmod(x, y) -> (div, mod)
--- return the tuple ((x-x%y)/y, x%y).  Invariant: div*y + mod == x.
-function divmod(a, b)
-   local d = math.floor(a / b)
-   local m = a - d * b
-   return d, m
-end
-
-
--- enumerate(iterable[, start]) -> iterator for index, value of iterable
--- return an enumerate object.  iterable must be another object that supports
--- iteration.  The enumerate object yields pairs containing a count (from
--- start, which defaults to zero) and a value yielded by the iterable argument.
--- enumerate is useful for obtaining an indexed list:
---     (0, seq[0]), (1, seq[1]), (2, seq[2]), ...
-function enumerate(t, start)
-   -- assume t is a list
-   start = start or 0
-
-   local i, v = t(nil, nil)
-   return function()
-      local index, value = i, v
-      if index == nil then
-         return nil
-      end
-
-      i, v = t(nil, i)
-
-      return index, index + start - 1, value
-   end
-end
-
-
--- filter(function or None, iterable) --> filter object
--- return an iterator yielding those items of iterable for which function(item)
--- is true. If function is None, return the items that are true.
-function filter(func, iterable)
-   func = func or bool
-   -- fixme: use list for now, no lazy
-   local l = list {}
-   for _, item in iterable do
-      if func(item) then
-	 l.append(item)
-      end
-   end
-   return l
-end
-
-
-
--- float(x) -> floating point number
--- convert a string or number to a floating point number, if possible.
-function float(x)
-   local n = tonumber(x)
-   assert(n ~= nil, "could not convert string to float " .. tostring(x))
-   return n
-end
-
-
--- hex(number) -> string
--- return the hexadecimal representation of an integer.
---   >>> hex(3735928559)
---   '0xdeadbeef'
-function hex(num)
-   assert(type(num) == 'number', 'num is not a number in hex(num)')
-   assert(math.floor(num) == num, 'num is a float in hex(num)')
-
-   local int_hex_map = {
-      [0] = '0',
-      [1] = '1',
-      [2] = '2',
-      [3] = '3',
-      [4] = '4',
-      [5] = '5',
-      [6] = '6',
-      [7] = '7',
-      [8] = '8',
-      [9] = '9',
-      [10] = 'a',
-      [11] = 'b',
-      [12] = 'c',
-      [13] = 'd',
-      [14] = 'e',
-      [15] = 'f',
-   }
-
-   local prefix = '0x'
-   local m = 0
-   local h = ''
-   repeat
-      num, m = divmod(num, 16)
-      h = int_hex_map[m] .. h
-   until num == 0
-
-   return prefix .. h
-end
-
-
--- int(x=0) -> integer
--- int(x, base=10) -> integer
--- convert a number or string to an integer, or return 0 if no arguments
--- are given.  If x is a number, return x.__int__().  For floating point
--- numbers, this truncates towards zero.
--- if x is not a number or if base is given, then x must be a string,
--- bytes, or bytearray instance representing an integer literal in the
--- given base.
--- the literal can be preceded by '+' or '-' and be surrounded
--- by whitespace. The base defaults to 10.  Valid bases are 0 and 2-36.
--- base 0 means to interpret the base from the string as an integer literal.
---   >>> int('0b100', base=0)
---   4
-function int(x, base)
-   if x == nil then
-      return 0
-   end
-
-   if type(x) == 'number' then
-      if x >= 0 then
-	 return math.floor(x)
-      else
-	 return math.ceil(x)
-      end
-   end
-
-   assert(type(x) == 'string', "int() can't convert non-string with explicit base")
-
-   base = base or 10
-
-   if base == 0 then
-      local is_neg = string.find(x, '-') ~= nil
-      local pos = string.gsub(x, '-', '')
-
-      if string.find(x, '0x') then
-	 base = 16
-	 pos = string.gsub(pos, '0x', '')
-      elseif string.find(x, '0b') then
-	 base = 2
-	 pos = string.gsub(pos, '0b', '')
-      else
-	 base = 10
-      end
-      
-      local n = tonumber(pos, base)
-
-      assert(n ~= nil, "invalid literal for int(): " .. x)
-
-      if is_neg then
-	 n = -n
-      end
-
-      return n
+   local start = nil
+   local stop = nil
+   local step = nil
+   
+   if l == 1 then
+      stop = p[1]
+   elseif l == 2 then
+      start = p[1]
+      stop = p[2]
    else
-      assert(base >= 2 and base <= 40, "int() base must be >= 2 and <= 36")
+      start = p[1]
+      stop = p[2]
+      step = p[3]
+   end
+
+   start = start or 0
+   step = step or 1
+
+   assert(step ~= 0, 'range() arg 3 must not be zero')
+
+   local i = start
+
+   return function()
+      ret = i
+      if (step > 0 and i >= stop) or (step < 0 and i <= stop) then
+         return nil, nil
+      end
       
-      local is_neg = string.find(x, '-') ~= nil
-      local pos = string.gsub(x, '-', '')
-      local n = tonumber(pos, base)
-
-      assert(n ~= nil, "invalid literal for int(): " .. x)
-
-      if is_neg then
-	 n = -n
-      end
-
-      return n
+      i = i + step
+      return i, ret
    end
-    
 end
 
 
-
-
--- len(object)
--- return the number of items of a sequence or collection.
-function len(t)
-   if type(t._data) == "table" then
-      if t._is_list == true or t._is_tuple == true then
-	 return t._len
-      else
-	 local l = 0
-	 for k, v in pairs(t._data) do
-	    l = l + 1
-	 end
-	 return l
-      end
-   end
-
-   return #t
-end
 
 
 -- represent nil in table
 -- https://stackoverflow.com/questions/40441508/how-to-represent-nil-in-a-table
-function _null()
+local function _null()
 end
 
-function _to_null(...)
+local function _to_null(...)
    local t, n = {...}, select('#', ...)
    for k = 1, n do
       local v = t[k]
@@ -539,7 +288,7 @@ function _to_null(...)
    return unpack(t, 1, n)
 end
 
-function _to_nil(...)
+local function _to_nil(...)
    local t, n = {...}, select('#', ...)
    for k = 1, n do
       local v = t[k]
@@ -549,10 +298,11 @@ function _to_nil(...)
 end
 
 
--- 
+
+
 -- list() -> new empty list
 -- list(iterable) -> new list initialized from iterable's items
-list = {}
+local list = {}
 setmetatable(list, {
                 __call = function(_, t)
                    local result = {}
@@ -821,10 +571,302 @@ setmetatable(list, {
                 end,
 })
 
+-- bool(x) -> bool
+-- returns True when the argument x is true, False otherwise.
+-- the builtins True and False are the only two instances of the class bool.
+-- the class bool is a subclass of the class int, and cannot be subclassed.
+local function bool(x)
+   if x == false or x == nil or x == 0 or x == '' then
+      return false
+   end
+
+   if type(x) == "table" then
+      if x._is_list or x._is_dict then
+         return g_real_next(x._data) ~= nil
+      end
+   end
+
+   return true
+end 
+
+
+--[[
+   builtin functions
+   ref: https://docs.python.org/3.4/library/functions.html
+--]]
+
+-- abs(number) -> number
+-- return the absolute value of the argument.
+local abs = math.abs
+
+-- all(iterable) -> bool
+-- return true if bool(x) is true for all values x in the iterable.
+-- if the iterable is empty, return True.
+local function all(iterable)
+   for _, element in iterable do
+      if not bool(element) then
+         return false
+      end
+   end
+   return true
+end
+
+-- any(iterable) -> bool
+-- return true if bool(x) is true for any x in the iterable.
+-- if the iterable is empty, return False.
+local function any(iterable)
+   for _, element in iterable do
+      if bool(element) then
+         return true
+      end
+   end
+   return false
+end
+
+-- divmod(x, y) -> (div, mod)
+-- return the tuple ((x-x%y)/y, x%y).  Invariant: div*y + mod == x.
+local function divmod(a, b)
+   local d = math.floor(a / b)
+   local m = a - d * b
+   return d, m
+end
+
+-- ascii(object) -> string
+-- as repr(), return a string containing a printable representation of an
+-- object, but escape the non-ASCII characters in the string returned by
+-- repr() using \x, \u or \U escapes.  This generates a string similar
+-- to that returned by repr() in Python 2.
+local function ascii(obj)
+   -- todo
+end
+
+-- bin(number) -> string
+-- return the binary representation of an integer.
+-- >>> bin(2796202)
+-- '0b1010101010101010101010'
+local function bin(num)
+   assert(type(num) == 'number', 'num is not a number in bin()')
+   assert(math.floor(num) == num, 'num is a float in bin()')
+
+   local prefix = '0b'
+
+   local b = ''
+   local m = 0
+   repeat
+      num, m = divmod(num, 2)
+      b = tostring(m) .. b
+   until num == 0
+
+   return prefix .. b
+end
+
+-- callable(object) -> bool
+-- return whether the object is callable (i.e., some kind of function).
+-- note that classes are callable, as are instances of classes with a
+-- __call__() method.
+local function callable(obj)
+   local obj_type = type(obj)
+   if obj_type == "function" then
+      return true
+   end
+   if obj_type == "table" then
+      if obj._is_list or obj._is_dict then
+	 return false
+      end
+      
+      local meta = getmetatable(obj)
+      return type(meta.__call) == "function" 
+   end
+
+   return false
+end
+
+
+-- enumerate(iterable[, start]) -> iterator for index, value of iterable
+-- return an enumerate object.  iterable must be another object that supports
+-- iteration.  The enumerate object yields pairs containing a count (from
+-- start, which defaults to zero) and a value yielded by the iterable argument.
+-- enumerate is useful for obtaining an indexed list:
+--     (0, seq[0]), (1, seq[1]), (2, seq[2]), ...
+local function enumerate(t, start)
+   -- assume t is a list
+   start = start or 0
+
+   local i, v = t(nil, nil)
+   return function()
+      local index, value = i, v
+      if index == nil then
+         return nil
+      end
+
+      i, v = t(nil, i)
+
+      return index, index + start - 1, value
+   end
+end
+
+
+-- filter(function or None, iterable) --> filter object
+-- return an iterator yielding those items of iterable for which function(item)
+-- is true. If function is None, return the items that are true.
+local function filter(func, iterable)
+   func = func or bool
+   -- fixme: use list for now, no lazy
+   local l = list {}
+   for _, item in iterable do
+      if func(item) then
+	 l.append(item)
+      end
+   end
+   return l
+end
+
+
+
+-- float(x) -> floating point number
+-- convert a string or number to a floating point number, if possible.
+local function float(x)
+   local n = tonumber(x)
+   assert(n ~= nil, "could not convert string to float " .. tostring(x))
+   return n
+end
+
+
+-- hex(number) -> string
+-- return the hexadecimal representation of an integer.
+--   >>> hex(3735928559)
+--   '0xdeadbeef'
+local function hex(num)
+   assert(type(num) == 'number', 'num is not a number in hex(num)')
+   assert(math.floor(num) == num, 'num is a float in hex(num)')
+
+   local int_hex_map = {
+      [0] = '0',
+      [1] = '1',
+      [2] = '2',
+      [3] = '3',
+      [4] = '4',
+      [5] = '5',
+      [6] = '6',
+      [7] = '7',
+      [8] = '8',
+      [9] = '9',
+      [10] = 'a',
+      [11] = 'b',
+      [12] = 'c',
+      [13] = 'd',
+      [14] = 'e',
+      [15] = 'f',
+   }
+
+   local prefix = '0x'
+   local m = 0
+   local h = ''
+   repeat
+      num, m = divmod(num, 16)
+      h = int_hex_map[m] .. h
+   until num == 0
+
+   return prefix .. h
+end
+
+
+-- int(x=0) -> integer
+-- int(x, base=10) -> integer
+-- convert a number or string to an integer, or return 0 if no arguments
+-- are given.  If x is a number, return x.__int__().  For floating point
+-- numbers, this truncates towards zero.
+-- if x is not a number or if base is given, then x must be a string,
+-- bytes, or bytearray instance representing an integer literal in the
+-- given base.
+-- the literal can be preceded by '+' or '-' and be surrounded
+-- by whitespace. The base defaults to 10.  Valid bases are 0 and 2-36.
+-- base 0 means to interpret the base from the string as an integer literal.
+--   >>> int('0b100', base=0)
+--   4
+local function int(x, base)
+   if x == nil then
+      return 0
+   end
+
+   if type(x) == 'number' then
+      if x >= 0 then
+	 return math.floor(x)
+      else
+	 return math.ceil(x)
+      end
+   end
+
+   assert(type(x) == 'string', "int() can't convert non-string with explicit base")
+
+   base = base or 10
+
+   if base == 0 then
+      local is_neg = string.find(x, '-') ~= nil
+      local pos = string.gsub(x, '-', '')
+
+      if string.find(x, '0x') then
+	 base = 16
+	 pos = string.gsub(pos, '0x', '')
+      elseif string.find(x, '0b') then
+	 base = 2
+	 pos = string.gsub(pos, '0b', '')
+      else
+	 base = 10
+      end
+      
+      local n = tonumber(pos, base)
+
+      assert(n ~= nil, "invalid literal for int(): " .. x)
+
+      if is_neg then
+	 n = -n
+      end
+
+      return n
+   else
+      assert(base >= 2 and base <= 40, "int() base must be >= 2 and <= 36")
+      
+      local is_neg = string.find(x, '-') ~= nil
+      local pos = string.gsub(x, '-', '')
+      local n = tonumber(pos, base)
+
+      assert(n ~= nil, "invalid literal for int(): " .. x)
+
+      if is_neg then
+	 n = -n
+      end
+
+      return n
+   end
+    
+end
+
+
+
+
+-- len(object)
+-- return the number of items of a sequence or collection.
+local function len(t)
+   if type(t._data) == "table" then
+      if t._is_list == true or t._is_tuple == true then
+	 return t._len
+      else
+	 local l = 0
+	 for k, v in pairs(t._data) do
+	    l = l + 1
+	 end
+	 return l
+      end
+   end
+
+   return #t
+end
+
 
 -- different from coroutine.wrap
 -- the wrapper return code and res
-function coroutine_wrap(func)
+local function coroutine_wrap(func)
    local co = coroutine.create(func)
    local code, res = coroutine.resume(co)
    local ret_code
@@ -848,7 +890,7 @@ end
 
 
 -- generator (and meta) class
-meta_generator = {}
+local meta_generator = {}
 setmetatable(meta_generator, {
                 __call = function(_, t)
                    local result = {}
@@ -897,7 +939,7 @@ setmetatable(meta_generator, {
 -- map(func, *iterables) --> map object
 -- make an iterator that computes the function using arguments from
 -- each of the iterables.  Stops when the shortest iterable is exhausted.
-function map(func, ...)
+local function map(func, ...)
    local iterables = list {...}
    local lists = list {}
    
@@ -931,7 +973,7 @@ end
 -- return the octal representation of an integer.
 --    >>> oct(342391)
 --    '0o1234567'
-function oct(num)
+local function oct(num)
    assert(type(num) == 'number', 'num is not a number in hex()')
    assert(math.floor(num) == num, 'num is a float in hex()')
 
@@ -955,7 +997,7 @@ end
 -- default keyword-only argument specifies an object to return if
 -- the provided iterable is empty.
 -- with two or more arguments, return the largest argument.
-function max(arg1, ...)
+local function max(arg1, ...)
    local rest = list {...}
    local iterable = arg1
    if len(rest) ~= 0 then
@@ -983,7 +1025,7 @@ function max(arg1, ...)
 end
 
 
-function memoryview(object)
+local function memoryview(object)
    -- not support
 end
 
@@ -994,7 +1036,7 @@ end
 -- default keyword-only argument specifies an object to return if
 -- the provided iterable is empty.
 -- with two or more arguments, return the smallest argument.
-function min(arg1, ...)
+local function min(arg1, ...)
    local rest = list {...}
    local iterable = arg1
    if len(rest) ~= 0 then
@@ -1022,48 +1064,6 @@ function min(arg1, ...)
 end
 
 
-
--- range(stop) -> range object
--- range(start, stop[, step]) -> range object
--- return a sequence of numbers from start to stop by step.
-function range(...)
-   local p, l = {...}, select('#', ...)
-   assert(l ~= 0, 'range() expected 1 arguments, got 0')
-
-   local start = nil
-   local stop = nil
-   local step = nil
-   
-   if l == 1 then
-      stop = p[1]
-   elseif l == 2 then
-      start = p[1]
-      stop = p[2]
-   else
-      start = p[1]
-      stop = p[2]
-      step = p[3]
-   end
-
-   start = start or 0
-   step = step or 1
-
-   assert(step ~= 0, 'range() arg 3 must not be zero')
-
-   local i = start
-
-   return function()
-      ret = i
-      if (step > 0 and i >= stop) or (step < 0 and i <= stop) then
-         return nil, nil
-      end
-      
-      i = i + step
-      return i, ret
-   end
-end
-
-
 -- reduce(function, sequence[, initial]) -> value
 -- apply a function of two arguments cumulatively to the items of a sequence,
 -- from left to right, so as to reduce the sequence to a single value.
@@ -1071,7 +1071,7 @@ end
 -- ((((1+2)+3)+4)+5).  If initial is present, it is placed before the items
 -- of the sequence in the calculation, and serves as a default when the
 -- sequence is empty.
-function reduce(func, seq, init)
+local function reduce(func, seq, init)
    if len(seq) == 0 then
       return init
    end
@@ -1092,7 +1092,7 @@ end
 
 -- reversed(sequence) -> reverse iterator over values of the sequence
 -- return a reverse iterator
-function reversed(seq)
+local function reversed(seq)
    local l = list(seq)
    l.reverse()
    return l
@@ -1108,7 +1108,7 @@ end
 --         d[k] = v
 -- dict(**kwargs) -> new dictionary initialized with the name=value pairs
 --     in the keyword argument list.  For example:  dict(one=1, two=2)
-dict = {}
+local dict = {}
 setmetatable(dict, {
 		__call = function(_, t)
 		   local result = {}
@@ -1270,7 +1270,7 @@ setmetatable(dict, {
 
 
 
-function staticmethod(old_fun)
+local function staticmethod(old_fun)
    local wrapper = function(first, ...)
       return old_fun(...)
    end
@@ -1278,7 +1278,7 @@ function staticmethod(old_fun)
    return wrapper
 end
 
-function operator_in(item, items)
+local function operator_in(item, items)
    if type(items) == "table" then
       for _, v in items do
 	 if v == item then
@@ -1292,7 +1292,7 @@ function operator_in(item, items)
    return false
 end
 
-function operator_is(a, b)
+local function operator_is(a, b)
    local type_a = type(a)
    local type_b = type(b)
 
@@ -1320,7 +1320,7 @@ object.__mro__ = list {object}
 -- pow(x, y[, z]) -> number
 -- with two arguments, equivalent to x**y.  With three arguments,
 -- equivalent to (x**y) % z, but may be more efficient (e.g. for ints).
-function pow(x, y, z)
+local function pow(x, y, z)
    local p = math.pow(x, y)
    if z == nil then
       return p
@@ -1334,7 +1334,7 @@ end
 -- round a number to a given precision in decimal digits (default 0 digits).
 -- this returns an int when called with one argument, otherwise the
 -- same type as the number. ndigits may be negative.
-function round(number, ndigits)
+local function round(number, ndigits)
    ndigits = ndigits or 0
 
    local shift = math.pow(10, ndigits)
@@ -1353,7 +1353,7 @@ end
 -- set(iterable) -> new set object
 -- build an unordered collection of unique elements.
 -- ref: https://docs.python.org/3/library/stdtypes.html#set-types-set-frozenset
-set = {}
+local set = {}
 setmetatable(set, {
                 __call = function(_, t)
                    local result = {}
@@ -1571,7 +1571,7 @@ setmetatable(set, {
 -- frozenset() -> empty frozenset object
 -- frozenset(iterable) -> frozenset object
 -- build an immutable unordered collection of unique elements.
-frozenset = {}
+local frozenset = {}
 setmetatable(frozenset, {
                 __call = function(_, t)
                    local result = {}
@@ -1707,7 +1707,7 @@ setmetatable(frozenset, {
 -- slice(stop)
 -- slice(start, stop[, step])
 -- create a slice object.  This is used for extended slicing (e.g. a[0:10:2]).
-function slice(...)
+local function slice(...)
    local p, l = {...}, select('#', ...)
    assert(l ~= 0, 'slice expected at least 1 arguments, got 0')
 
@@ -1732,7 +1732,7 @@ function slice(...)
 end
 
 -- sorted(iterable, key=None, reverse=False) --> new sorted list
-function sorted(iterable, key, reverse)
+local function sorted(iterable, key, reverse)
    local l = list(iterable)
    l.sort(key, reverse)
    return l
@@ -1743,7 +1743,7 @@ end
 -- return the sum of an iterable of numbers (NOT strings) plus the value
 -- of parameter 'start' (which defaults to 0).  When the iterable is
 -- empty, return start.
-function sum(iterable, start)
+local function sum(iterable, start)
    local start = start or 0
    local s = 0
 
@@ -1758,7 +1758,7 @@ end
 -- tuple() -> empty tuple
 -- tuple(iterable) -> tuple initialized from iterable's items
 -- f the argument is a tuple, the return value is the same object.
-tuple = {}
+local tuple = {}
 setmetatable(tuple, {
                 __call = function(_, t)
                    local result = {}
@@ -1889,12 +1889,6 @@ setmetatable(tuple, {
 
 
 
-
-
-
-------------------------------------------------
-
-
 --[[
    class
 
@@ -1906,7 +1900,8 @@ setmetatable(tuple, {
    - @property, @staticmethod, @classmethod
    - multi inherit
 --]]
-function class(class_init, bases, class_name)
+
+local function class(class_init, bases, class_name)
    bases = bases or {}
 
    local c = {}
@@ -1959,14 +1954,14 @@ function class(class_init, bases, class_name)
 end
 
 
-function isinstance(obj, cls)
+local function isinstance(obj, cls)
    local c = obj.__class__
 
    -- if cls in c's parent classes
    -- base on __mro__
 end
 
-function issubclass()
+local function issubclass()
 end
 
 --[[
@@ -1986,7 +1981,7 @@ class C(B):
     def cmeth(cls, arg):
         super().cmeth(arg)
 --]]
-function super(cls, obj)
+local function super(cls, obj)
 end
 
 
@@ -1995,7 +1990,7 @@ end
 -- the i-th element comes from the i-th iterable argument.  The .__next__()
 -- method continues until the shortest iterable in the argument sequence
 -- is exhausted and then it raises StopIteration.
-function zip(iter1, ...)
+local function zip(iter1, ...)
    local iters = list {...}
    iters.insert(0, iter1)
 
@@ -2023,3 +2018,54 @@ function zip(iter1, ...)
    return res
 end
 
+
+return {
+   ["bit"] = bit,
+   ["unpack"] = unpack,
+   ["next"] = next,
+   ["abs"] = abs,
+   ["all"] = all,
+   ["any"] = any,
+   ["ascii"] = ascii,
+   ["bin"] = bin,
+   ["bool"] = bool,
+   ["callable"] = callable,
+   ["divmod"] = divmod,
+   ["enumerate"] = enumerate,
+   ["filter"] = filter,
+   ["float"] = float,
+   ["hex"] = hex,
+   ["int"] = int,
+   ["len"] = len,
+   ["_to_null"] = _to_null,
+   ["_to_nil"] = _to_nil,
+   ["list"] = list,
+   ["coroutine_wrap"] = coroutine_wrap,
+   ["meta_generator"] = meta_generator,
+   ["map"] = map,
+   ["oct"] = oct,
+   ["max"] = max,
+   ["memoryview"] = memoryview,
+   ["min"] = min,
+   ["range"] = range,
+   ["reduce"] = reduce,
+   ["reversed"] = reversed,
+   ["dict"] = dict,
+   ["staticmethod"] = staticmethod,
+   ["operator_in"] = operator_in,
+   ["operator_is"] = operator_is,
+   ["object"] = object,
+   ["pow"] = pow,
+   ["round"] = round,
+   ["set"] = set,
+   ["frozenset"] = frozenset,
+   ["slice"] = slice,
+   ["sorted"] = sorted,
+   ["sum"] = sum,
+   ["tuple"] = tuple,
+   ["class"] = class,
+   ["isinstance"] = isinstance,
+   ["issubclass"] = issubclass,
+   ["super"] = super,
+   ["zip"] = zip,
+}

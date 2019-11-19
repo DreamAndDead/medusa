@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 assert(((bit.brshift(10, 1)) == 5))
 assert(((bit.brshift(10, 2)) == 2))
 assert(((bit.brshift(10, 3)) == 1))

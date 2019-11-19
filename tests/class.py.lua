@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local Point = class(function(Point)
     function Point.__init__(self, x, y)
         self.x = x

@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local a = 1
 assert((a == 1))
 local b = 1

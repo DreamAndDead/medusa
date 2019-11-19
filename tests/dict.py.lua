@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local d = dict {[_to_null("name")] = _to_null("john"), [_to_null(1)] = _to_null(26), [_to_null("age")] = _to_null(20), [_to_null(nil)] = _to_null(nil)}
 assert((d[_to_null("name")] == "john"))
 assert((d[_to_null(1)] == 26))

@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local i = 0
 while true do
     if (i > 99) then

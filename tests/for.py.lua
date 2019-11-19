@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local n = 0
 for _, i in list {_to_null(1, 2, 3)} do
     n = (n + 1)

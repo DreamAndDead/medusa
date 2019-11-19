@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local a = list {_to_null(0, 1, 2, 3)}
 local b = coroutine_wrap(function() for _, i in a do coroutine.yield((i + 1)) end end)
 local i = 0

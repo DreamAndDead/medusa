@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local s = frozenset(set {_to_null(0, 1, 2, 3, nil)})
 assert((len(s) == 5))
 assert((operator_in(0, s)))

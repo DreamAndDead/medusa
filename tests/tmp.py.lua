@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local function add(...)
     local a = list {...}
     local t = 0

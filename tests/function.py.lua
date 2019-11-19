@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local function mul(a, b)
     --[[simple multiplication]]
     return (a * b)

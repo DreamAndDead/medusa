@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local g = 10
 local function outer()
     local e = 20

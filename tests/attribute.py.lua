@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local l = list {_to_null(1, 2)}
 assert((l.count(1) == 1))
 local T = class(function(T)

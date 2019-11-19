@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local inc = function(x) return (x + 1) end
 local i = 0
 assert((inc(i) == 1))

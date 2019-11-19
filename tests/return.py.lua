@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local function null()
     return 
 end

@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local t = tuple(list {_to_null(1, 2, 3, nil)})
 assert((len(t) == 4))
 assert((t[_to_null(0)] == 1))

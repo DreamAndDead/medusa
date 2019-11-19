@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local l = list {_to_null(nil, 4, 3, nil, 2, 1, nil)}
 assert((len(l) == 7))
 assert((l[_to_null(0)] == nil))

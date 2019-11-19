@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local a = set {_to_null(0, 1, 2, 3)}
 local b = (function() local result = set {} for _, i in a do result.add((i + 1)) end return result end)()
 assert((operator_in(1, b)))

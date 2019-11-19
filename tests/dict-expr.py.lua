@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local d = dict {[_to_null(0)] = _to_null("a"), [_to_null(1)] = _to_null("b"), [_to_null("c")] = _to_null(3)}
 local e = (function() local result = dict {} for _, k, v in d.items() do result[k] = v end return result end)()
 local f = (function() local result = dict {} for _, k, v in d.items() do result[v] = k end return result end)()

@@ -1,4 +1,3 @@
-dofile('./polyfill/pypolyfill.lua')
 local a = list {_to_null(0, 1, 2, 3)}
 local b = (function() local result = list {} for _, i in a do result.append((i + 1)) end return result end)()
 assert(((a[_to_null(0)] + 1) == b[_to_null(0)]))
