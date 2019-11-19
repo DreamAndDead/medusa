@@ -35,8 +35,6 @@ TEST_FOLDER=./tests/
 pylua=./medusa.py
 luatest=./run_test.lua
 
-pyfile_path=$1
-
 function test_pyfile()
 {
     pyfile=$1
@@ -49,10 +47,10 @@ function test_pyfile()
     py_exit=$?
 
     # cd and pop
-    pushd $TEST_FOLDER
+    pushd $(dirname $pyfile) > /dev/null
     $LUA $luatest $(basename $pyfile .py).lua
     lua_exit=$?
-    popd
+    popd > /dev/null
 
     if [[ $py_exit -eq 0 ]] && [[ $lua_exit -eq 0 ]]; then
 	echogreen "success"
@@ -69,12 +67,16 @@ function test_pyfile()
     fi
 }
 
-if [[ "$pyfile_path" == "" ]]; then
+if [[ -z $1 ]]; then
     for f in ${TEST_FOLDER}*.py
     do
 	test_pyfile $f
     done
-else
-    test_pyfile $pyfile_path
 fi
+
+for pyfile_path in $*
+do
+    test_pyfile $pyfile_path
+done
+
 

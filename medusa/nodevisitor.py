@@ -116,6 +116,10 @@ class NodeVisitor(ast.NodeVisitor):
         for target in targets:
             local_keyword = ""
 
+            if "." not in target and "[" not in target and target not in cur_scope['locals']:
+                local_keyword = "local "
+                cur_scope["locals"].append(target)
+            
             last_ctx = self.context.last()
 
             if last_ctx["class_name"]:
@@ -203,8 +207,12 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit(line.format(name=name, arguments=", ".join(arguments)))
 
     def visit_ClassDef(self, node):
-        """Visit class definition"""
+        last_scope = self.scope.last()
+        last_scope['locals'].append(node.name)
+        
         self.scope.push(dict(kind="class", name=node.name))
+        cur_scope = self.scope.last()
+
         bases = [self.visit_all(base, inline=True) for base in node.bases]
 
         local_keyword = ""

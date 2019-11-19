@@ -2018,6 +2018,26 @@ local function zip(iter1, ...)
    return res
 end
 
+local g_real_require = require
+
+local function require(m)
+   print(m)
+
+   
+   local polyfill, e = loadfile('./polyfill.lua')
+
+   if polyfill == nil then
+      error("load polyfill error: " .. e)
+   end
+
+   local code = loadfile(m)
+   local env = polyfill()
+   setmetatable(env, {__index = _G})
+   setfenv(code, env)
+   local export = code()
+   return export
+end
+
 
 return {
    ["bit"] = bit,
@@ -2068,4 +2088,5 @@ return {
    ["issubclass"] = issubclass,
    ["super"] = super,
    ["zip"] = zip,
+   ["require"] = require,
 }
