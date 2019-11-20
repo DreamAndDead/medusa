@@ -840,13 +840,21 @@ python 中独有的上下文操作，目前不支持。
 ### Import ImportFrom
 
 import 的实现需要配合 module 概念的引入，将单个文件作为一个 module。
-lua 中也有 module 的概念，需要将其与 python 的 module 写法相适配。
-
-暂时不支持。
+lua 中也有 module 的概念，在文件内部使用局部变量，最终使用 `return` 返回一个 table，其中存储模块的对应关系。
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
-|`import`|`import module`|` `|:x:|
+|`import`|`import module`|`local module = require('module')`|:heavy_check_mark:|
+|`import as`|`import module as m`|`local m = require('module')`|:heavy_check_mark:|
+|`from import`|`from module import func`|`local func = require('module').func`|:heavy_check_mark:|
+|`from import as`|`from module import func as f`|`local f = require('module').func`|:heavy_check_mark:|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[import.py](./../codeblock/import.py)|[import.py.lua](./../codeblock/import.py.lua)|
+|[module.py](./../codeblock/module.py)|[module.py.lua](./../codeblock/module.py.lua)|
+|[module_2.py](./../codeblock/module_2.py)|[module_2.py.lua](./../codeblock/module_2.py.lua)|
 
 
 ### Global Nonlocal
