@@ -2021,16 +2021,14 @@ end
 local g_real_require = require
 
 local function require(m)
-   print(m)
-
-   
    local polyfill, e = loadfile('./polyfill.lua')
 
    if polyfill == nil then
       error("load polyfill error: " .. e)
    end
 
-   local code = loadfile(m)
+   local module_file = m .. '.lua'
+   local code = loadfile(module_file)
    local env = polyfill()
    setmetatable(env, {__index = _G})
    setfenv(code, env)

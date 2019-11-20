@@ -42,4 +42,9 @@ assert((e[_to_null("b")] == 3))
 assert((not operator_in("c", e)))
 assert((not operator_in("d", e)))
 return {
+    d = d,
+    e = e,
+    f = f,
+    l = l,
+    a = a,
 }

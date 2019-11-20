@@ -31,5 +31,8 @@ g = 10
 local l = function(e) return function(l) return ((g + e) + l) end end
 assert((l(20)(30) == 60))
 return {
+    g = g,
     outer = outer,
+    o = o,
+    l = l,
 }

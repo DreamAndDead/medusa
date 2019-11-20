@@ -51,4 +51,8 @@ assert((sl[_to_null(1)] == 2))
 assert((sl[_to_null(2)] == 3))
 assert((sl[_to_null(3)] == 4))
 return {
+    l = l,
+    d = d,
+    s = s,
+    sl = sl,
 }

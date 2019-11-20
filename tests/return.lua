@@ -16,4 +16,5 @@ return {
     null = null,
     inspect = inspect,
     inspect_more = inspect_more,
+    a, b = a, b,
 }

@@ -15,4 +15,6 @@ assert((b == 1024))
 b = (math.fmod(b, 3))
 assert((b == 1))
 return {
+    a = a,
+    b = b,
 }

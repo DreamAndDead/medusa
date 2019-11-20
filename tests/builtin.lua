@@ -203,4 +203,19 @@ assert((z[_to_null(2)][_to_null(0)] == 2))
 assert((z[_to_null(2)][_to_null(1)] == "c"))
 assert((z[_to_null(2)][_to_null(2)] == 1))
 return {
+    d = d,
+    e = e,
+    d, m = d, m,
+    l = l,
+    f = f,
+    m = m,
+    n = n,
+    rl = rl,
+    s = s,
+    sl = sl,
+    t = t,
+    l1 = l1,
+    l2 = l2,
+    l3 = l3,
+    z = z,
 }

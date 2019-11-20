@@ -77,4 +77,8 @@ for _, v in d.values() do
     assert(((v == "john") or (v == 26) or (v == 20)))
 end
 return {
+    d = d,
+    m = m,
+    k, v = k, v,
+    v = v,
 }

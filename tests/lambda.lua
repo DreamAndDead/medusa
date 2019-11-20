@@ -17,4 +17,11 @@ for _, i in itself(unpack(l)) do
 end
 assert((t == 9))
 return {
+    inc = inc,
+    i = i,
+    add = add,
+    dec = dec,
+    itself = itself,
+    t = t,
+    l = l,
 }

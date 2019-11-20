@@ -20,4 +20,7 @@ assert((not operator_in(4, set {_to_null(1, 2, 3)})))
 assert((not operator_in(5, set {_to_null(1, 2, 3)})))
 assert((not operator_in(6, set {_to_null(1, 2, 3)})))
 return {
+    a = a,
+    b = b,
+    c = c,
 }

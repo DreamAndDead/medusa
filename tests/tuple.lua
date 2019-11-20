@@ -20,4 +20,5 @@ assert((t.index("a", 4) == 4))
 assert((t.index("a", 1, 4) == 1))
 assert((t.index("a", 2, 5) == 4))
 return {
+    t = t,
 }

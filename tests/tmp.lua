@@ -10,4 +10,5 @@ local p = list {_to_null(1, 2, 3, 4)}
 assert((add(unpack(p)) == 10))
 return {
     add = add,
+    p = p,
 }

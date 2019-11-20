@@ -100,6 +100,7 @@ return {
     registerClickEvent = registerClickEvent,
     callback = callback,
     plus_factory = plus_factory,
+    plus_10 = plus_10,
     clamp_wrapper = clamp_wrapper,
     minus = minus,
     clamp_wrapper_with = clamp_wrapper_with,

@@ -21,5 +21,7 @@ assert((next(e) == nil))
 assert((e.send(10) == 10))
 return {
     count = count,
+    c = c,
     echo = echo,
+    e = e,
 }

@@ -35,4 +35,7 @@ c = (function() local result = list {} for _, i in a do if (len(i) == 2) then fo
 assert((len(c) == 1))
 assert((c[_to_null(0)] == 10))
 return {
+    a = a,
+    b = b,
+    c = c,
 }

@@ -1,3 +1,4 @@
+local module_2 = require("module_2")
 local name = "module"
 local function func(n)
     return (math.pow(n, 1))
@@ -17,6 +18,7 @@ local function incr()
     return count
 end
 return {
+    module_2 = module_2,
     name = name,
     func = func,
     func_2 = func_2,

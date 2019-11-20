@@ -11,4 +11,9 @@ assert((d == 2))
 local e = (1 or (2 and 3))
 assert((e == 1))
 return {
+    a = a,
+    b = b,
+    c = c,
+    d = d,
+    e = e,
 }

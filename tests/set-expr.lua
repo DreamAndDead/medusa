@@ -37,4 +37,7 @@ c = (function() local result = set {} for _, i in a do if (len(i) == 2) then for
 assert((len(c) == 1))
 assert((operator_in(10, c)))
 return {
+    a = a,
+    b = b,
+    c = c,
 }

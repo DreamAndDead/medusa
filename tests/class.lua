@@ -65,4 +65,13 @@ assert((a.name == "jane"))
 assert((a.age == 24))
 assert((a.talk() == "I love talk show"))
 return {
+    Point = Point,
+    p = p,
+    Dog = Dog,
+    d = d,
+    Person = Person,
+    Chinese = Chinese,
+    American = American,
+    c = c,
+    a = a,
 }

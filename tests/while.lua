@@ -12,4 +12,5 @@ while (i < 10) do
 end
 assert((i == 10))
 return {
+    i = i,
 }

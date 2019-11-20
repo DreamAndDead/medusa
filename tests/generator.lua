@@ -92,4 +92,8 @@ for _, n in c do
 end
 assert((i == 1))
 return {
+    a = a,
+    b = b,
+    i = i,
+    c = c,
 }

@@ -17,4 +17,9 @@ assert((n == 2))
 n = ((-1) - (-(-(-(-1)))))
 assert((n == (-2)))
 return {
+    a = a,
+    b = b,
+    m = m,
+    p = p,
+    n = n,
 }

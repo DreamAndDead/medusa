@@ -109,4 +109,19 @@ assert((operator_in(8, s1_union_s2s3)))
 assert((operator_in(0, s1_union_s2s3)))
 assert((operator_in(10, s1_union_s2s3)))
 return {
+    s = s,
+    sc = sc,
+    s1 = s1,
+    s2 = s2,
+    s3 = s3,
+    s1_2 = s1_2,
+    s1_2_3 = s1_2_3,
+    s1and2 = s1and2,
+    s1and2and3 = s1and2and3,
+    s4 = s4,
+    s1_sym_s1 = s1_sym_s1,
+    s1_sym_s2 = s1_sym_s2,
+    s1_sym_s3 = s1_sym_s3,
+    s1_sym_s4 = s1_sym_s4,
+    s1_union_s2s3 = s1_union_s2s3,
 }

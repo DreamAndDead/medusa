@@ -1,3 +1,5 @@
+import module_2
+
 name = 'module'
 
 def func(n):

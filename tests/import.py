@@ -6,8 +6,9 @@ import module
 assert module.name == 'module'
 assert module.func(10) == 10
 assert module.func_2(10) == 20
-
 assert module.Module('first').name == 'first'
+assert module.module_2.func(10) == 100
+assert module.module_2.func_2(10) == 200
 
 
 ## import as

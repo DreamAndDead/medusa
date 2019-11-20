@@ -23,4 +23,6 @@ end
 assert((i == 100))
 assert((j == 50))
 return {
+    i = i,
+    j = j,
 }

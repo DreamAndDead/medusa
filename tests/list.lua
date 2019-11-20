@@ -128,4 +128,9 @@ assert((l[_to_null(2)] == 2))
 assert((l[_to_null(3)] == 3))
 assert((l[_to_null(4)] == 4))
 return {
+    l = l,
+    i = i,
+    l1 = l1,
+    l2 = l2,
+    p = p,
 }

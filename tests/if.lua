@@ -55,4 +55,5 @@ else
 end
 assert((b == 3))
 return {
+    b = b,
 }

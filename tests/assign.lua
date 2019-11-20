@@ -11,4 +11,8 @@ d, e = e, d
 assert((d == 3))
 assert((e == 2))
 return {
+    a = a,
+    b = b,
+    c = c,
+    d, e = d, e,
 }

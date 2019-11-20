@@ -11,4 +11,7 @@ assert((t.name == "T"))
 t.name = "New"
 assert((t.name == "New"))
 return {
+    l = l,
+    T = T,
+    t = t,
 }

@@ -32,4 +32,6 @@ for _, i in range(10, 1, (-2)) do
 end
 assert((n == 0))
 return {
+    n = n,
+    d = d,
 }

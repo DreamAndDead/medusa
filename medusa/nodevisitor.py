@@ -117,7 +117,6 @@ class NodeVisitor(ast.NodeVisitor):
             local_keyword = ""
 
             if "." not in target and "[" not in target and target not in cur_scope['locals']:
-                local_keyword = "local "
                 cur_scope["locals"].append(target)
             
             last_ctx = self.context.last()
@@ -540,6 +539,8 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit(line.format(**values))
 
     def visit_Import(self, node):
+        last_scope = self.scope.last()
+        
         line = 'local {asname} = require("{name}")'
         values = {"asname": "", "name": ""}
 
@@ -552,9 +553,12 @@ class NodeVisitor(ast.NodeVisitor):
                 values["name"] = alias.name
                 values["asname"] = alias.asname
 
+            last_scope['locals'].append(values["asname"])
             self.emit(line.format(**values))
 
     def visit_ImportFrom(self, node):
+        last_scope = self.scope.last()
+
         line = 'local {asname} = require("{module}").{name}'
         values = {"asname": "", "module": "", "name": ""}
 
@@ -568,6 +572,7 @@ class NodeVisitor(ast.NodeVisitor):
                 values["name"] = alias.name
                 values["asname"] = alias.asname
 
+            last_scope['locals'].append(values["asname"])
             self.emit(line.format(**values))
 
         
