@@ -1,5 +1,20 @@
-local d = dict {}
-d[_to_null(nil)] = 1
+local g = 10
+local c = class(function(c)
+    local c = 20
+    local function f()
+        local f = 30
+        local function n()
+            -- nonlocal
+            local function g()
+
+            end
+        end
+    end
+    c.c = c
+    c.f = f
+    return c
+end, {}, "c")
 return {
-    d = d,
+    g = g,
+    c = c,
 }

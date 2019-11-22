@@ -874,12 +874,17 @@ def 可以开启闭包作用域，class 不能。使用 nonlocal 同样进行的
 
 因为 lambda 和 generator 只能使用一行表达式，无法作用赋值，在新的作用域中作用有限，意义最大在于它不会和已有的上层作用域相冲突。
 
-因为 lua 本身遵循由内到外的查找方式，其中 `_G` 是整个语言的全局变量，而不是当前模块的最顶层，所以 global 关键字无法支持。
+因为 lua 本身遵循由内到外的查找方式（实际上，闭包是第一概念），每个 `... end` 定义一个块，每个块中有自己的 local 作用域，搜索过程中从内向外的，直到最外层 global。
+并且对于找到的变量可以直接修改，不像 python 还需要 global, nonlocal 声明。
+
+正因为搜索的中途可能有和 global 相同的符号存在，所以不支持 global 关键字。
+
+nonlocal 只搜索 enclosure 作用域，并且会在语言层面检测正确性。如果使用 nonlocal 和一个不在外部 enclosure 的变量，会出现语法错误。
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
+|`nonlocal`|`nonlocal n`|`[means n is not in current scope]`|:heavy_check_mark:|
 |`global`|`global g`|` `|:x:|
-|`nonlocal`|`nonlocal n`|` `|:x:|
 
 ----
 

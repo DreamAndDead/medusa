@@ -1,6 +1,9 @@
-# list can't contain trailing None
 
-d = {}
+g = 10
 
-d[None] = 1
+def f():
+    f = 30
+    n = 1
+    def n():
+        nonlocal f, n
 

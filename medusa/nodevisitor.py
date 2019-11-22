@@ -33,9 +33,9 @@ class NodeVisitor(ast.NodeVisitor):
         - Global
         - ExtSlice
         - NamedExpr
+        - With
 
         maybe support:
-        - Nonlocal
         - Continue
         - YieldFrom
         """
@@ -103,6 +103,13 @@ class NodeVisitor(ast.NodeVisitor):
         else:
             self.emit("assert({test})".format(test=test))
 
+    def visit_Nonlocal(self, node):
+        cur_scope = self.scope.last()
+
+        for name in node.names:
+            if name not in cur_scope['nonlocals']:
+                cur_scope['nonlocals'].append(name)
+
     def visit_Assign(self, node):
         """
         TODO:
@@ -116,18 +123,10 @@ class NodeVisitor(ast.NodeVisitor):
         for target in targets:
             local_keyword = ""
 
-            if "." not in target and "[" not in target and target not in cur_scope['locals']:
+            if "." not in target and "[" not in target and target not in cur_scope['locals'] and target not in cur_scope['nonlocals']:
+                local_keyword = "local "
                 cur_scope["locals"].append(target)
             
-            last_ctx = self.context.last()
-
-            if last_ctx["class_name"]:
-                target = ".".join([last_ctx["class_name"], target])
-
-            if "." not in target and "[" not in target and not last_ctx["locals"].exists(target):
-                local_keyword = "local "
-                last_ctx["locals"].add_symbol(target)
-
             self.emit("{local}{target} = {value}".format(local=local_keyword,
                                                          target=target,
                                                          value=value))
@@ -207,22 +206,13 @@ class NodeVisitor(ast.NodeVisitor):
 
     def visit_ClassDef(self, node):
         last_scope = self.scope.last()
-        last_scope['locals'].append(node.name)
-        
-        self.scope.push(dict(kind="class", name=node.name))
-        cur_scope = self.scope.last()
-
-        bases = [self.visit_all(base, inline=True) for base in node.bases]
 
         local_keyword = ""
-        last_ctx = self.context.last()
-        if not last_ctx["class_name"] and not last_ctx["locals"].exists(node.name):
-            local_keyword = "local "
-            last_ctx["locals"].add_symbol(node.name)
+        if node.name not in last_scope['locals']:
+            local_keyword = 'local '
+            last_scope['locals'].append(node.name)
 
         name = node.name
-        if last_ctx["class_name"]:
-            name = ".".join([last_ctx["class_name"], name])
 
         values = {
             "local": local_keyword,
@@ -232,19 +222,18 @@ class NodeVisitor(ast.NodeVisitor):
 
         self.emit("{local}{name} = class(function({node_name})".format(**values))
 
-        self.context.push({"class_name": node.name})
+        bases = [self.visit_all(base, inline=True) for base in node.bases]
+
+        self.scope.push(dict(kind="class", name=node.name))
         self.visit_all(node.body)
-        self.context.pop()
+        cls_scope = self.scope.pop()
+
+        # gather symbol and assign to class
+        for symbol in cls_scope['locals']:
+            self.output[-1].append("{node_name}.{symbol} = {symbol}".format(node_name=node.name, symbol=symbol))
 
         self.output[-1].append("return {node_name}".format(**values))
-
         self.emit("end, {{{}}}, \"{}\")".format(", ".join(bases), node.name))
-
-        self.scope.pop()
-        # Return class object only in the top-level classes.
-        # Not in the nested classes.
-        #if not last_ctx["class_name"]:
-        #    self.emit("return {}".format(name))
 
     def visit_Compare(self, node):
         """Visit compare"""
@@ -364,18 +353,15 @@ class NodeVisitor(ast.NodeVisitor):
 
     def visit_FunctionDef(self, node):
         last_scope = self.scope.last()
-        last_scope['locals'].append(node.name)
-        
-        self.scope.push(dict(kind="function", name=node.name))
-        cur_scope = self.scope.last()
-        
+
         line = "{local}function {name}({arguments})"
 
-        last_ctx = self.context.last()
+        local_keyword = ""
+        if node.name not in last_scope['locals']:
+            local_keyword = "local "
+            last_scope['locals'].append(node.name)
 
         name = node.name
-        if last_ctx["class_name"]:
-            name = ".".join([last_ctx["class_name"], name])
 
         # TODO: 忽略了所有 keywords 参数
         arguments = [arg.arg for arg in node.args.args]
@@ -383,21 +369,16 @@ class NodeVisitor(ast.NodeVisitor):
         if node.args.vararg is not None:
             arguments.append("...")
 
-        local_keyword = ""
-
-        if "." not in name and not last_ctx["locals"].exists(name):
-            local_keyword = "local "
-            last_ctx["locals"].add_symbol(name)
-
         function_def = line.format(local=local_keyword,
                                    name=name,
                                    arguments=", ".join(arguments))
 
         self.emit(function_def)
 
-        self.context.push({"class_name": ""})
+
+        self.scope.push(dict(kind="function", name=node.name))
         self.visit_all(node.body)
-        body_ctx = self.context.pop()
+        cur_scope = self.scope.pop()
 
         body = self.output[-1]
 
@@ -435,8 +416,6 @@ class NodeVisitor(ast.NodeVisitor):
             }
             line = "{name} = {decorator}({name})".format(**values)
             self.emit(line)
-
-        self.scope.pop()
 
     def visit_Yield(self, node):
         func_scope = self.scope.trace(kinds=['function'])
@@ -784,33 +763,6 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit("while {} do".format(test))
 
         self.visit_all(node.body)
-
-        self.emit("end")
-
-    def visit_With(self, node):
-        """
-        Visit with
-
-        TODO:
-        - just do ... end block? not connect with context
-        """
-        self.emit("do")
-
-        self.visit_all(node.body)
-
-        body = self.output[-1]
-        lines = []
-        for i in node.items:
-            line = ""
-            if i.optional_vars is not None:
-                line = "local {} = "
-                line = line.format(self.visit_all(i.optional_vars,
-                                                  inline=True))
-            line += self.visit_all(i.context_expr, inline=True)
-            lines.append(line)
-
-        for line in lines:
-            body.insert(0, line)
 
         self.emit("end")
 

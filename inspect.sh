@@ -2,7 +2,7 @@
 
 pyfile=$1
 pyast=pyast.py
-pylua=py2lua.py
+pylua=medusa.py
 
 echo "==========py=========="
 cat $pyfile
