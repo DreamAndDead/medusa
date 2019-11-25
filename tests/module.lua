@@ -7,9 +7,10 @@ local function func_2(n)
     return (2 * (math.pow(n, 1)))
 end
 local Module = class(function(Module)
-    function Module.__init__(self, name)
+    local function __init__(self, name)
         self.name = name
     end
+    Module.__init__ = __init__
     return Module
 end, {}, "Module")
 local count = 0

@@ -44,10 +44,12 @@ for _, k, v in d.items() do
     elseif (k == "age") then
         assert((v == 20))
     end
+    ::loop_label_1::
 end
 d = dict {[_to_null("name")] = _to_null("john"), [_to_null(1)] = _to_null(26), [_to_null("age")] = _to_null(20)}
 for _, k in d.keys() do
     assert(((k == "name") or (k == 1) or (k == "age")))
+    ::loop_label_2::
 end
 d = dict {[_to_null("name")] = _to_null("john"), [_to_null(1)] = _to_null(26), [_to_null("age")] = _to_null(20)}
 assert((d.pop("name") == "john"))
@@ -75,6 +77,7 @@ assert((d[_to_null("hair")] == "blond"))
 d = dict {[_to_null("name")] = _to_null("john"), [_to_null(1)] = _to_null(26), [_to_null("age")] = _to_null(20)}
 for _, v in d.values() do
     assert(((v == "john") or (v == 26) or (v == 20)))
+    ::loop_label_3::
 end
 return {
     d = d,

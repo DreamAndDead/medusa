@@ -49,11 +49,13 @@ assert((g == 40))
 g = 10
 for _, i in range(20) do
     g = 20
+    ::loop_label_1::
 end
 assert((g == 20))
 g = 10
 while (g < 20) do
     g = 20
+    ::loop_label_2::
 end
 assert((g == 20))
 g = 10

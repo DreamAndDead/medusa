@@ -1,6 +1,7 @@
 local function count()
     for _, i in range(10) do
         coroutine.yield(i)
+        ::loop_label_1::
     end
 end
 count = meta_generator(count)
@@ -13,6 +14,7 @@ local function echo()
     while true do
         local line = coroutine.yield(start)
         start = line
+        ::loop_label_2::
     end
 end
 echo = meta_generator(echo)

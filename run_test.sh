@@ -30,7 +30,7 @@ function echocyan()
 
 
 PYTHON=python3.4
-LUA=lua5.1
+LUA=luajit-2.0.5
 TEST_FOLDER=./tests/
 pylua=./medusa.py
 luatest=./run_test.lua

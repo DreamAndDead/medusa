@@ -3,6 +3,7 @@ local function add(...)
     local t = 0
     for _, i in a do
         t = (t + i)
+        ::loop_label_1::
     end
     return t
 end

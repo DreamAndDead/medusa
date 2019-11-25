@@ -14,6 +14,7 @@ local t = 0
 local l = list {_to_null(1, 2, 3, 4)}
 for _, i in itself(unpack(l)) do
     t = (t + i)
+    ::loop_label_1::
 end
 assert((t == 9))
 return {

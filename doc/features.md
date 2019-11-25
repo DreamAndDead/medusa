@@ -22,7 +22,7 @@ transpile 的本质在于，用 lua 实现 python 语言所表现的语义，相
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[constant.py](./../codeblock/constant.py)|[constant.py.lua](./../codeblock/constant.py.lua)|
+|[constant.py](./../tests/constant.py)|[constant.py.lua](./../tests/constant.py.lua)|
 
 
 ### Variable 变量
@@ -77,7 +77,7 @@ a = (a + 1)
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[variable.py](./../codeblock/variable.py)|[variable.py.lua](./../codeblock/variable.py.lua)|
+|[variable.py](./../tests/variable.py)|[variable.py.lua](./../tests/variable.py.lua)|
 
 
 ### Assign 语句
@@ -94,7 +94,7 @@ python 中多种赋值方法，都可以转化为相应的 lua 代码来实现�
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[assign.py](./../codeblock/assign.py)|[assign.py.lua](./../codeblock/assign.py.lua)|
+|[assign.py](./../tests/assign.py)|[assign.py.lua](./../tests/assign.py.lua)|
 
 
 ### Del 语句
@@ -108,7 +108,7 @@ python 中 del 语句用于解除一个值，lua 中没有 del 的概念，可�
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[del.py](./../codeblock/del.py)|[del.py.lua](./../codeblock/del.py.lua)|
+|[del.py](./../tests/del.py)|[del.py.lua](./../tests/del.py.lua)|
 
 
 ### AugAssign 语句
@@ -124,7 +124,7 @@ python 中 del 语句用于解除一个值，lua 中没有 del 的概念，可�
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[augassign.py](./../codeblock/augassign.py)|[augassign.py.lua](./../codeblock/augassign.py.lua)|
+|[augassign.py](./../tests/augassign.py)|[augassign.py.lua](./../tests/augassign.py.lua)|
 
 
 ---
@@ -146,7 +146,7 @@ python 和 lua 本身都支持 and or 二元运算，都为短路求值，且 an
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[bool.py](./../codeblock/bool.py)|[bool.py.lua](./../codeblock/bool.py.lua)|
+|[bool.py](./../tests/bool.py)|[bool.py.lua](./../tests/bool.py.lua)|
 
 
 ### Arithmetic 算术运算
@@ -170,7 +170,7 @@ python 和 lua 本身都支持 and or 二元运算，都为短路求值，且 an
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[arithmetic.py](./../codeblock/arithmetic.py)|[arithmetic.py.lua](./../codeblock/arithmetic.py.lua)|
+|[arithmetic.py](./../tests/arithmetic.py)|[arithmetic.py.lua](./../tests/arithmetic.py.lua)|
 
 
 ### Bit 位运算
@@ -190,7 +190,7 @@ python 和 lua 本身都支持 and or 二元运算，都为短路求值，且 an
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[bit.py](./../codeblock/bit.py)|[bit.py.lua](./../codeblock/bit.py.lua)|
+|[bit.py](./../tests/bit.py)|[bit.py.lua](./../tests/bit.py.lua)|
 
 
 ### Compare 比较运算
@@ -213,7 +213,7 @@ python 和 lua 本身都支持 and or 二元运算，都为短路求值，且 an
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[compare.py](./../codeblock/compare.py)|[compare.py.lua](./../codeblock/compare.py.lua)|
+|[compare.py](./../tests/compare.py)|[compare.py.lua](./../tests/compare.py.lua)|
 
 
 -----
@@ -247,7 +247,7 @@ lua 中不存在相应的概念，需要编写相应代码来模拟。
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[list.py](./../codeblock/list.py)|[list.py.lua](./../codeblock/list.py.lua)|
+|[list.py](./../tests/list.py)|[list.py.lua](./../tests/list.py.lua)|
 
 
 ### Dict
@@ -279,7 +279,7 @@ dict 是 python 中内建的数据结构，使用非常广泛。
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[dict.py](./../codeblock/dict.py)|[dict.py.lua](./../codeblock/dict.py.lua)|
+|[dict.py](./../tests/dict.py)|[dict.py.lua](./../tests/dict.py.lua)|
 
 
 ### Tuple
@@ -307,7 +307,7 @@ tuple 是 list 有只读形式，但是在 python 中 tuple 的存在广泛，�
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[tuple.py](./../codeblock/tuple.py)|[tuple.py.lua](./../codeblock/tuple.py.lua)|
+|[tuple.py](./../tests/tuple.py)|[tuple.py.lua](./../tests/tuple.py.lua)|
 
 
 ### Set
@@ -343,7 +343,7 @@ set 同样是 python 中内建的数据结构。
 
 python示例代码|lua转换代码|
 |:-:|:-:|
-|[set.py](./../codeblock/set.py)|[set.py.lua](./../codeblock/set.py.lua)|
+|[set.py](./../tests/set.py)|[set.py.lua](./../tests/set.py.lua)|
 
 
 ### FrozenSet
@@ -369,7 +369,7 @@ frozenset 同样是 python 中内建的数据结构，和 set 的区别在于它
 
 python示例代码|lua转换代码|
 |:-:|:-:|
-|[frozenset.py](./../codeblock/frozenset.py)|[frozenset.py.lua](./../codeblock/frozenset.py.lua)|
+|[frozenset.py](./../tests/frozenset.py)|[frozenset.py.lua](./../tests/frozenset.py.lua)|
 
 
 
@@ -392,7 +392,7 @@ python 中有 3 种下标，Index, Slice 和 ExtSlice，分别对应于
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[subscript.py](./../codeblock/subscript.py)|[subscript.py.lua](./../codeblock/subscript.py.lua)|
+|[subscript.py](./../tests/subscript.py)|[subscript.py.lua](./../tests/subscript.py.lua)|
 
 ------
 
@@ -413,7 +413,7 @@ python 和 lua 的分支结构是非常相似的。
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[if.py](./../codeblock/if.py)|[if.py.lua](./../codeblock/if.py.lua)|
+|[if.py](./../tests/if.py)|[if.py.lua](./../tests/if.py.lua)|
 
 
 ### For 语句
@@ -430,7 +430,7 @@ lua 中也有 for in 的语法，和 python 的实现非常类似。
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[for.py](./../codeblock/for.py)|[for.py.lua](./../codeblock/for.py.lua)|
+|[for.py](./../tests/for.py)|[for.py.lua](./../tests/for.py.lua)|
 
 
 ### While 语句
@@ -445,7 +445,7 @@ lua 中也有 for in 的语法，和 python 的实现非常类似。
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[while.py](./../codeblock/while.py)|[while.py.lua](./../codeblock/while.py.lua)|
+|[while.py](./../tests/while.py)|[while.py.lua](./../tests/while.py.lua)|
 
 
 ### Break 语句
@@ -459,17 +459,22 @@ break 的含义在 python 和 lua 中相同，用于跳出最内层的循环。
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[break.py](./../codeblock/break.py)|[break.py.lua](./../codeblock/break.py.lua)|
+|[break.py](./../tests/break.py)|[break.py.lua](./../tests/break.py.lua)|
 
 
 ### Continue 语句
 
-也许难以相信，lua5.1 不支持 Continue 语句，而且这一特性很难模拟 :scream:
+也许难以相信，lua5.1 没有内建 Continue 语句，在 lua5.2（包括 luajit） 之后引入了 goto 和 label，可以使用其来进行模拟。
 
 
 |feature|python|lua|supported|
 |:-:|:-:|:-:|:-:|
-|continue|`continue`|` `|:x:|
+|continue|`continue`|`goto ::label::`|:heavy_check_mark:|
+
+
+|python示例代码|lua转换代码|
+|:-:|:-:|
+|[continue.py](./../tests/continue.py)|[continue.py.lua](./../tests/continue.py.lua)|
 
 
 ### Pass 语句
@@ -484,7 +489,7 @@ break 的含义在 python 和 lua 中相同，用于跳出最内层的循环。
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[pass.py](./../codeblock/pass.py)|[pass.py.lua](./../codeblock/pass.py.lua)|
+|[pass.py](./../tests/pass.py)|[pass.py.lua](./../tests/pass.py.lua)|
 
 
 ---
@@ -518,7 +523,7 @@ python 的函数定义的关键有 位置参数，默认值参数，vararg，键
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[function.py](./../codeblock/function.py)|[function.py.lua](./../codeblock/function.py.lua)|
+|[function.py](./../tests/function.py)|[function.py.lua](./../tests/function.py.lua)|
 
 
 ### Return 语句
@@ -535,7 +540,7 @@ return 语句在 python 和 lua 中是相同的，用于从函数中返回值。
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[return.py](./../codeblock/return.py)|[return.py.lua](./../codeblock/return.py.lua)|
+|[return.py](./../tests/return.py)|[return.py.lua](./../tests/return.py.lua)|
 
 
 ### Lambda 表达式
@@ -557,7 +562,7 @@ return 语句在 python 和 lua 中是相同的，用于从函数中返回值。
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[lambda.py](./../codeblock/lambda.py)|[lambda.py.lua](./../codeblock/lambda.py.lua)|
+|[lambda.py](./../tests/lambda.py)|[lambda.py.lua](./../tests/lambda.py.lua)|
 
 
 ### Yield
@@ -572,7 +577,7 @@ python 中的 yield 是对称性协程机制，而 lua 中的协程机制是非�
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[yield.py](./../codeblock/yield.py)|[yield.py.lua](./../codeblock/yield.py.lua)|
+|[yield.py](./../tests/yield.py)|[yield.py.lua](./../tests/yield.py.lua)|
 
 -----
 
@@ -596,7 +601,7 @@ lua 中不存在类的概念，对于类只能用 table 和 metatable 来模拟�
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[class.py](./../codeblock/class.py)|[class.py.lua](./../codeblock/class.py.lua)|
+|[class.py](./../tests/class.py)|[class.py.lua](./../tests/class.py.lua)|
 
 
 ### 属性
@@ -614,7 +619,7 @@ python 中一切都是对象，获取对象的属性是常用操作。
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[attribute.py](./../codeblock/attribute.py)|[attribute.py.lua](./../codeblock/attribute.py.lua)|
+|[attribute.py](./../tests/attribute.py)|[attribute.py.lua](./../tests/attribute.py.lua)|
 
 ---
 
@@ -631,7 +636,7 @@ python 从 perl 借鉴来的语法，将 if 判断作为表达式，而不是语
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[if-expr.py](./../codeblock/if-expr.py)|[if-expr.py.lua](./../codeblock/if-expr.py.lua)|
+|[if-expr.py](./../tests/if-expr.py)|[if-expr.py.lua](./../tests/if-expr.py.lua)|
 
 
 ### List 生成式
@@ -650,7 +655,7 @@ list 生成式也是 python 中的创新，用表达式来生成列表，本质�
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[list-expr.py](./../codeblock/list-expr.py)|[list-expr.py.lua](./../codeblock/list-expr.py.lua)|
+|[list-expr.py](./../tests/list-expr.py)|[list-expr.py.lua](./../tests/list-expr.py.lua)|
 
 
 ### Dict 生成式
@@ -669,7 +674,7 @@ dict 生成式和 list 生成式相似，只不过使用 `k: v` 形式来生成�
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[dict-expr.py](./../codeblock/dict-expr.py)|[dict-expr.py.lua](./../codeblock/dict-expr.py.lua)|
+|[dict-expr.py](./../tests/dict-expr.py)|[dict-expr.py.lua](./../tests/dict-expr.py.lua)|
 
 
 
@@ -687,7 +692,7 @@ set 生成式类似 list 生成式，只不过生成 set 对象。
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[set-expr.py](./../codeblock/set-expr.py)|[set-expr.py.lua](./../codeblock/set-expr.py.lua)|
+|[set-expr.py](./../tests/set-expr.py)|[set-expr.py.lua](./../tests/set-expr.py.lua)|
 
 
 
@@ -708,7 +713,7 @@ set 生成式类似 list 生成式，只不过生成 set 对象。
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[generator.py](./../codeblock/generator.py)|[generator.py.lua](./../codeblock/generator.py.lua)|
+|[generator.py](./../tests/generator.py)|[generator.py.lua](./../tests/generator.py.lua)|
 
 
 ----
@@ -796,8 +801,7 @@ python 语言环境中除了引用标准库，其中有不少有用的[内建函
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[builtin.py](./../codeblock/builtin.py)|[builtin.py.lua](./../codeblock/builtin.py.lua)|
-
+|[builtin.py](./../tests/builtin.py)|[builtin.py.lua](./../tests/builtin.py.lua)|
 
 
 ---
@@ -816,7 +820,7 @@ transpile 的测试就是通过 assert 来实现的。
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[assert.py](./../codeblock/assert.py)|[assert.py.lua](./../codeblock/assert.py.lua)|
+|[assert.py](./../tests/assert.py)|[assert.py.lua](./../tests/assert.py.lua)|
 
 
 ### With 语句
@@ -852,9 +856,9 @@ lua 中也有 module 的概念，在文件内部使用局部变量，最终使�
 
 |python示例代码|lua转换代码|
 |:-:|:-:|
-|[import.py](./../codeblock/import.py)|[import.py.lua](./../codeblock/import.py.lua)|
-|[module.py](./../codeblock/module.py)|[module.py.lua](./../codeblock/module.py.lua)|
-|[module_2.py](./../codeblock/module_2.py)|[module_2.py.lua](./../codeblock/module_2.py.lua)|
+|[import.py](./../tests/import.py)|[import.py.lua](./../tests/import.py.lua)|
+|[module.py](./../tests/module.py)|[module.py.lua](./../tests/module.py.lua)|
+|[module_2.py](./../tests/module_2.py)|[module_2.py.lua](./../tests/module_2.py.lua)|
 
 
 ### Global Nonlocal

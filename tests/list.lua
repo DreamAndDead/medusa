@@ -40,6 +40,7 @@ for _, v in l do
         assert((v == nil))
     end
     i = (i + 1)
+    ::loop_label_1::
 end
 assert((i == 7))
 l = list {_to_null(nil, 4, 3, 2, 1, nil)}

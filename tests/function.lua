@@ -17,6 +17,7 @@ local function sum(first, second, ...)
     local s = (first + second)
     for _, i in more do
         s = (s + i)
+        ::loop_label_1::
     end
     return s
 end
@@ -66,7 +67,7 @@ assert((minus(10, 20) == 0))
 assert((minus(1) == 0))
 local function clamp_wrapper_with(left, right)
     --[[a clamp decorator with left and right limit]]
-    function clamp_wrapper(func)
+    local function clamp_wrapper(func)
         local function wrapper(...)
             local params = list {...}
             local res = func(unpack(params))
@@ -86,6 +87,7 @@ function sum(...)
     local t = 0
     for _, i in n do
         t = (t + i)
+        ::loop_label_2::
     end
     return t
 end
@@ -104,5 +106,4 @@ return {
     clamp_wrapper = clamp_wrapper,
     minus = minus,
     clamp_wrapper_with = clamp_wrapper_with,
-    sum = sum,
 }

@@ -36,7 +36,6 @@ class NodeVisitor(ast.NodeVisitor):
         - With
 
         maybe support:
-        - Continue
         - YieldFrom
         """
         raise RuntimeError("unsupported syntax '%s' at line %d col %d" % (node.__class__.__name__, node.lineno, node.col_offset))
@@ -50,10 +49,6 @@ class NodeVisitor(ast.NodeVisitor):
         - True, return the visit node result, we can manipulate them ourselves
         - False, embed the result in visitor self output
         """
-        if not inline:
-            last_ctx = self.context.last()
-            last_ctx["locals"].push()
-
         visitor = NodeVisitor(context=self.context, scope=self.scope)
 
         if isinstance(nodes, list):
@@ -65,10 +60,6 @@ class NodeVisitor(ast.NodeVisitor):
             visitor.visit(nodes)
             if not inline:
                 self.output.extend(visitor.output)
-
-        if not inline:
-            last_ctx = self.context.last()
-            last_ctx["locals"].pop()
 
         if inline:
             return " ".join(visitor.output)
@@ -264,6 +255,11 @@ class NodeVisitor(ast.NodeVisitor):
 
         self.emit("({})".format(line))
 
+    def visit_Continue(self, node):
+        last_ctx = self.context.last()
+        line = "goto {}".format(last_ctx["loop_label"])
+        self.emit(line)
+
     def visit_Delete(self, node):
         """Visit delete"""
         targets = [self.visit_all(target, inline=True) for target in node.targets]
@@ -441,7 +437,11 @@ class NodeVisitor(ast.NodeVisitor):
 
         self.emit(line.format(**values))
 
+        self.context.push_loop()
         self.visit_all(node.body)
+        last_ctx = self.context.pop()
+
+        self.output[-1].append("::{}::".format(last_ctx["loop_label"]))
 
         self.emit("end")
 
@@ -762,7 +762,11 @@ class NodeVisitor(ast.NodeVisitor):
 
         self.emit("while {} do".format(test))
 
+        self.context.push_loop()
         self.visit_all(node.body)
+        last_ctx = self.context.pop()
+
+        self.output[-1].append("::{}::".format(last_ctx["loop_label"]))
 
         self.emit("end")
 

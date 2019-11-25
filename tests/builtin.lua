@@ -46,6 +46,7 @@ assert(((d == 3) and (m == (-1))))
 local l = list {_to_null(0, 1, 2, 3, 4)}
 for _, i, n in enumerate(l) do
     assert((i == n))
+    ::loop_label_1::
 end
 l = list {_to_null(0, 1, 2, 3, 4, 5)}
 local f = list(filter(nil, l))

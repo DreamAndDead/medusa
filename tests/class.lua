@@ -1,14 +1,17 @@
 local Point = class(function(Point)
-    function Point.__init__(self, x, y)
+    local function __init__(self, x, y)
         self.x = x
         self.y = y
     end
-    function Point.get_x(self)
+    local function get_x(self)
         return self.x
     end
-    function Point.get_y(self)
+    local function get_y(self)
         return self.y
     end
+    Point.__init__ = __init__
+    Point.get_x = get_x
+    Point.get_y = get_y
     return Point
 end, {}, "Point")
 local p = Point(5, 10)
@@ -17,11 +20,13 @@ assert((p.get_y() == 10))
 assert((p.x == 5))
 assert((p.y == 10))
 local Dog = class(function(Dog)
-    Dog.species = "mammal"
-    function Dog.__init__(self, name, age)
+    local species = "mammal"
+    local function __init__(self, name, age)
         self.name = name
         self.age = age
     end
+    Dog.species = species
+    Dog.__init__ = __init__
     return Dog
 end, {}, "Dog")
 local d = Dog("roster", 18)
@@ -29,29 +34,34 @@ assert((Dog.species == "mammal"))
 assert((d.name == "roster"))
 assert((d.age == 18))
 local Person = class(function(Person)
-    function Person.__init__(self, name, age)
+    local function __init__(self, name, age)
         self.name = name
         self.age = age
     end
-    function Person.talk(self)
+    local function talk(self)
         return "person talks"
     end
+    Person.__init__ = __init__
+    Person.talk = talk
     return Person
 end, {}, "Person")
 local Chinese = class(function(Chinese)
-    function Chinese.__init__(self, name, age, country)
+    local function __init__(self, name, age, country)
         Person.__init__(self, name, age)
         self.country = country
     end
-    function Chinese.walk(self)
+    local function walk(self)
         return "chinese walks"
     end
+    Chinese.__init__ = __init__
+    Chinese.walk = walk
     return Chinese
 end, {Person}, "Chinese")
 local American = class(function(American)
-    function American.talk(self)
+    local function talk(self)
         return "I love talk show"
     end
+    American.talk = talk
     return American
 end, {Person}, "American")
 local c = Chinese("john", 18, "China")

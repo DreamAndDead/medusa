@@ -139,6 +139,7 @@ for _, i in range(len(s1)) do
     local e = s1.pop()
     assert((not operator_in(e, s1)))
     assert((operator_in(e, s2)))
+    ::loop_label_1::
 end
 assert((len(s1) == 0))
 s = set {_to_null("a", 1, "c", nil)}
