@@ -1,5 +1,5 @@
 local l = list {_to_null(1, 2)}
-assert((l.count(1) == 1))
+assert(bool((l.count(1) == 1)))
 local T = class(function(T)
     local function __init__(self)
         self.name = "T"
@@ -8,9 +8,9 @@ local T = class(function(T)
     return T
 end, {}, "T")
 local t = T()
-assert((t.name == "T"))
+assert(bool((t.name == "T")))
 t.name = "New"
-assert((t.name == "New"))
+assert(bool((t.name == "New")))
 return {
     l = l,
     T = T,

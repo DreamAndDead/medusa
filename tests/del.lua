@@ -1,5 +1,5 @@
 local v = "exist"
-assert(v)
+assert(bool(v))
 v = nil
 return {
     v = v,

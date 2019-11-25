@@ -90,9 +90,9 @@ class NodeVisitor(ast.NodeVisitor):
         test = self.visit_all(node.test, inline=True)
         if node.msg:
             msg = self.visit_all(node.msg, inline=True)
-            self.emit("assert({test}, {msg})".format(test=test, msg=msg))
+            self.emit("assert(bool({test}), {msg})".format(test=test, msg=msg))
         else:
-            self.emit("assert({test})".format(test=test))
+            self.emit("assert(bool({test}))".format(test=test))
 
     def visit_Nonlocal(self, node):
         cur_scope = self.scope.last()
@@ -149,9 +149,7 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit(line.format(**values))
 
     def visit_BinOp(self, node):
-        """Visit binary operation"""
         operation = BinaryOperationDesc.OPERATION[node.op.__class__]
-        # 保证运算优先级
         line = "({})".format(operation["format"])
         values = {
             "left": self.visit_all(node.left, True),
@@ -162,7 +160,6 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit(line.format(**values))
 
     def visit_BoolOp(self, node):
-        """Visit boolean operation"""
         operation = BooleanOperationDesc.OPERATION[node.op.__class__]
         
         values = [self.visit_all(n, inline=True) for n in node.values]
@@ -173,13 +170,10 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit(line)
 
     def visit_Break(self, node):
-        """Visit break"""
         self.emit("break")
 
     def visit_Call(self, node):
         """
-        Visit function call
-
         TODO:
         - 暂时不支持键值参数，忽略了所有 keywords
         """
@@ -302,7 +296,7 @@ class NodeVisitor(ast.NodeVisitor):
             ends_count += 1
 
             for if_ in comp.ifs:
-                line = "if {} then".format(self.visit_all(if_, inline=True))
+                line = "if bool({}) then".format(self.visit_all(if_, inline=True))
                 self.emit(line)
                 ends_count += 1
 
@@ -341,7 +335,6 @@ class NodeVisitor(ast.NodeVisitor):
             expr_is_docstring = True
 
         self.context.push({"docstring": expr_is_docstring})
-        #import ipdb; ipdb.set_trace()
         output = self.visit_all(node.value, inline=True)
         self.context.pop()
 
@@ -462,7 +455,7 @@ class NodeVisitor(ast.NodeVisitor):
             ends_count += 1
 
             for if_ in comp.ifs:
-                line = "if {} then".format(self.visit_all(if_, inline=True))
+                line = "if bool({}) then".format(self.visit_all(if_, inline=True))
                 self.emit(line)
                 ends_count += 1
 
@@ -479,7 +472,7 @@ class NodeVisitor(ast.NodeVisitor):
         """Visit if"""
         test = self.visit_all(node.test, inline=True)
 
-        line = "if {} then".format(test)
+        line = "if bool({}) then".format(test)
 
         self.emit(line)
 
@@ -491,7 +484,7 @@ class NodeVisitor(ast.NodeVisitor):
                 elseif = node.orelse[0]
                 elseif_test = self.visit_all(elseif.test, inline=True)
 
-                line = "elseif {} then".format(elseif_test)
+                line = "elseif bool({}) then".format(elseif_test)
                 self.emit(line)
 
                 output_length = len(self.output)
@@ -508,7 +501,7 @@ class NodeVisitor(ast.NodeVisitor):
 
     def visit_IfExp(self, node):
         """Visit if expression"""
-        line = "{cond} and {true_cond} or {false_cond}"
+        line = "bool({cond}) and {true_cond} or {false_cond}"
         values = {
             "cond": self.visit_all(node.test, inline=True),
             "true_cond": self.visit_all(node.body, inline=True),
@@ -621,7 +614,7 @@ class NodeVisitor(ast.NodeVisitor):
             ends_count += 1
 
             for if_ in comp.ifs:
-                line = "if {} then".format(self.visit_all(if_, inline=True))
+                line = "if bool({}) then".format(self.visit_all(if_, inline=True))
                 self.emit(line)
                 ends_count += 1
 
@@ -691,7 +684,7 @@ class NodeVisitor(ast.NodeVisitor):
             ends_count += 1
 
             for if_ in comp.ifs:
-                line = "if {} then".format(self.visit_all(if_, inline=True))
+                line = "if bool({}) then".format(self.visit_all(if_, inline=True))
                 self.emit(line)
                 ends_count += 1
 
@@ -760,7 +753,7 @@ class NodeVisitor(ast.NodeVisitor):
         """Visit while"""
         test = self.visit_all(node.test, inline=True)
 
-        self.emit("while {} do".format(test))
+        self.emit("while bool({}) do".format(test))
 
         self.context.push_loop()
         self.visit_all(node.body)

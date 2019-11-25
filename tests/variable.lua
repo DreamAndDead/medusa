@@ -1,7 +1,7 @@
 local var = 3
-assert((var == 3))
+assert(bool((var == 3)))
 var = (var + 3)
-assert((var == 6))
+assert(bool((var == 6)))
 return {
     var = var,
 }

@@ -6,12 +6,12 @@ local function count()
 end
 count = meta_generator(count)
 local c = count()
-assert((next(c) == 0))
-assert((next(c) == 1))
-assert((next(c) == 2))
+assert(bool((next(c) == 0)))
+assert(bool((next(c) == 1)))
+assert(bool((next(c) == 2)))
 local function echo()
     local start = nil
-    while true do
+    while bool(true) do
         local line = coroutine.yield(start)
         start = line
         ::loop_label_2::
@@ -19,8 +19,8 @@ local function echo()
 end
 echo = meta_generator(echo)
 local e = echo()
-assert((next(e) == nil))
-assert((e.send(10) == 10))
+assert(bool((next(e) == nil)))
+assert(bool((e.send(10) == 10)))
 return {
     count = count,
     c = c,

@@ -10,3 +10,10 @@ assert a == 1
 a = 0 if False else 1
 
 assert a == 1
+
+
+## all false values
+
+a = 0 if False or 0 or "" or None else 1
+
+assert a == 1

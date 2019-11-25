@@ -8,6 +8,11 @@ if True:
 
 assert b == 1
 
+## all False values
+
+if False or 0 or "" or None:
+    assert False, "this line shouldn't be executed."
+
 
 ## if ... else ...
 

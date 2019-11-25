@@ -1,19 +1,19 @@
 local a = 1
-assert((a == 1))
+assert(bool((a == 1)))
 a = (a + 2)
-assert((a == 3))
+assert(bool((a == 3)))
 a = (a - 4)
-assert((a == (-1)))
+assert(bool((a == (-1))))
 a = (a * 5)
-assert((a == (-5)))
+assert(bool((a == (-5))))
 a = (a / (-2))
-assert((a == 2.5))
+assert(bool((a == 2.5)))
 local b = 2
-assert((b == 2))
+assert(bool((b == 2)))
 b = (math.pow(b, 10))
-assert((b == 1024))
+assert(bool((b == 1024)))
 b = (math.fmod(b, 3))
-assert((b == 1))
+assert(bool((b == 1)))
 return {
     a = a,
     b = b,
