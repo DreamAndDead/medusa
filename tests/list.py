@@ -53,7 +53,6 @@ for v in l:
 
 assert i == 7
 
-
 # 运算
 
 ## not support ==
@@ -232,4 +231,143 @@ assert l[3] == 3
 assert l[4] == 4
 
 
+# operations
 
+## in and not in
+
+l = [ 4, 1, 2, 0, 3 ]
+
+assert 0 in l
+assert 5 not in l
+
+## +
+
+l1 = [ 4, 1, 2, 0, 3 ]
+l2 = [ 4, 1, 2, 0, 3 ]
+
+l = l1 + l2
+
+assert len(l) == 10
+assert l[0] == 4
+assert l[1] == 1
+assert l[2] == 2
+assert l[3] == 0
+assert l[4] == 3
+assert l[5] == 4
+assert l[6] == 1
+assert l[7] == 2
+assert l[8] == 0
+assert l[9] == 3
+
+## *
+
+l1 = [ 4, 1, 2, 0, 3 ]
+
+l = l1 * 2
+
+assert len(l) == 10
+assert l[0] == 4
+assert l[1] == 1
+assert l[2] == 2
+assert l[3] == 0
+assert l[4] == 3
+assert l[5] == 4
+assert l[6] == 1
+assert l[7] == 2
+assert l[8] == 0
+assert l[9] == 3
+
+## == FIXME, lua don't support __eq meta method
+
+#l = [ 4, 1, 2, 0, 3 ]
+
+#assert l == [4, 1, 2, 0, 3]
+#assert l != [4, 2, 0, 3]
+
+## slice index
+
+l = [ 4, 1, 2, 0, 3 ]
+
+assert l[0] == 4
+
+ls = l[1:2]
+assert len(ls) == 1
+assert ls[0] == 1
+
+ls2 = l[1:5:2]
+assert len(ls2) == 2
+assert ls2[0] == 1
+assert ls2[1] == 0
+
+## [] assign
+
+l = [ 4, 1, 2, 0, 3 ]
+
+assert l[0] == 4
+
+l[0] = 2
+
+assert l[0] == 2
+
+## [:] assign
+
+l = [ 4, 1, 2, 0, 3 ]
+
+l[1:3] = [10, 11, 12]
+
+assert len(l) == 6
+assert l[0] == 4
+assert l[1] == 10
+assert l[2] == 11
+assert l[3] == 12
+assert l[4] == 0
+assert l[5] == 3
+
+
+## [::] assign
+
+l = [ 4, 1, 2, 0, 3 ]
+
+l[0:5:2] = [10, 11, 12]
+
+assert len(l) == 5
+assert l[0] == 10
+assert l[1] == 1
+assert l[2] == 11
+assert l[3] == 0
+assert l[4] == 12
+
+
+## FIXME del []
+
+#l = [ 4, 1, 2, 0, 3 ]
+
+#del l[0]
+
+#assert len(l) == 4
+#assert l[0] == 1
+#assert l[1] == 2
+#assert l[2] == 0
+#assert l[3] == 3
+
+
+## del [:]
+
+l = [ 4, 1, 2, 0, 3 ]
+
+del l[1:3]
+
+assert len(l) == 3
+assert l[0] == 4
+assert l[1] == 0
+assert l[2] == 3
+
+## del [::]
+
+l = [ 4, 1, 2, 0, 3 ]
+
+del l[0:5:2]
+
+assert len(l) == 2
+assert l[0] == 1
+assert l[1] == 0

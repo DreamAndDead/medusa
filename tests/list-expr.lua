@@ -11,7 +11,7 @@ assert(bool((b[_to_null(1)] == 1)))
 assert(bool((b[_to_null(2)] == 0)))
 assert(bool((b[_to_null(3)] == 3)))
 a = list {_to_null(0, 1, 2, 3)}
-b = (function() local result = list {} for _, i in a do if ((math.fmod(i, 2)) == 1) then result.append(i) end end return result end)()
+b = (function() local result = list {} for _, i in a do if bool(((math.fmod(i, 2)) == 1)) then result.append(i) end end return result end)()
 assert(bool((b[_to_null(0)] == 1)))
 assert(bool((b[_to_null(1)] == 3)))
 a = list {_to_null(0, 1)}
@@ -28,10 +28,10 @@ assert(bool((b[_to_null(1)] == 1)))
 assert(bool((b[_to_null(2)] == 2)))
 assert(bool((b[_to_null(3)] == 3)))
 a = list {_to_null(list {_to_null(0, 1, 2)}, list {_to_null(0, 1)}, list {_to_null(0)})}
-b = (function() local result = list {} for _, i in a do if (len(i) == 2) then for _, j in i do if (j == 0) then result.append(j) end end end end return result end)()
+b = (function() local result = list {} for _, i in a do if bool((len(i) == 2)) then for _, j in i do if bool((j == 0)) then result.append(j) end end end end return result end)()
 assert(bool((len(b) == 1)))
 assert(bool((b[_to_null(0)] == 0)))
-c = (function() local result = list {} for _, i in a do if (len(i) == 2) then for _, j in i do if (j == 0) then result.append(bool((j == 1)) and j or 10) end end end end return result end)()
+c = (function() local result = list {} for _, i in a do if bool((len(i) == 2)) then for _, j in i do if bool((j == 0)) then result.append(bool((j == 1)) and j or 10) end end end end return result end)()
 assert(bool((len(c) == 1)))
 assert(bool((c[_to_null(0)] == 10)))
 return {

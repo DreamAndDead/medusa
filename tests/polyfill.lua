@@ -1,4 +1,4 @@
---[[
+---[[
 local function inspect(t)
    local i = require 'inspect'.inspect
    print(i(t))
@@ -272,6 +272,48 @@ local function range(...)
 end
 
 
+-- len(object)
+-- return the number of items of a sequence or collection.
+local function len(t)
+   if type(t._data) == "table" then
+      if t._is_list == true or t._is_tuple == true then
+	 return t._len
+      else
+	 local l = 0
+	 for k, v in pairs(t._data) do
+	    l = l + 1
+	 end
+	 return l
+      end
+   end
+
+   return #t
+end
+
+-- enumerate(iterable[, start]) -> iterator for index, value of iterable
+-- return an enumerate object.  iterable must be another object that supports
+-- iteration.  The enumerate object yields pairs containing a count (from
+-- start, which defaults to zero) and a value yielded by the iterable argument.
+-- enumerate is useful for obtaining an indexed list:
+--     (0, seq[0]), (1, seq[1]), (2, seq[2]), ...
+local function enumerate(t, start)
+   -- assume t is a list
+   start = start or 0
+
+   local i, v = t(nil, nil)
+   return function()
+      local index, value = i, v
+      if index == nil then
+         return nil
+      end
+
+      i, v = t(nil, i)
+
+      return index, index + start - 1, value
+   end
+end
+
+
 
 
 -- represent nil in table
@@ -296,8 +338,6 @@ local function _to_nil(...)
    end
    return unpack(t, 1, n)
 end
-
-
 
 
 -- list() -> new empty list
@@ -468,6 +508,7 @@ setmetatable(list, {
 
 		      for i = index + 1, self._len do
 			 self._data[i-1] = self._data[i]
+			 self._data[i] = nil
 		      end
 		      self._len = self._len - 1
 
@@ -517,6 +558,64 @@ setmetatable(list, {
 		   methods.__iter__ = function(self)
 		      return self
 		   end
+
+		   -- list concat
+		   methods.__add__ = function(self, other)
+		      assert(other._is_list, "only concat list with list")
+
+		      res = list {}
+		      for _, e in self do
+			 res.append(e)
+		      end
+
+		      for _, e in other do
+			 res.append(e)
+		      end
+
+		      return res
+		   end
+
+
+		   -- list multi
+		   methods.__mul__ = function(self, m)
+		      assert(math.floor(m) == m, "can't multiply sequence by non-int of type 'float'")
+		      if m < 0 then
+			 m = 0
+		      end
+
+		      res = list {}
+		      if m == 0 then
+			 return res
+		      end
+
+		      for i = 1, m do
+			 for _, e in self do
+			    res.append(e)
+			 end
+		      end
+
+		      return res
+		   end
+
+		   -- list equal
+		   methods.__eq__ = function(self, other)
+		      if not other._is_list then
+			 return false
+		      end
+
+		      if len(self) ~= len(other) then
+			 return false
+		      end
+
+		      for i = 0, len(self)-1 do
+			 if self[i] ~= other[i] then
+			    return false
+			 end
+		      end
+
+		      return true
+		   end
+		   
 		   
                    local iterator_index = 0
 
@@ -542,15 +641,65 @@ setmetatable(list, {
 					 return s
 				      end
 
-                                      return function(...)
-					 return methods[index](self, ...)
+				      if methods[index] ~= nil then
+					 return function(...)
+					    return methods[index](self, ...)
+					 end
+				      else
+					 return nil
 				      end
                                    end,
-				   -- only number index is permitted in python
                                    __newindex = function(self, index, value)
-				      index = py_to_lua_idx(index, self._len)
-                                      rawset(self._data, index, value)
+				      if type(index) == "table" and index._is_slice == true then
+					 local other = value
+					 
+					 local start = index.start or 0
+					 start = py_idx(start, self._len)
+					 local stop = index.stop or self._len
+					 stop = py_idx(stop, self._len)
+					 local step = index.step or 1
+
+					 if step == 1 then
+					    for _, i in range(start, stop, step) do
+					       self.pop(start)
+					    end
+
+					    -- other may be nil
+					    local iter = list(other or list {})
+					    iter.reverse()
+					    for _, e in iter do
+					       self.insert(start, e)
+					    end
+					 else -- step != 1
+					    local idx = list {}
+					    for _, i in range(start, stop, step) do
+					       idx.append(i)
+					    end
+
+					    if other ~= nil then
+					       assert(len(idx) == len(other), "assign sequence size not equal to extend slice size")
+					       for _, i, v in enumerate(other) do
+						  self[idx[i]] = v
+					       end
+					    else -- other == nil
+					       idx.sort()
+					       local n = 0
+					       for _, i in idx do
+						  self.pop(i-n)
+						  n = n + 1
+					       end
+					    end
+					 end
+                                      elseif type(index) == "number" then
+					 index = py_to_lua_idx(index, self._len)
+					 rawset(self._data, index, value)
+                                      else
+					 error("invalid list index")
+				      end
                                    end,
+				   __add = methods.__add__,
+				   __mul = methods.__mul__,
+				   __eq = methods.__eq__,
                                    __call = function(self, _, idx)
                                       if idx == nil then
                                          iterator_index = 0
@@ -570,6 +719,17 @@ setmetatable(list, {
                    return result
                 end,
 })
+
+
+-- reversed(sequence) -> reverse iterator over values of the sequence
+-- return a reverse iterator
+local function reversed(seq)
+   local l = list(seq)
+   l.reverse()
+   return l
+end
+
+
 
 -- bool(x) -> bool
 -- returns True when the argument x is true, False otherwise.
@@ -681,29 +841,6 @@ local function callable(obj)
    return false
 end
 
-
--- enumerate(iterable[, start]) -> iterator for index, value of iterable
--- return an enumerate object.  iterable must be another object that supports
--- iteration.  The enumerate object yields pairs containing a count (from
--- start, which defaults to zero) and a value yielded by the iterable argument.
--- enumerate is useful for obtaining an indexed list:
---     (0, seq[0]), (1, seq[1]), (2, seq[2]), ...
-local function enumerate(t, start)
-   -- assume t is a list
-   start = start or 0
-
-   local i, v = t(nil, nil)
-   return function()
-      local index, value = i, v
-      if index == nil then
-         return nil
-      end
-
-      i, v = t(nil, i)
-
-      return index, index + start - 1, value
-   end
-end
 
 
 -- filter(function or None, iterable) --> filter object
@@ -843,25 +980,6 @@ local function int(x, base)
 end
 
 
-
-
--- len(object)
--- return the number of items of a sequence or collection.
-local function len(t)
-   if type(t._data) == "table" then
-      if t._is_list == true or t._is_tuple == true then
-	 return t._len
-      else
-	 local l = 0
-	 for k, v in pairs(t._data) do
-	    l = l + 1
-	 end
-	 return l
-      end
-   end
-
-   return #t
-end
 
 
 -- different from coroutine.wrap
@@ -1087,15 +1205,6 @@ local function reduce(func, seq, init)
    end
 
    return r
-end
-
-
--- reversed(sequence) -> reverse iterator over values of the sequence
--- return a reverse iterator
-local function reversed(seq)
-   local l = list(seq)
-   l.reverse()
-   return l
 end
 
 

@@ -34,8 +34,6 @@ class NodeVisitor(ast.NodeVisitor):
         - ExtSlice
         - NamedExpr
         - With
-
-        maybe support:
         - YieldFrom
         """
         raise RuntimeError("unsupported syntax '%s' at line %d col %d" % (node.__class__.__name__, node.lineno, node.col_offset))

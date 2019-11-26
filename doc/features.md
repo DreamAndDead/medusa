@@ -243,7 +243,19 @@ lua 中不存在相应的概念，需要编写相应代码来模拟。
 |`remove`|`l.remove(-1)`|`l.remove(-1)`|:heavy_check_mark:|
 |`reverse`|`l.reverse()`|`l.reverse()`|:heavy_check_mark:|
 |`sort`|`l.sort()`|`l.sort()`|:heavy_check_mark:，因为当前函数不支持键值参数，所以 key 和 reverse 参数无法传递，有待调整|
-|索引`[n]`|`l[0]`|`l[0]`|:heavy_check_mark:|
+|in|`0 in l`|`operator_in(0, l)`|:heavy_check_mark:|
+|not in|`0 not in l`|`not operator_in(0, l)`|:heavy_check_mark:|
+|`+`|`l1 + l2`|`l1 + l2`|:heavy_check_mark:|
+|`*`|`l * 5`|`l * 5`|:heavy_check_mark:|
+|索引|`l[0]`|`l[0]`|:heavy_check_mark:|
+|索引|`l[0:3]`|`l[slice(0, 3)]`|:heavy_check_mark:|
+|索引|`l[0:5:2]`|`l[slice(0, 5, 2)]`|:heavy_check_mark:|
+|索引赋值|`l[0] = 1`|`l[0] = 1`|:heavy_check_mark:|
+|索引赋值|`l[0:3] = [0]`|`l[slice(0, 3)] = list {0}`|:heavy_check_mark:|
+|索引赋值|`l[0:5:2] = [1,2,3]`|`l[slice(0, 5, 2)] = list {1,2,3}`|:heavy_check_mark:|
+|删除索引|`del l[0]`|` `|:x:，目前和 `l[0] = None` 相冲突|
+|删除索引|`del l[0:2]`|`l[slice(0,2)] = nil`|:heavy_check_mark:|
+|删除索引|`del l[0:5:2]`|`l[slice(0,5,2)] = nil`|:heavy_check_mark:|
 
 |python示例代码|lua转换代码|
 |:-:|:-:|

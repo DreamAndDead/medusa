@@ -128,10 +128,83 @@ assert(bool((l[_to_null(1)] == 1)))
 assert(bool((l[_to_null(2)] == 2)))
 assert(bool((l[_to_null(3)] == 3)))
 assert(bool((l[_to_null(4)] == 4)))
+l = list {_to_null(4, 1, 2, 0, 3)}
+assert(bool((operator_in(0, l))))
+assert(bool((not operator_in(5, l))))
+l1 = list {_to_null(4, 1, 2, 0, 3)}
+l2 = list {_to_null(4, 1, 2, 0, 3)}
+l = (l1 + l2)
+assert(bool((len(l) == 10)))
+assert(bool((l[_to_null(0)] == 4)))
+assert(bool((l[_to_null(1)] == 1)))
+assert(bool((l[_to_null(2)] == 2)))
+assert(bool((l[_to_null(3)] == 0)))
+assert(bool((l[_to_null(4)] == 3)))
+assert(bool((l[_to_null(5)] == 4)))
+assert(bool((l[_to_null(6)] == 1)))
+assert(bool((l[_to_null(7)] == 2)))
+assert(bool((l[_to_null(8)] == 0)))
+assert(bool((l[_to_null(9)] == 3)))
+l1 = list {_to_null(4, 1, 2, 0, 3)}
+l = (l1 * 2)
+assert(bool((len(l) == 10)))
+assert(bool((l[_to_null(0)] == 4)))
+assert(bool((l[_to_null(1)] == 1)))
+assert(bool((l[_to_null(2)] == 2)))
+assert(bool((l[_to_null(3)] == 0)))
+assert(bool((l[_to_null(4)] == 3)))
+assert(bool((l[_to_null(5)] == 4)))
+assert(bool((l[_to_null(6)] == 1)))
+assert(bool((l[_to_null(7)] == 2)))
+assert(bool((l[_to_null(8)] == 0)))
+assert(bool((l[_to_null(9)] == 3)))
+l = list {_to_null(4, 1, 2, 0, 3)}
+assert(bool((l[_to_null(0)] == 4)))
+local ls = l[slice(1, 2, nil)]
+assert(bool((len(ls) == 1)))
+assert(bool((ls[_to_null(0)] == 1)))
+local ls2 = l[slice(1, 5, 2)]
+assert(bool((len(ls2) == 2)))
+assert(bool((ls2[_to_null(0)] == 1)))
+assert(bool((ls2[_to_null(1)] == 0)))
+l = list {_to_null(4, 1, 2, 0, 3)}
+assert(bool((l[_to_null(0)] == 4)))
+l[_to_null(0)] = 2
+assert(bool((l[_to_null(0)] == 2)))
+l = list {_to_null(4, 1, 2, 0, 3)}
+l[slice(1, 3, nil)] = list {_to_null(10, 11, 12)}
+assert(bool((len(l) == 6)))
+assert(bool((l[_to_null(0)] == 4)))
+assert(bool((l[_to_null(1)] == 10)))
+assert(bool((l[_to_null(2)] == 11)))
+assert(bool((l[_to_null(3)] == 12)))
+assert(bool((l[_to_null(4)] == 0)))
+assert(bool((l[_to_null(5)] == 3)))
+l = list {_to_null(4, 1, 2, 0, 3)}
+l[slice(0, 5, 2)] = list {_to_null(10, 11, 12)}
+assert(bool((len(l) == 5)))
+assert(bool((l[_to_null(0)] == 10)))
+assert(bool((l[_to_null(1)] == 1)))
+assert(bool((l[_to_null(2)] == 11)))
+assert(bool((l[_to_null(3)] == 0)))
+assert(bool((l[_to_null(4)] == 12)))
+l = list {_to_null(4, 1, 2, 0, 3)}
+l[slice(1, 3, nil)] = nil
+assert(bool((len(l) == 3)))
+assert(bool((l[_to_null(0)] == 4)))
+assert(bool((l[_to_null(1)] == 0)))
+assert(bool((l[_to_null(2)] == 3)))
+l = list {_to_null(4, 1, 2, 0, 3)}
+l[slice(0, 5, 2)] = nil
+assert(bool((len(l) == 2)))
+assert(bool((l[_to_null(0)] == 1)))
+assert(bool((l[_to_null(1)] == 0)))
 return {
     l = l,
     i = i,
     l1 = l1,
     l2 = l2,
     p = p,
+    ls = ls,
+    ls2 = ls2,
 }
