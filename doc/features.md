@@ -360,6 +360,8 @@ set 同样是 python 中内建的数据结构。
 |`symmetric_difference_update`|`s.symmetric_difference_update(s1)`|`s.symmetric_difference_update(s1)`|:heavy_check_mark:|
 |`union`|`s = s.union(s1, s2)`|`s = s.union(s1, s2)`|:heavy_check_mark:|
 |`update`|`s.update(s1, s2)`|`s.update(s1, s2)`|:heavy_check_mark:|
+|in|`0 in s`|`operator_in(0, s)`|:heavy_check_mark:|
+|not in|`0 not in s`|`not operator_in(0, s)`|:heavy_check_mark:|
 
 
 python示例代码|lua转换代码|
@@ -386,6 +388,8 @@ frozenset 同样是 python 中内建的数据结构，和 set 的区别在于它
 |`issuperset`|`s.issuperset(s1)`|`s.issuperset(s1)`|:heavy_check_mark:|
 |`symmetric_difference`|`s = s.symmetric_difference(s1)`|`s = s.symmetric_difference(s1)`|:heavy_check_mark:|
 |`union`|`s = s.union(s1, s2)`|`s = s.union(s1, s2)`|:heavy_check_mark:|
+|in|`0 in s`|`operator_in(0, s)`|:heavy_check_mark:|
+|not in|`0 not in s`|`not operator_in(0, s)`|:heavy_check_mark:|
 
 
 python示例代码|lua转换代码|

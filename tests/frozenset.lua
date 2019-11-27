@@ -108,6 +108,9 @@ assert(bool((operator_in(6, s1_union_s2s3))))
 assert(bool((operator_in(8, s1_union_s2s3))))
 assert(bool((operator_in(0, s1_union_s2s3))))
 assert(bool((operator_in(10, s1_union_s2s3))))
+s = set {_to_null(1, 2, 3, 4, 5, 6)}
+assert(bool((operator_in(1, s))))
+assert(bool((not operator_in(7, s))))
 return {
     s = s,
     sc = sc,

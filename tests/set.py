@@ -354,3 +354,26 @@ assert 8 in s1
 assert 0 in s1
 assert 10 in s1
 
+
+# operations
+
+## in and not in
+
+s = { 1, 2, 3, 4, 5, 6 }
+
+assert 1 in s
+assert 7 not in s
+
+
+## no +
+
+
+## no *
+
+
+## no index and slice
+
+
+
+
+
