@@ -79,6 +79,9 @@ for _, v in d.values() do
     assert(bool(((v == "john") or (v == 26) or (v == 20))))
     ::loop_label_3::
 end
+d = dict {[_to_null("name")] = _to_null("john"), [_to_null(1)] = _to_null(26), [_to_null("age")] = _to_null(20)}
+assert(bool((operator_in("name", d))))
+assert(bool((not operator_in("height", d))))
 return {
     d = d,
     m = m,

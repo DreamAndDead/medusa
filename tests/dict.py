@@ -168,3 +168,17 @@ for v in d.values():
     assert v == 'john' or v == 26 or v == 20
 
 
+# operations
+
+## in and not in
+
+d = { 'name' : 'john', 1 : 26, 'age' : 20 }
+
+assert 'name' in d
+assert 'height' not in d
+
+## no +
+
+## no *
+
+## no slice

@@ -286,6 +286,8 @@ dict 是 python 中内建的数据结构，使用非常广泛。
 |`setdefault`|`d.setdefault('hair', 'black')`|`d.setdefault('hair', 'black')`|:heavy_check_mark:|
 |`update`|`d.update({'age': 22})`|`d.update(dict {['age'] = 22})`|:heavy_check_mark:|
 |`values`|`d.values()`|`d.values()`|:heavy_check_mark:|
+|in|`0 in d`|`operator_in(0, d)`|:heavy_check_mark:|
+|not in|`0 not in d`|`not operator_in(0, d)`|:heavy_check_mark:|
 |索引`[k]`|`d[k]`|`d[k]`|:heavy_check_mark:|
 
 
