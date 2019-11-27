@@ -350,7 +350,6 @@ class NodeVisitor(ast.NodeVisitor):
 
         name = node.name
 
-        # TODO: 忽略了所有 keywords 参数
         arguments = [arg.arg for arg in node.args.args]
 
         if node.args.vararg is not None:
@@ -361,7 +360,6 @@ class NodeVisitor(ast.NodeVisitor):
                                    arguments=", ".join(arguments))
 
         self.emit(function_def)
-
 
         self.scope.push(dict(kind="function", name=node.name))
         self.visit_all(node.body)
