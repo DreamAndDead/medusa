@@ -375,5 +375,63 @@ assert 7 not in s
 
 
 
+#https://docs.python.org/3.5/library/stdtypes.html#set-types-set-frozenset
 
+## <, <=, >, >=, FIXME __le not work in lua metatable
+
+## |
+
+s1 = { 1, 2, 3, 4, 5, 6 }
+s2 = { 2, 4, 6, 8 }
+
+s = s1 | s2
+
+assert len(s) == 7
+assert 1 in s
+assert 2 in s
+assert 3 in s
+assert 4 in s
+assert 5 in s
+assert 6 in s
+assert 8 in s
+
+## &
+
+s1 = { 1, 2, 3, 4, 5, 6 }
+s2 = { 2, 4, 6, 8 }
+
+s = s1 & s2
+
+assert len(s) == 3
+assert 2 in s
+assert 4 in s
+assert 6 in s
+
+
+## -
+
+s1 = { 1, 2, 3, 4, 5, 6 }
+s2 = { 2, 4, 6, 8 }
+
+s = s1 - s2
+
+assert len(s) == 3
+assert 1 in s
+assert 3 in s
+assert 5 in s
+
+
+
+## ^
+
+s1 = { 1, 2, 3, 4, 5, 6 }
+s2 = { 2, 4, 6, 8 }
+
+s = s1 ^ s2
+
+assert len(s) == 4
+assert 1 in s
+assert 3 in s
+assert 5 in s
+assert 8 in s
 

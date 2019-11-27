@@ -362,6 +362,10 @@ set 同样是 python 中内建的数据结构。
 |`update`|`s.update(s1, s2)`|`s.update(s1, s2)`|:heavy_check_mark:|
 |in|`0 in s`|`operator_in(0, s)`|:heavy_check_mark:|
 |not in|`0 not in s`|`not operator_in(0, s)`|:heavy_check_mark:|
+|`\|`|`s1 \| s2`|`bit.bor(s1, s2)`|:heavy_check_mark:|
+|`&`|`s1 & s2`|`bit.band(s1, s2)`|:heavy_check_mark:|
+|`-`|`s1 - s2`|`s1 - s2`|:heavy_check_mark:|
+|`^`|`s1 ^ s2`|`bit.bxor(s1, s2)`|:heavy_check_mark:|
 
 
 python示例代码|lua转换代码|
@@ -390,6 +394,10 @@ frozenset 同样是 python 中内建的数据结构，和 set 的区别在于它
 |`union`|`s = s.union(s1, s2)`|`s = s.union(s1, s2)`|:heavy_check_mark:|
 |in|`0 in s`|`operator_in(0, s)`|:heavy_check_mark:|
 |not in|`0 not in s`|`not operator_in(0, s)`|:heavy_check_mark:|
+|`\|`|`s1 \| s2`|`bit.bor(s1, s2)`|:heavy_check_mark:|
+|`&`|`s1 & s2`|`bit.band(s1, s2)`|:heavy_check_mark:|
+|`-`|`s1 - s2`|`s1 - s2`|:heavy_check_mark:|
+|`^`|`s1 ^ s2`|`bit.bxor(s1, s2)`|:heavy_check_mark:|
 
 
 python示例代码|lua转换代码|

@@ -164,12 +164,11 @@ assert 10 in s1_union_s2s3
 
 
 
-
 # operations
 
 ## in and not in
 
-s = { 1, 2, 3, 4, 5, 6 }
+s = frozenset({ 1, 2, 3, 4, 5, 6 })
 
 assert 1 in s
 assert 7 not in s
@@ -184,4 +183,64 @@ assert 7 not in s
 ## no index and slice
 
 
+
+#https://docs.python.org/3.5/library/stdtypes.html#set-types-set-frozenset
+
+## <, <=, >, >=, FIXME __le not work in lua metatable
+
+## |
+
+s1 = frozenset({ 1, 2, 3, 4, 5, 6 })
+s2 = frozenset({ 2, 4, 6, 8 })
+
+s = s1 | s2
+
+assert len(s) == 7
+assert 1 in s
+assert 2 in s
+assert 3 in s
+assert 4 in s
+assert 5 in s
+assert 6 in s
+assert 8 in s
+
+## &
+
+s1 = frozenset({ 1, 2, 3, 4, 5, 6 })
+s2 = frozenset({ 2, 4, 6, 8 })
+
+s = s1 & s2
+
+assert len(s) == 3
+assert 2 in s
+assert 4 in s
+assert 6 in s
+
+
+## -
+
+s1 = frozenset({ 1, 2, 3, 4, 5, 6 })
+s2 = frozenset({ 2, 4, 6, 8 })
+
+s = s1 - s2
+
+assert len(s) == 3
+assert 1 in s
+assert 3 in s
+assert 5 in s
+
+
+
+## ^
+
+s1 = frozenset({ 1, 2, 3, 4, 5, 6 })
+s2 = frozenset({ 2, 4, 6, 8 })
+
+s = s1 ^ s2
+
+assert len(s) == 4
+assert 1 in s
+assert 3 in s
+assert 5 in s
+assert 8 in s
 

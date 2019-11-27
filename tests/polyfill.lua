@@ -90,6 +90,15 @@ local function tbl_to_number(tbl)
 end
 
 local function bit_and(left, right)
+   -- overload for set object
+   if type(left) == 'table' and type(right) == 'table' then
+      assert(left._is_set or left._is_frozenset, "does not overload & operator")
+      assert(right._is_set or right._is_frozenset, "does not overload & operator")
+
+      return left.intersection(right)
+   end
+
+   -- normal bit operation
    local left_tbl = number_to_tbl(left)
    local right_tbl = number_to_tbl(right)
 
@@ -106,6 +115,15 @@ local function bit_and(left, right)
 end
 
 local function bit_or(left, right)
+   -- overload for set object
+   if type(left) == 'table' and type(right) == 'table' then
+      assert(left._is_set or left._is_frozenset, "does not overload | operator")
+      assert(right._is_set or right._is_frozenset, "does not overload | operator")
+
+      return left.union(right)
+   end
+
+   -- normal bit operation
    local left_tbl = number_to_tbl(left)
    local right_tbl = number_to_tbl(right)
 
@@ -137,6 +155,15 @@ local function bit_not(n)
 end
 
 local function bit_xor(left, right)
+   -- overload for set object
+   if type(left) == 'table' and type(right) == 'table' then
+      assert(left._is_set or left._is_frozenset, "does not overload ^ operator")
+      assert(right._is_set or right._is_frozenset, "does not overload ^ operator")
+
+      return left.symmetric_difference(right)
+   end
+
+   -- normal bit operation
    local left_tbl = number_to_tbl(left)
    local right_tbl = number_to_tbl(right)
 
@@ -1660,6 +1687,7 @@ setmetatable(set, {
 					 return methods[index](self, ...)
 				      end
                                    end,
+				   __sub = methods.difference,
                                    __call = function(self, _, idx)
                                       if idx == nil then
                                          iterator_index = nil
@@ -1797,6 +1825,7 @@ setmetatable(frozenset, {
 					 return methods[index](self, ...)
 				      end
                                    end,
+				   __sub = methods.difference,
                                    __call = function(self, _, idx)
                                       if idx == nil then
                                          iterator_index = nil
