@@ -340,6 +340,35 @@ local function _to_nil(...)
 end
 
 
+local py_to_lua_idx = function(i, size)
+   if i >= 0 then
+      i = i + 1
+      if i > size then
+	 i = size
+      end
+   else
+      i = i + size + 1
+      if i < 1 then
+	 i = 1
+      end
+   end
+   return i
+end
+
+local py_idx = function(i, size)
+   if i >= 0 then
+      if i > size then
+	 i = size
+      end
+   else
+      i = i + size
+      if i < 0 then
+	 i = 0
+      end
+   end
+   return i
+end
+
 -- list() -> new empty list
 -- list(iterable) -> new list initialized from iterable's items
 local list = {}
@@ -373,35 +402,6 @@ setmetatable(list, {
 		      -- list()
 		   end
 
-		   local py_to_lua_idx = function(i, size)
-		      if i >= 0 then
-			 i = i + 1
-			 if i > size then
-			    i = size
-			 end
-		      else
-			 i = i + size + 1
-			 if i < 1 then
-			    i = 1
-			 end
-		      end
-		      return i
-		   end
-
-		   local py_idx = function(i, size)
-		      if i >= 0 then
-			 if i > size then
-			    i = size
-			 end
-		      else
-			 i = i + size
-			 if i < 0 then
-			    i = 0
-			 end
-		      end
-		      return i
-		   end
-                   
                    local methods = {}
 
 		   -- L.append(object) -> None -- append object to end
@@ -1897,22 +1897,6 @@ setmetatable(tuple, {
 		      -- tuple()
 		   end
 
-		   local py_to_lua_idx = function(i, size)
-		      if i >= 0 then
-			 i = i + 1
-			 if i > size then
-			    i = size
-			 end
-		      else
-			 i = i + size + 1
-			 if i < 1 then
-			    i = 1
-			 end
-		      end
-		      return i
-		   end
-		   
-                   
                    local methods = {}
 
 		   -- T.count(value) -> integer -- return number of occurrences of value
@@ -1962,7 +1946,44 @@ setmetatable(tuple, {
 		   methods.__iter__ = function(self)
 		      return self
 		   end
+
+		   -- tuple concat
+		   methods.__add__ = function(self, other)
+		      assert(other._is_tuple, "only concat tuple with tuple")
+
+		      res = list {}
+		      for _, e in self do
+			 res.append(e)
+		      end
+
+		      for _, e in other do
+			 res.append(e)
+		      end
+
+		      return tuple(res)
+		   end
 		   
+		   -- tuple multi
+		   methods.__mul__ = function(self, m)
+		      assert(math.floor(m) == m, "can't multiply sequence by non-int of type 'float'")
+		      if m < 0 then
+			 m = 0
+		      end
+
+		      res = list {}
+		      if m == 0 then
+			 return tuple(res)
+		      end
+
+		      for i = 1, m do
+			 for _, e in self do
+			    res.append(e)
+			 end
+		      end
+
+		      return tuple(res)
+		   end
+
                    local iterator_index = 0
 
                    setmetatable(result, {
@@ -1972,10 +1993,31 @@ setmetatable(tuple, {
                                          return rawget(self._data, index)
                                       end
 
-                                      return function(...)
-					 return methods[index](self, ...)
+				      if type(index) == "table" and index._is_slice == true then
+					 local s = list()
+					 
+					 local start = index.start or 0
+					 start = py_idx(start, self._len)
+					 local stop = index.stop or self._len
+					 stop = py_idx(stop, self._len)
+					 local step = index.step or 1
+
+					 for _, i in range(start, stop, step) do
+					    s.append(self[i])
+					 end
+					 return tuple(s)
+				      end
+
+				      if methods[index] ~= nil then
+					 return function(...)
+					    return methods[index](self, ...)
+					 end
+				      else
+					 return nil
 				      end
                                    end,
+				   __add = methods.__add__,
+				   __mul = methods.__mul__,
                                    __call = function(self, _, idx)
                                       if idx == nil then
                                          iterator_index = 0

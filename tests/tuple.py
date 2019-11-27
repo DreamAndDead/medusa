@@ -43,3 +43,64 @@ assert t.index('a', 1, 4) == 1
 assert t.index('a', 2, 5) == 4
 
 
+## operations
+
+## in and not in
+
+t = tuple([ 4, 1, 2, 0, 3 ])
+
+assert 0 in t
+assert 5 not in t
+
+## +
+
+t1 = tuple([ 4, 1, 2, 0, 3 ])
+t2 = tuple([ 4, 1, 2, 0, 3 ])
+
+t = t1 + t2
+
+assert len(t) == 10
+assert t[0] == 4
+assert t[1] == 1
+assert t[2] == 2
+assert t[3] == 0
+assert t[4] == 3
+assert t[5] == 4
+assert t[6] == 1
+assert t[7] == 2
+assert t[8] == 0
+assert t[9] == 3
+
+## *
+
+t1 = tuple([ 4, 1, 2, 0, 3 ])
+
+t = t1 * 2
+
+assert len(t) == 10
+assert t[0] == 4
+assert t[1] == 1
+assert t[2] == 2
+assert t[3] == 0
+assert t[4] == 3
+assert t[5] == 4
+assert t[6] == 1
+assert t[7] == 2
+assert t[8] == 0
+assert t[9] == 3
+
+## slice index
+
+t = tuple([ 4, 1, 2, 0, 3 ])
+
+assert t[0] == 4
+
+ts = t[1:2]
+assert len(ts) == 1
+assert ts[0] == 1
+
+ts2 = t[1:5:2]
+assert len(ts2) == 2
+assert ts2[0] == 1
+assert ts2[1] == 0
+
