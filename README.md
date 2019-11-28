@@ -2,6 +2,8 @@
 
 A python project to transpile python code to lua code. *this project is just for research not for production*.
 
+Heavily borrowed the idea from [NeonMercury/python-lua](https://github.com/NeonMercury/python-lua), thanks.
+
 ## usage
 
 ### prerequisite
