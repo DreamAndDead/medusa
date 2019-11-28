@@ -5,6 +5,8 @@ how to do transpiling work?
 
 
 
+也是编译时，至于虚拟机运行时是没有办法的
+
 
 transpiler 运行在编译层面，运行时出现的问题它也不能解决。
 
@@ -44,9 +46,14 @@ https://docs.python.org/3.5/library/stdtypes.html
 两种语言的异同
 
 
-todo:
-- sequence operations https://docs.python.org/3.5/library/stdtypes.html#common-sequence-operations
-- mutable seq https://docs.python.org/3.5/library/stdtypes.html#mutable-sequence-types
-- string method https://docs.python.org/3.5/library/stdtypes.html#string-methods
-- set op https://docs.python.org/3.5/library/stdtypes.html#set-types-set-frozenset
-- class https://docs.python.org/3.5/library/stdtypes.html#special-attributes
+
+transpile 的本质在于，用 lua 实现 python 语言所表现的语义，相当于用 lua 实现了 python。
+
+
+遗憾之处
+
+类过于简单，没有 python 的核心
+
+
+迭代器重写
+None 作用键值的失误
