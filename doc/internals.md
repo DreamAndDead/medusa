@@ -197,3 +197,12 @@ def func(a, b=1, *c, e=2, f, **g):
 类是 python 语言的核心，如果没有实现同义的类结构，在后续的很多地方都是受限的，比如魔术方法，多继承，元编程等。
 
 
+## 参考
+
+- [The Complete Syntax of Lua](https://www.lua.org/manual/5.1/manual.html#8)
+- [Design of CPython’s Compiler](https://devguide.python.org/compiler/)
+- [Python ast library](https://docs.python.org/3/library/ast.html#abstract-grammar)
+- [Python ast node guide](https://greentreesnakes.readthedocs.io/en/latest/nodes.html)
+- [Python builtin types](https://docs.python.org/3.5/library/stdtypes.html)
+- [Python builtin functions](https://docs.python.org/3.5/library/functions.html)
+

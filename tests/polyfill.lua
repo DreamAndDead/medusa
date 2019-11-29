@@ -1,10 +1,3 @@
----[[
-local function inspect(t)
-   local i = require 'inspect'.inspect
-   print(i(t))
-end
---]]
-
 local max_bit_length = 32
 
 local function check_int(n)

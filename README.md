@@ -27,7 +27,7 @@ $ ./transpile.sh [py_code_file.py | py_code_dir]+
 
 ### test
 
-所有测试用例在 :point_right: [tests](./tests/)，执行 `run_tesh.sh`，可运行所有 [tests](./tests/)，
+所有测试用例在 [tests](./tests/)，执行 `run_tesh.sh`，可运行所有 tests，
 
 ```
 $ ./run_test.sh
@@ -42,13 +42,13 @@ $ ./run_test.sh
 
 ## features
 
-转译语言以 python 3.4 为基准，支持大部分 [features](./doc/features.md)，转译为 lua 5.1 (准确的说是 luajit) 同义可执行代码。
+转译语言以 python 3.4 为基准，支持大部分 features，转译为 lua 5.1 (准确的说是 luajit) 同义可执行代码。
 
-具体可见 :point_right: [features](./doc/features.md)
+具体可见 [features](./doc/features.md)
 
 ## internals
 
-关于 medusa 运行的内部原理，可参考 :point_right: [internals](./doc/internals.md)
+关于 medusa 运行的内部原理，可参考 [medusa internals](./doc/internals.md)
 
 
 ## refs
