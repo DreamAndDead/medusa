@@ -1,8 +1,6 @@
-"""Compare operation description"""
 import ast
 
 class CompareOperationDesc:
-    """Compare operation description"""
     OPERATION = {
         ast.Eq: "==",
         ast.NotEq: "~=",

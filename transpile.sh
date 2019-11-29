@@ -5,7 +5,7 @@ pylua=./medusa.py
 
 function usage()
 {
-    echo "$0 py_file_path or py_file_dir ..."
+    echo "$0 [py_file_path | py_file_dir]+"
     exit 1
 }
 

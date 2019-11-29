@@ -1,7 +1,6 @@
 from copy import deepcopy
 
 class Scope:
-    """code context and scope"""
     def __init__(self):
         """
         level: 0 and above

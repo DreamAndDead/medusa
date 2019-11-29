@@ -1,16 +1,8 @@
-"""Binary operation description"""
 import ast
 
 _DEFAULT_FORMAT = "{left} {operation} {right}"
 
 class BinaryOperationDesc:
-    """
-    Binary operation description
-
-    TODO:
-    - bit ops
-    """
-
     OPERATION = {
         ast.Add: {
             "value": "+",

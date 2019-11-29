@@ -1,11 +1,3 @@
-"""
-Node visitor
-
-ref:
-- https://docs.python.org/3/library/ast.html#abstract-grammar
-- https://greentreesnakes.readthedocs.io/en/latest/nodes.html
-"""
-
 import ast
 
 from .binopdesc import BinaryOperationDesc
@@ -17,7 +9,6 @@ from .context import Context
 from .scope import Scope
 
 class NodeVisitor(ast.NodeVisitor):
-    """Node visitor"""
     def __init__(self, context=None, scope=None):
         self.context = context if context is not None else Context()
         self.scope = scope if scope is not None else Scope()
@@ -25,8 +16,6 @@ class NodeVisitor(ast.NodeVisitor):
 
     def generic_visit(self, node):
         """
-        unsupported nodes
-
         not support:
         - Raise
         - Try
@@ -63,28 +52,14 @@ class NodeVisitor(ast.NodeVisitor):
             return " ".join(visitor.output)
 
     def emit(self, code):
-        """Add translated code to the output"""
         self.output.append(code)
 
     def visit_Module(self, node):
-        """
-        Visit module
-
-        node attr:
-        - body, a list of statements
-        """
         self.visit_all(node.body)
         # body is a list, it's a list result in output, fetch it with [0]
         self.output = self.output[0]
 
     def visit_Assert(self, node):
-        """
-        Visit assert
-
-        node attr:
-        - test, commonly a Compare node
-        - msg, a Str node or None
-        """
         test = self.visit_all(node.test, inline=True)
         if node.msg:
             msg = self.visit_all(node.msg, inline=True)
@@ -102,7 +77,7 @@ class NodeVisitor(ast.NodeVisitor):
     def visit_Assign(self, node):
         """
         TODO:
-        - starred may happens here
+        - star may happens here
         """
         cur_scope = self.scope.last()
         
@@ -121,7 +96,6 @@ class NodeVisitor(ast.NodeVisitor):
                                                          value=value))
 
     def visit_AugAssign(self, node):
-        """Visit augassign"""
         operation = BinaryOperationDesc.OPERATION[node.op.__class__]
 
         target = self.visit_all(node.target, inline=True)
@@ -138,7 +112,6 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit("{target} = {line}".format(target=target, line=line))
 
     def visit_Attribute(self, node):
-        """Visit attribute"""
         line = "{object}.{attr}"
         values = {
             "object": self.visit_all(node.value, True),
@@ -173,14 +146,13 @@ class NodeVisitor(ast.NodeVisitor):
     def visit_Call(self, node):
         """
         TODO:
-        - 暂时不支持键值参数，忽略了所有 keywords
+        - 暂时不支持键值参数，忽略所有 keywords
         """
         line = "{name}({arguments})"
 
         name = self.visit_all(node.func, inline=True)
         arguments = [self.visit_all(arg, inline=True) for arg in node.args]
 
-        # 当函数调用中有 *o 这样的形式，解析出来是 unpack，用于将列表展开，传递参数
         if node.starargs:
             starargs = self.visit_all(node.starargs, inline=True)
             arguments.append("unpack(%s)" % starargs)
@@ -219,8 +191,6 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit("end, {{{}}}, \"{}\")".format(", ".join(bases), node.name))
 
     def visit_Compare(self, node):
-        """Visit compare"""
-
         line = ""
 
         left = self.visit_all(node.left, inline=True)
@@ -253,7 +223,6 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit(line)
 
     def visit_Delete(self, node):
-        """Visit delete"""
         targets = [self.visit_all(target, inline=True) for target in node.targets]
         nils = ["nil" for _ in targets]
         line = "{targets} = {nils}".format(targets=", ".join(targets),
@@ -261,7 +230,6 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit(line)
 
     def visit_Dict(self, node):
-        """Visit dictionary"""
         keys = []
 
         for key in node.keys:
@@ -276,7 +244,6 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit("dict {{{}}}".format(elements))
 
     def visit_DictComp(self, node):
-        """Visit dictionary comprehension"""
         self.scope.push(dict(kind="generator"))
         self.emit("(function()")
         self.emit("local result = dict {}")
@@ -312,16 +279,9 @@ class NodeVisitor(ast.NodeVisitor):
         self.scope.pop()
 
     def visit_Ellipsis(self, node):
-        """Visit ellipsis"""
         self.emit("...")
 
     def visit_Expr(self, node):
-        """
-        Visit expr
-        
-        node attr:
-        - value
-        """
         # FIXME: something wrong here
         # 在定义函数之后，直接使用 “”“”“” 是一个 Str Expr
         # 而如果我在随便一行写上 "" 一个字符串，用下面的规则，也会被认为是 doc string
@@ -416,7 +376,6 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit(line.format(value))
             
     def visit_For(self, node):
-        """Visit for"""
         line = "for _, {target} in {iter} do"
 
         values = {
@@ -465,7 +424,6 @@ class NodeVisitor(ast.NodeVisitor):
         self.scope.pop()
         
     def visit_If(self, node):
-        """Visit if"""
         test = self.visit_all(node.test, inline=True)
 
         line = "if bool({}) then".format(test)
@@ -496,7 +454,6 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit("end")
 
     def visit_IfExp(self, node):
-        """Visit if expression"""
         line = "bool({cond}) and {true_cond} or {false_cond}"
         values = {
             "cond": self.visit_all(node.test, inline=True),
@@ -545,13 +502,11 @@ class NodeVisitor(ast.NodeVisitor):
 
         
     def visit_Index(self, node):
-        """Visit index"""
         line = "_to_null({})"
         value = self.visit_all(node.value, inline=True)
         self.emit(line.format(value))
 
     def visit_Lambda(self, node):
-        """Visit lambda"""
         # TODO: ignore key-value parameters
         self.scope.push(dict(kind="lambda"))
         
@@ -587,7 +542,6 @@ class NodeVisitor(ast.NodeVisitor):
         self.scope.pop()
 
     def visit_List(self, node):
-        """Visit list"""
         elements = [self.visit_all(item, inline=True) for item in node.elts]
         line = "list {{_to_null({})}}".format(", ".join(elements))
         self.emit(line)
@@ -625,23 +579,18 @@ class NodeVisitor(ast.NodeVisitor):
         self.scope.pop()
         
     def visit_Name(self, node):
-        """Visit name"""
         self.emit(node.id)
 
     def visit_NameConstant(self, node):
-        """Visit name constant"""
         self.emit(NameConstantDesc.NAME[node.value])
 
     def visit_Num(self, node):
-        """Visit number"""
         self.emit(str(node.n))
 
     def visit_Pass(self, node):
-        """Visit pass"""
         pass
 
     def visit_Return(self, node):
-        """Visit return"""
         line = "return "
         if node.value:
             line += self.visit_all(node.value, inline=True)
@@ -649,10 +598,6 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit(line)
 
     def visit_Starred(self, node):
-        """Visit starred object"""
-
-        # TODO, 在 python 3.5 之后, 在 function call 中有些变化
-        # https://greentreesnakes.readthedocs.io/en/latest/nodes.html#Starred
         value = self.visit_all(node.value, inline=True)
         line = "unpack({})".format(value)
         self.emit(line)
@@ -704,7 +649,6 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit(line.format(**values))
 
     def visit_Str(self, node):
-        """Visit str"""
         value = node.s
         if self.context.last()["docstring"]:
             self.emit('--[[{}]]'.format(node.s))
@@ -712,10 +656,6 @@ class NodeVisitor(ast.NodeVisitor):
             self.emit('"{}"'.format(node.s))
 
     def visit_Subscript(self, node):
-        """
-        - Index
-        - Slice
-        """
         line = "{name}[{index}]"
         values = {
             "name": self.visit_all(node.value, inline=True),
@@ -725,15 +665,13 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit(line.format(**values))
 
     def visit_Tuple(self, node):
-        """Visit tuple"""
         elements = [self.visit_all(item, inline=True) for item in node.elts]
-        # 暂不支持 tuple 字面量
+        # TODO: 暂不支持 tuple 字面量
         #line = "tuple {{{}}}".format(", ".join(elements))
         #self.emit(line)
         self.emit(", ".join(elements))
 
     def visit_UnaryOp(self, node):
-        """Visit unary operator"""
         operation = UnaryOperationDesc.OPERATION[node.op.__class__]
         value = self.visit_all(node.operand, inline=True)
 
@@ -746,7 +684,6 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit(line.format(**values))
 
     def visit_While(self, node):
-        """Visit while"""
         test = self.visit_all(node.test, inline=True)
 
         self.emit("while bool({}) do".format(test))

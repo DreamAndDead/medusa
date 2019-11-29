@@ -1,13 +1,8 @@
-"""Unary operation description"""
 import ast
-
 
 _DEFAULT_FORMAT = "{operation}{value}"
 
-
 class UnaryOperationDesc:
-    """Unary operation description"""
-
     OPERATION = {
         ast.USub: {
             "value": "-",

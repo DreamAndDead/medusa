@@ -1,1 +1,1 @@
-"""translator module"""
+

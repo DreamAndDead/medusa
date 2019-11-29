@@ -1,5 +1,3 @@
-from .symbolsstack import SymbolsStack
-
 class Context:
     def __init__(self, ctx=None):
         ctx = ctx if ctx is not None else {

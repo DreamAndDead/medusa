@@ -1,7 +1,3 @@
-"""
-pretty print ast
-"""
-
 import ast
 
 def dump(node, annotate_fields=True, include_attributes=False, indent='  '):
