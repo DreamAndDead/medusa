@@ -2,47 +2,56 @@
 
 A python project to transpile python code to lua code. *this project is just for research not for production*.
 
-Heavily borrowed the idea from [NeonMercury/python-lua](https://github.com/NeonMercury/python-lua), thanks.
-
 ## usage
 
 ### prerequisite
 
-**python 3.4**
-
-因为使用了 python 标准库 `ast` 来解析 python 代码，在更高版本的 python ast 库中，些许字段有变动，所以最好使用 3.4 版本来运行。
+- python 3.4
+- luajit (for test)
 
 ### run
 
-执行 `medusa.py`，从 stdin 读取 python 代码，在 stdout 输出转译的 lua 代码。
+运行 `medusa.py`，从 stdin 读取 python 代码，在 stdout 输出转译的 lua 代码。
 
 ```
 $ python medusa.py < py_code_file.py
 ```
 
-或者
+**or**
 
-使用脚本 `transpile.sh`，将 python 代码文件/目录进行批量转译。
+使用脚本 `transpile.sh`，对 python 代码文件/目录进行批量转译。
 
 ```
-$ ./transpile.sh py_code_file.py py_code_dir/
+$ ./transpile.sh [py_code_file.py | py_code_dir]+
 ```
 
-## features
+### test
 
-支持的 python 语言以 python 3.4 为基准，支持大部分 feature，转换为 lua5.1 版本来执行。
-
-具体可见 :point_right: [features](./doc/features.md)
-
-## test
-
-所有测试用例在 :point_right: [tests](./tests/)，使用 `assert` 函数进行断言测试。
-
-运行所有测试用例，
+所有测试用例在 :point_right: [tests](./tests/)，执行 `run_tesh.sh`，可运行所有 [tests](./tests/)，
 
 ```
 $ ./run_test.sh
 ```
 
-## example
+其中
+- 使用 `assert` 函数进行断言测试
+- 使用 `setfenv` 加载 polyfill 运行环境
+
+
+## doc
+
+## features
+
+转译语言以 python 3.4 为基准，支持大部分 [features](./doc/features.md)，转译为 lua 5.1 (准确的说是 luajit) 同义可执行代码。
+
+具体可见 :point_right: [features](./doc/features.md)
+
+## internals
+
+关于 medusa 运行的内部原理，可参考 :point_right: [internals](./doc/internals.md)
+
+
+## refs
+
+Heavily borrowed the idea from [NeonMercury/python-lua](https://github.com/NeonMercury/python-lua), thanks.
 
