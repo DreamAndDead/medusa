@@ -247,17 +247,8 @@ tuple 可看作是只读的 list，但是在 python 中 tuple 的存在广泛，
 |:-:|:-:|:-:|:-:|
 |tuple字面量|`t = (1, 2, 3)`|`[local] t = tuple {1, 2, 3}`|:x:|
 |tuple函数|`t = tuple([1, 2, 3])`|`[local] t = tuple([1, 2, 3])`|:heavy_check_mark:|
-|`append`|`t.append(4)`|`t.append(4)`|:heavy_check_mark:|
-|`clear`|`t.clear()`|`t.clear()`|:heavy_check_mark:|
-|`copy`|`t.copy()`|`t.copy()`|:heavy_check_mark:|
 |`count`|`t.count(4)`|`t.count(4)`|:heavy_check_mark:|
-|`extend`|`t.extend([5, 6, 7])`|`t.extend(list {5, 6, 7})`|:heavy_check_mark:|
 |`index`|`t.index(4)`|`t.index(4)`|:heavy_check_mark:|
-|`insert`|`t.insert(0, -1)`|`t.insert(0, -1)`|:heavy_check_mark:|
-|`pop`|`t.pop()`|`t.pop()`|:heavy_check_mark:|
-|`remove`|`t.remove(-1)`|`t.remove(-1)`|:heavy_check_mark:|
-|`reverse`|`t.reverse()`|`t.reverse()`|:heavy_check_mark:|
-|`sort`|`t.sort()`|`t.sort()`|:heavy_check_mark:，因为当前函数不支持键值参数，所以 key 和 reverse 参数无法传递，有待调整|
 |in|`0 in t`|`operator_in(0, t)`|:heavy_check_mark:|
 |not in|`0 not in t`|`not operator_in(0, t)`|:heavy_check_mark:|
 |`+`|`t1 + t2`|`t1 + t2`|:heavy_check_mark:|
