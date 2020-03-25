@@ -36,6 +36,9 @@ class NodeVisitor(ast.NodeVisitor):
         - True, return the visit node result, we can manipulate them ourselves
         - False, embed the result in visitor self output
         """
+        if nodes is None and inline:
+            return "nil"
+            
         visitor = NodeVisitor(context=self.context, scope=self.scope)
 
         if isinstance(nodes, list):
@@ -144,14 +147,18 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit("break")
 
     def visit_Call(self, node):
-        """
-        TODO:
-        - 暂时不支持键值参数，忽略所有 keywords
-        """
         line = "{name}({arguments})"
 
         name = self.visit_all(node.func, inline=True)
         arguments = [self.visit_all(arg, inline=True) for arg in node.args]
+
+        if node.kwargs:
+            kwargs = self.visit_all(node.kwargs, inline=True)
+        else:
+            kwargs = '{}'
+
+        kvs = ['{} = {}'.format(k.arg, self.visit_all(k.value, inline=True)) for k in node.keywords]
+        arguments.insert(0, 'merge_kwargs({{{}}}, {})'.format(", ".join(kvs), kwargs))
 
         if node.starargs:
             starargs = self.visit_all(node.starargs, inline=True)
@@ -301,6 +308,7 @@ class NodeVisitor(ast.NodeVisitor):
     def visit_FunctionDef(self, node):
         last_scope = self.scope.last()
 
+        # kvs means key-value s
         line = "{local}function {name}({arguments})"
 
         local_keyword = ""
@@ -310,7 +318,7 @@ class NodeVisitor(ast.NodeVisitor):
 
         name = node.name
 
-        arguments = [arg.arg for arg in node.args.args]
+        arguments = ['kvs'] + [arg.arg for arg in node.args.args]
 
         if node.args.vararg is not None:
             arguments.append("...")
@@ -327,23 +335,31 @@ class NodeVisitor(ast.NodeVisitor):
 
         body = self.output[-1]
 
+        all_except_varkwargs = node.args.args + node.args.kwonlyargs
+
+        if node.args.kwarg is not None:
+            line = "local {} = get_kwargs(kvs, {{{}}})".format(node.args.kwarg.arg, ", ".join(map(lambda a: "{} = true".format(a.arg), all_except_varkwargs)))
+            body.insert(0, line)
+
+        for k, v in reversed(list(zip(node.args.kwonlyargs, node.args.kw_defaults))):
+            line = "local {} = get_kwonlyarg(kvs, '{}', {}, '{}')".format(k.arg, k.arg, self.visit_all(v, inline=True) if v else "nil", node.name)
+            body.insert(0, line)
+            
         if node.args.vararg is not None:
             line = "local {name} = list {{...}}".format(name=node.args.vararg.arg)
             body.insert(0, line)
 
-        # 填充位置参数的默认值
-        arg_index = -1
-        for d in reversed(node.args.defaults):
-            line = "{name} = {name} or {value}"
+        defaults = [None] * (len(node.args.args) - len(node.args.defaults)) + node.args.defaults
+        for arg, d in reversed(list(zip(node.args.args, defaults))):
+            line = "{} = get_posarg(kvs, '{}', {}, {}, '{}')".format(
+                arg.arg,
+                arg.arg,
+                arg.arg,
+                self.visit_all(d, inline=True),
+                node.name
+            )
 
-            arg = node.args.args[arg_index]
-            values = {
-                "name": arg.arg,
-                "value": self.visit_all(d, inline=True),
-            }
-            body.insert(0, line.format(**values))
-
-            arg_index -= 1
+            body.insert(0, line)
 
         self.emit("end")
 
@@ -359,7 +375,7 @@ class NodeVisitor(ast.NodeVisitor):
                 "name": name,
                 "decorator": decorator_name,
             }
-            line = "{name} = {decorator}({name})".format(**values)
+            line = "{name} = {decorator}({{}}, {name})".format(**values)
             self.emit(line)
 
     def visit_Yield(self, node):

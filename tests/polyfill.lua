@@ -2193,7 +2193,7 @@ end
 
 local g_real_require = require
 
-local function require(m)
+local function _require(m)
    local polyfill, e = loadfile('./polyfill.lua')
 
    if polyfill == nil then
@@ -2207,6 +2207,52 @@ local function require(m)
    setfenv(code, env)
    local export = code()
    return export
+end
+
+-- filter all args and get **kwargs
+local function get_kwargs(kvs, keys)
+   local t = {}
+   for k, v in pairs(kvs) do
+      if not keys[k] then
+	 t[k] = v
+      end
+   end
+   return t
+end
+
+-- if a kwonlyarg is optional or must
+local function get_kwonlyarg(kvs, var_name, default, func_name)
+   local arg = kvs[var_name]
+
+   assert(not(arg == nil and default == nil), "function " .. func_name .. " miss keyword-only argument: " .. var_name)
+
+   return arg or default
+end
+
+
+-- if kw arg is conflict with pos arg passed in
+local function get_posarg(kvs, var_name, var, default, func_name)
+   local kwvar = kvs[var_name]
+
+   assert(not(kwvar ~= nil and var ~= nil), "function " .. func_name .. " got multiple values for argument " .. var_name)
+
+   local v = kwvar or var or default
+
+   if v == nil then
+      error("miss position argument " .. var_name)
+   end
+
+   return v
+end
+
+
+local function merge_kwargs(kvs, kwargs)
+   for k, v in pairs(kwargs) do
+      assert(kvs[k] == nil, "got multiple values for argument " .. k)
+      kvs[k] = v
+   end
+
+   return kvs
 end
 
 
@@ -2259,5 +2305,9 @@ return {
    ["issubclass"] = issubclass,
    ["super"] = super,
    ["zip"] = zip,
-   ["require"] = require,
+   ["require"] = _require,
+   ["get_kwargs"] = get_kwargs,
+   ["get_kwonlyarg"] = get_kwonlyarg,
+   ["get_posarg"] = get_posarg,
+   ["merge_kwargs"] = merge_kwargs,
 }
