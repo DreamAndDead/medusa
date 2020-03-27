@@ -28,11 +28,11 @@ assert(bool((b[_to_null(1)] == 1)))
 assert(bool((b[_to_null(2)] == 2)))
 assert(bool((b[_to_null(3)] == 3)))
 a = list {_to_null(list {_to_null(0, 1, 2)}, list {_to_null(0, 1)}, list {_to_null(0)})}
-b = (function() local result = list {} for _, i in a do if bool((len(i) == 2)) then for _, j in i do if bool((j == 0)) then result.append(j) end end end end return result end)()
-assert(bool((len(b) == 1)))
+b = (function() local result = list {} for _, i in a do if bool((len(merge_kwargs({}, {}), i) == 2)) then for _, j in i do if bool((j == 0)) then result.append(j) end end end end return result end)()
+assert(bool((len(merge_kwargs({}, {}), b) == 1)))
 assert(bool((b[_to_null(0)] == 0)))
-c = (function() local result = list {} for _, i in a do if bool((len(i) == 2)) then for _, j in i do if bool((j == 0)) then result.append(bool((j == 1)) and j or 10) end end end end return result end)()
-assert(bool((len(c) == 1)))
+c = (function() local result = list {} for _, i in a do if bool((len(merge_kwargs({}, {}), i) == 2)) then for _, j in i do if bool((j == 0)) then result.append(bool((j == 1)) and j or 10) end end end end return result end)()
+assert(bool((len(merge_kwargs({}, {}), c) == 1)))
 assert(bool((c[_to_null(0)] == 10)))
 return {
     a = a,

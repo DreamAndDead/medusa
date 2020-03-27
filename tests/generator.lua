@@ -78,7 +78,7 @@ for _, n in b do
     ::loop_label_5::
 end
 a = list {_to_null(list {_to_null(0, 1, 2)}, list {_to_null(0, 1)}, list {_to_null(0)})}
-b = coroutine_wrap(function() for _, i in a do if bool((len(i) == 2)) then for _, j in i do if bool((j == 0)) then coroutine.yield(j) end end end end end)
+b = coroutine_wrap(function() for _, i in a do if bool((len(merge_kwargs({}, {}), i) == 2)) then for _, j in i do if bool((j == 0)) then coroutine.yield(j) end end end end end)
 i = 0
 for _, n in b do
     if bool((i == 0)) then
@@ -88,7 +88,7 @@ for _, n in b do
     ::loop_label_6::
 end
 assert(bool((i == 1)))
-c = coroutine_wrap(function() for _, i in a do if bool((len(i) == 2)) then for _, j in i do if bool((j == 0)) then coroutine.yield(bool((j == 1)) and j or 10) end end end end end)
+c = coroutine_wrap(function() for _, i in a do if bool((len(merge_kwargs({}, {}), i) == 2)) then for _, j in i do if bool((j == 0)) then coroutine.yield(bool((j == 1)) and j or 10) end end end end end)
 i = 0
 for _, n in c do
     if bool((i == 0)) then

@@ -219,24 +219,24 @@ local bit = {
 }
 
 
-local string_meta = getmetatable("")
-string_meta.__add = function(v1, v2)
+local _string_meta = getmetatable("")
+_string_meta.__add = function(v1, v2)
    if type(v1) == "string" and type(v2) == "string" then
       return v1 .. v2
    end
    return v1 + v2
 end
 
-local g_real_unpack = unpack or table.unpack
+local _g_real_unpack = unpack or table.unpack
 
 local unpack = function(t)
    if type(t) == "table" and t._is_list then
-      return g_real_unpack(t._data)
+      return _g_real_unpack(t._data)
    end
-   return g_real_unpack(t)
+   return _g_real_unpack(t)
 end
 
-local g_real_next = next
+local _g_real_next = next
 
 -- next(iterator[, default])
 -- return the next item from the iterator. If default is given and the iterator
@@ -254,7 +254,7 @@ end
 -- range(stop) -> range object
 -- range(start, stop[, step]) -> range object
 -- return a sequence of numbers from start to stop by step.
-local function range(...)
+local function range(kvs, ...)
    local p, l = {...}, select('#', ...)
    assert(l ~= 0, 'range() expected 1 arguments, got 0')
 
@@ -294,7 +294,7 @@ end
 
 -- len(object)
 -- return the number of items of a sequence or collection.
-local function len(t)
+local function len(kvs, t)
    if type(t._data) == "table" then
       if t._is_list == true or t._is_tuple == true then
 	 return t._len
@@ -316,7 +316,7 @@ end
 -- start, which defaults to zero) and a value yielded by the iterable argument.
 -- enumerate is useful for obtaining an indexed list:
 --     (0, seq[0]), (1, seq[1]), (2, seq[2]), ...
-local function enumerate(t, start)
+local function enumerate(kvs, t, start)
    -- assume t is a list
    start = start or 0
 
@@ -393,7 +393,8 @@ end
 -- list(iterable) -> new list initialized from iterable's items
 local list = {}
 setmetatable(list, {
-                __call = function(_, t)
+		-- _ is list {} itself
+                __call = function(_, kvs, t)
                    local result = {}
 
                    result._is_list = true
@@ -444,7 +445,7 @@ setmetatable(list, {
                    end
 
 		   -- L.count(value) -> integer -- return number of occurrences of value
-                   methods.count = function(self, value)
+                   methods.count = function(self, kvs, value)
                       local cnt = 0
 		      for i = 1, self._len do
 			 local v = self._data[i]
@@ -743,48 +744,51 @@ setmetatable(list, {
 
 -- reversed(sequence) -> reverse iterator over values of the sequence
 -- return a reverse iterator
-local function reversed(seq)
-   local l = list(seq)
+local function reversed(kvs, seq)
+   local l = list({}, seq)
    l.reverse()
    return l
 end
 
 
 
+--[[
+   builtin functions
+   ref: https://docs.python.org/3.4/library/functions.html
+
+   大致顺序按照字母顺序，其中有一些对依赖关系的调整，比如 bool 被很多依赖
+--]]
+
 -- bool(x) -> bool
 -- returns True when the argument x is true, False otherwise.
 -- the builtins True and False are the only two instances of the class bool.
 -- the class bool is a subclass of the class int, and cannot be subclassed.
-local function bool(x)
+local function bool(kvs, x)
    if x == false or x == nil or x == 0 or x == '' then
       return false
    end
 
    if type(x) == "table" then
       if x._is_list or x._is_dict then
-         return g_real_next(x._data) ~= nil
+         return _g_real_next(x._data) ~= nil
       end
    end
 
    return true
 end 
 
-
---[[
-   builtin functions
-   ref: https://docs.python.org/3.4/library/functions.html
---]]
-
 -- abs(number) -> number
 -- return the absolute value of the argument.
-local abs = math.abs
+local function abs(kvs, num)
+   return math.abs(num)
+end
 
 -- all(iterable) -> bool
 -- return true if bool(x) is true for all values x in the iterable.
 -- if the iterable is empty, return True.
-local function all(iterable)
+local function all(kvs, iterable)
    for _, element in iterable do
-      if not bool(element) then
+      if not bool({}, element) then
          return false
       end
    end
@@ -794,9 +798,9 @@ end
 -- any(iterable) -> bool
 -- return true if bool(x) is true for any x in the iterable.
 -- if the iterable is empty, return False.
-local function any(iterable)
+local function any(kvs, iterable)
    for _, element in iterable do
-      if bool(element) then
+      if bool({}, element) then
          return true
       end
    end
@@ -805,7 +809,7 @@ end
 
 -- divmod(x, y) -> (div, mod)
 -- return the tuple ((x-x%y)/y, x%y).  Invariant: div*y + mod == x.
-local function divmod(a, b)
+local function divmod(kvs, a, b)
    local d = math.floor(a / b)
    local m = a - d * b
    return d, m
@@ -824,7 +828,7 @@ end
 -- return the binary representation of an integer.
 -- >>> bin(2796202)
 -- '0b1010101010101010101010'
-local function bin(num)
+local function bin(kvs, num)
    assert(type(num) == 'number', 'num is not a number in bin()')
    assert(math.floor(num) == num, 'num is a float in bin()')
 
@@ -833,7 +837,7 @@ local function bin(num)
    local b = ''
    local m = 0
    repeat
-      num, m = divmod(num, 2)
+      num, m = divmod({}, num, 2)
       b = tostring(m) .. b
    until num == 0
 
@@ -844,7 +848,7 @@ end
 -- return whether the object is callable (i.e., some kind of function).
 -- note that classes are callable, as are instances of classes with a
 -- __call__() method.
-local function callable(obj)
+local function callable(kvs, obj)
    local obj_type = type(obj)
    if obj_type == "function" then
       return true
@@ -866,12 +870,12 @@ end
 -- filter(function or None, iterable) --> filter object
 -- return an iterator yielding those items of iterable for which function(item)
 -- is true. If function is None, return the items that are true.
-local function filter(func, iterable)
+local function filter(kvs, func, iterable)
    func = func or bool
    -- fixme: use list for now, no lazy
-   local l = list {}
+   local l = list({}, {})
    for _, item in iterable do
-      if func(item) then
+      if func({}, item) then
 	 l.append(item)
       end
    end
@@ -882,7 +886,7 @@ end
 
 -- float(x) -> floating point number
 -- convert a string or number to a floating point number, if possible.
-local function float(x)
+local function float(kvs, x)
    local n = tonumber(x)
    assert(n ~= nil, "could not convert string to float " .. tostring(x))
    return n
@@ -893,7 +897,7 @@ end
 -- return the hexadecimal representation of an integer.
 --   >>> hex(3735928559)
 --   '0xdeadbeef'
-local function hex(num)
+local function hex(kvs, num)
    assert(type(num) == 'number', 'num is not a number in hex(num)')
    assert(math.floor(num) == num, 'num is a float in hex(num)')
 
@@ -920,7 +924,7 @@ local function hex(num)
    local m = 0
    local h = ''
    repeat
-      num, m = divmod(num, 16)
+      num, m = divmod({}, num, 16)
       h = int_hex_map[m] .. h
    until num == 0
 
@@ -941,7 +945,7 @@ end
 -- base 0 means to interpret the base from the string as an integer literal.
 --   >>> int('0b100', base=0)
 --   4
-local function int(x, base)
+local function int(kvs, x, base)
    if x == nil then
       return 0
    end
@@ -1077,29 +1081,29 @@ setmetatable(meta_generator, {
 -- map(func, *iterables) --> map object
 -- make an iterator that computes the function using arguments from
 -- each of the iterables.  Stops when the shortest iterable is exhausted.
-local function map(func, ...)
-   local iterables = list {...}
-   local lists = list {}
+local function map(kvs, func, ...)
+   local iterables = list({}, {...})
+   local lists = list({}, {})
    
-   local iter_num = len(iterables)
+   local iter_num = len({}, iterables)
    local min_len = math.huge
 
    for _, it in iterables do
-      lists.append(list(it))
+      lists.append(list({}, it))
       
-      local l = len(list(it))
+      local l = len({}, list({}, it))
       if l < min_len then
 	 min_len = l
       end
    end
    
-   local res = list {}
-   for _, nth in range(min_len) do
+   local res = list({}, {})
+   for _, nth in range({}, min_len) do
       local param = {}
-      for _, ith in range(iter_num) do
+      for _, ith in range({}, iter_num) do
 	 param[#param+1] = lists[ith][nth]
       end
-      res.append(func(unpack(param)))
+      res.append(func({}, unpack(param)))
    end
 
    return res
@@ -1111,7 +1115,7 @@ end
 -- return the octal representation of an integer.
 --    >>> oct(342391)
 --    '0o1234567'
-local function oct(num)
+local function oct(kvs, num)
    assert(type(num) == 'number', 'num is not a number in hex()')
    assert(math.floor(num) == num, 'num is a float in hex()')
 
@@ -1120,7 +1124,7 @@ local function oct(num)
    local b = ''
    local m = 0
    repeat
-      num, m = divmod(num, 8)
+      num, m = divmod({}, num, 8)
       b = tostring(m) .. b
    until num == 0
 
@@ -1135,16 +1139,16 @@ end
 -- default keyword-only argument specifies an object to return if
 -- the provided iterable is empty.
 -- with two or more arguments, return the largest argument.
-local function max(arg1, ...)
-   local rest = list {...}
+local function max(kvs, arg1, ...)
+   local rest = list({}, {...})
    local iterable = arg1
-   if len(rest) ~= 0 then
+   if len({}, rest) ~= 0 then
       rest.append(arg1)
       iterable = rest
    end
 
    local default = nil
-   if len(iterable) == 0 then
+   if len({}, iterable) == 0 then
       return default
    end
 
@@ -1174,16 +1178,16 @@ end
 -- default keyword-only argument specifies an object to return if
 -- the provided iterable is empty.
 -- with two or more arguments, return the smallest argument.
-local function min(arg1, ...)
-   local rest = list {...}
+local function min(kvs, arg1, ...)
+   local rest = list({}, {...})
    local iterable = arg1
-   if len(rest) ~= 0 then
+   if len({}, rest) ~= 0 then
       rest.append(arg1)
       iterable = rest
    end
 
    local default = nil
-   if len(iterable) == 0 then
+   if len({}, iterable) == 0 then
       return default
    end
 
@@ -1239,7 +1243,7 @@ end
 --     in the keyword argument list.  For example:  dict(one=1, two=2)
 local dict = {}
 setmetatable(dict, {
-		__call = function(_, t)
+		__call = function(_, kvs, t)
 		   local result = {}
 
 		   result._is_dict = true
@@ -1302,7 +1306,7 @@ setmetatable(dict, {
 		   -- D.items() -> a set-like object providing a view on D's items
 		   methods.items = function(self)
 		      return function(_, idx)
-			 idx, v = g_real_next(self._data, idx)
+			 idx, v = _g_real_next(self._data, idx)
 			 return idx, _to_nil(idx), _to_nil(v)
 		      end
 		   end
@@ -1310,7 +1314,7 @@ setmetatable(dict, {
 		   -- D.keys() -> a set-like object providing a view on D's keys
 		   methods.keys = function(self)
 		      return function(_, idx) 
-			 idx, v = g_real_next(self._data, idx)
+			 idx, v = _g_real_next(self._data, idx)
 			 return idx, _to_nil(idx)
 		      end
 		   end
@@ -1326,7 +1330,7 @@ setmetatable(dict, {
 		   -- D.popitem() -> (k, v), remove and return some (key, value) pair as a
 		   -- 2-tuple; but raise KeyError if D is empty.
 		   methods.popitem = function(self)
-		      local key, value = g_real_next(self._data)
+		      local key, value = _g_real_next(self._data)
 		      if key ~= nil then
 			 self._data[key] = nil
 		      end
@@ -1360,7 +1364,7 @@ setmetatable(dict, {
 		   -- D.values() -> an object providing a view on D's values
 		   methods.values = function(self)
 		      return function(_, idx) 
-			 idx, v = g_real_next(self._data, idx)
+			 idx, v = _g_real_next(self._data, idx)
 			 return idx, _to_nil(v)
 		      end
 		   end
@@ -1388,7 +1392,7 @@ setmetatable(dict, {
 				      self._data[_to_null(index)] = _to_null(value)
 				   end,
 				   __call = function(self, _, idx)
-				      idx, _ = g_real_next(self._data, idx)
+				      idx, _ = _g_real_next(self._data, idx)
 				      return idx, _to_nil(idx)
 				   end,
 		   })
@@ -1449,7 +1453,7 @@ object.__mro__ = list {object}
 -- pow(x, y[, z]) -> number
 -- with two arguments, equivalent to x**y.  With three arguments,
 -- equivalent to (x**y) % z, but may be more efficient (e.g. for ints).
-local function pow(x, y, z)
+local function pow(kvs, x, y, z)
    local p = math.pow(x, y)
    if z == nil then
       return p
@@ -1463,7 +1467,7 @@ end
 -- round a number to a given precision in decimal digits (default 0 digits).
 -- this returns an int when called with one argument, otherwise the
 -- same type as the number. ndigits may be negative.
-local function round(number, ndigits)
+local function round(kvs, number, ndigits)
    ndigits = ndigits or 0
 
    local shift = math.pow(10, ndigits)
@@ -1686,7 +1690,7 @@ setmetatable(set, {
                                          iterator_index = nil
                                       end
 
-				      iterator_index, _ = g_real_next(self._data, iterator_index)
+				      iterator_index, _ = _g_real_next(self._data, iterator_index)
 				      
                                       return iterator_index, _to_nil(iterator_index)
                                    end,
@@ -1824,7 +1828,7 @@ setmetatable(frozenset, {
                                          iterator_index = nil
                                       end
 
-				      iterator_index, _ = g_real_next(result._data, iterator_index)
+				      iterator_index, _ = _g_real_next(result._data, iterator_index)
 				      
                                       return iterator_index, _to_nil(iterator_index)
                                    end,
@@ -1838,7 +1842,7 @@ setmetatable(frozenset, {
 -- slice(stop)
 -- slice(start, stop[, step])
 -- create a slice object.  This is used for extended slicing (e.g. a[0:10:2]).
-local function slice(...)
+local function slice(kvs, ...)
    local p, l = {...}, select('#', ...)
    assert(l ~= 0, 'slice expected at least 1 arguments, got 0')
 
@@ -1863,8 +1867,8 @@ local function slice(...)
 end
 
 -- sorted(iterable, key=None, reverse=False) --> new sorted list
-local function sorted(iterable, key, reverse)
-   local l = list(iterable)
+local function sorted(kvs, iterable, key, reverse)
+   local l = list({}, iterable)
    l.sort(key, reverse)
    return l
 end
@@ -1874,7 +1878,7 @@ end
 -- return the sum of an iterable of numbers (NOT strings) plus the value
 -- of parameter 'start' (which defaults to 0).  When the iterable is
 -- empty, return start.
-local function sum(iterable, start)
+local function sum(kvs, iterable, start)
    local start = start or 0
    local s = 0
 
@@ -1891,7 +1895,7 @@ end
 -- f the argument is a tuple, the return value is the same object.
 local tuple = {}
 setmetatable(tuple, {
-                __call = function(_, t)
+                __call = function(_, kvs, t)
                    local result = {}
 
                    result._is_tuple = true
@@ -2101,8 +2105,10 @@ local function class(class_init, bases, class_name)
 			 local attr = c[idx]
 			 if type(attr) == "function" then
 			    return function(...)
+			       local args = list {...}
+			       local kvs = args.pop(0)
 			       -- attr is function, obj is self
-			       return c[idx](obj, ...) 
+			       return c[idx](kvs, obj, unpack(args)) 
 			    end
 			 end
 
@@ -2163,26 +2169,26 @@ end
 -- the i-th element comes from the i-th iterable argument.  The .__next__()
 -- method continues until the shortest iterable in the argument sequence
 -- is exhausted and then it raises StopIteration.
-local function zip(iter1, ...)
-   local iters = list {...}
+local function zip(kvs, iter1, ...)
+   local iters = list({}, {...})
    iters.insert(0, iter1)
 
-   local lists = list {}
-   local iters_num = len(iters)
+   local lists = list({}, {})
+   local iters_num = len({}, iters)
    local min_iter_len = math.huge
 
    for _, it in iters do
-      lists.append(list(it))
-      local l = len(list(it))
+      lists.append(list({}, it))
+      local l = len({}, list({}, it))
       if l < min_iter_len then
 	 min_iter_len = l
       end
    end
 
-   local res = list {}
-   for _, nth in range(min_iter_len) do
-      local item = list {}
-      for _, ith in range(iters_num) do
+   local res = list({}, {})
+   for _, nth in range({}, min_iter_len) do
+      local item = list({}, {})
+      for _, ith in range({}, iters_num) do
 	 item.append(lists[ith][nth])
       end
       res.append(item)
@@ -2236,7 +2242,7 @@ local function get_posarg(kvs, var_name, var, default, func_name)
 
    assert(not(kwvar ~= nil and var ~= nil), "function " .. func_name .. " got multiple values for argument " .. var_name)
 
-   local v = kwvar or var or default
+   local v = var or kwvar or default
 
    if v == nil then
       error("miss position argument " .. var_name)

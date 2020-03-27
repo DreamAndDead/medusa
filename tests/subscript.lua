@@ -12,40 +12,40 @@ assert(bool((d[_to_null(1)] == 1)))
 assert(bool((d[_to_null(2)] == "b")))
 assert(bool((d[_to_null(3)] == "c")))
 l = list {_to_null(1, 2, 3, 4)}
-local s = slice(0, 2)
+local s = slice(merge_kwargs({}, {}), 0, 2)
 local sl = l[_to_null(s)]
-assert(bool((len(sl) == 2)))
+assert(bool((len(merge_kwargs({}, {}), sl) == 2)))
 assert(bool((sl[_to_null(0)] == 1)))
 assert(bool((sl[_to_null(1)] == 2)))
 l = list {_to_null(1, 2, 3, 4)}
-s = slice(3)
+s = slice(merge_kwargs({}, {}), 3)
 sl = l[_to_null(s)]
-assert(bool((len(sl) == 3)))
+assert(bool((len(merge_kwargs({}, {}), sl) == 3)))
 assert(bool((sl[_to_null(0)] == 1)))
 assert(bool((sl[_to_null(1)] == 2)))
 assert(bool((sl[_to_null(2)] == 3)))
 l = list {_to_null(1, 2, 3, 4)}
 sl = l[slice(0, 3, nil)]
-assert(bool((len(sl) == 3)))
+assert(bool((len(merge_kwargs({}, {}), sl) == 3)))
 assert(bool((sl[_to_null(0)] == 1)))
 assert(bool((sl[_to_null(1)] == 2)))
 assert(bool((sl[_to_null(2)] == 3)))
 l = list {_to_null(1, 2, 3, 4)}
 sl = l[slice(0, (-1), nil)]
-assert(bool((len(sl) == 3)))
+assert(bool((len(merge_kwargs({}, {}), sl) == 3)))
 assert(bool((sl[_to_null(0)] == 1)))
 assert(bool((sl[_to_null(1)] == 2)))
 assert(bool((sl[_to_null(2)] == 3)))
 l = list {_to_null(1, 2, 3, 4)}
 sl = l[slice(0, nil, nil)]
-assert(bool((len(sl) == 4)))
+assert(bool((len(merge_kwargs({}, {}), sl) == 4)))
 assert(bool((sl[_to_null(0)] == 1)))
 assert(bool((sl[_to_null(1)] == 2)))
 assert(bool((sl[_to_null(2)] == 3)))
 assert(bool((sl[_to_null(3)] == 4)))
 l = list {_to_null(1, 2, 3, 4)}
 sl = l[slice(nil, 4, nil)]
-assert(bool((len(sl) == 4)))
+assert(bool((len(merge_kwargs({}, {}), sl) == 4)))
 assert(bool((sl[_to_null(0)] == 1)))
 assert(bool((sl[_to_null(1)] == 2)))
 assert(bool((sl[_to_null(2)] == 3)))

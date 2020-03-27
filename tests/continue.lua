@@ -1,9 +1,9 @@
-for _, i in range(20) do
+for _, i in range(merge_kwargs({}, {}), 20) do
     if bool(((math.fmod(i, 2)) == 0)) then
         goto loop_label_1
     end
     assert(bool(((math.fmod(i, 2)) == 1)))
-    for _, j in range(30) do
+    for _, j in range(merge_kwargs({}, {}), 30) do
         if bool(((math.fmod(j, 3)) == 0)) then
             goto loop_label_2
         end

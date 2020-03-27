@@ -66,9 +66,9 @@ class NodeVisitor(ast.NodeVisitor):
         test = self.visit_all(node.test, inline=True)
         if node.msg:
             msg = self.visit_all(node.msg, inline=True)
-            self.emit("assert(bool({test}), {msg})".format(test=test, msg=msg))
+            self.emit("assert(bool({{}}, {test}), {msg})".format(test=test, msg=msg))
         else:
-            self.emit("assert(bool({test}))".format(test=test))
+            self.emit("assert(bool({{}}, {test}))".format(test=test))
 
     def visit_Nonlocal(self, node):
         cur_scope = self.scope.last()
@@ -248,7 +248,7 @@ class NodeVisitor(ast.NodeVisitor):
 
         elements = ["{} = _to_null({})".format(keys[i], values[i]) for i in range(len(keys))]
         elements = ", ".join(elements)
-        self.emit("dict {{{}}}".format(elements))
+        self.emit("dict({{}}, {{{}}})".format(elements))
 
     def visit_DictComp(self, node):
         self.scope.push(dict(kind="generator"))
@@ -268,7 +268,7 @@ class NodeVisitor(ast.NodeVisitor):
             ends_count += 1
 
             for if_ in comp.ifs:
-                line = "if bool({}) then".format(self.visit_all(if_, inline=True))
+                line = "if bool({{}}, {}) then".format(self.visit_all(if_, inline=True))
                 self.emit(line)
                 ends_count += 1
 
@@ -318,7 +318,9 @@ class NodeVisitor(ast.NodeVisitor):
 
         name = node.name
 
-        arguments = ['kvs'] + [arg.arg for arg in node.args.args]
+        # if first argument is self in class definations
+        arguments = [arg.arg for arg in node.args.args]
+        arguments = ['kvs'] + arguments
 
         if node.args.vararg is not None:
             arguments.append("...")
@@ -426,7 +428,7 @@ class NodeVisitor(ast.NodeVisitor):
             ends_count += 1
 
             for if_ in comp.ifs:
-                line = "if bool({}) then".format(self.visit_all(if_, inline=True))
+                line = "if bool({{}}, {}) then".format(self.visit_all(if_, inline=True))
                 self.emit(line)
                 ends_count += 1
 
@@ -442,7 +444,7 @@ class NodeVisitor(ast.NodeVisitor):
     def visit_If(self, node):
         test = self.visit_all(node.test, inline=True)
 
-        line = "if bool({}) then".format(test)
+        line = "if bool({{}}, {}) then".format(test)
 
         self.emit(line)
 
@@ -454,7 +456,7 @@ class NodeVisitor(ast.NodeVisitor):
                 elseif = node.orelse[0]
                 elseif_test = self.visit_all(elseif.test, inline=True)
 
-                line = "elseif bool({}) then".format(elseif_test)
+                line = "elseif bool({{}}, {}) then".format(elseif_test)
                 self.emit(line)
 
                 output_length = len(self.output)
@@ -470,7 +472,7 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit("end")
 
     def visit_IfExp(self, node):
-        line = "bool({cond}) and {true_cond} or {false_cond}"
+        line = "bool({{}}, {cond}) and {true_cond} or {false_cond}"
         values = {
             "cond": self.visit_all(node.test, inline=True),
             "true_cond": self.visit_all(node.body, inline=True),
@@ -523,12 +525,13 @@ class NodeVisitor(ast.NodeVisitor):
         self.emit(line.format(value))
 
     def visit_Lambda(self, node):
-        # TODO: ignore key-value parameters
         self.scope.push(dict(kind="lambda"))
         
         line = "function({arguments}) "
 
         arguments = [arg.arg for arg in node.args.args]
+        arguments = ['kvs'] + arguments
+
         if node.args.vararg is not None:
             arguments.append("...")
 
@@ -559,7 +562,7 @@ class NodeVisitor(ast.NodeVisitor):
 
     def visit_List(self, node):
         elements = [self.visit_all(item, inline=True) for item in node.elts]
-        line = "list {{_to_null({})}}".format(", ".join(elements))
+        line = "list({{}}, {{_to_null({})}})".format(", ".join(elements))
         self.emit(line)
 
     def visit_ListComp(self, node):
@@ -580,7 +583,7 @@ class NodeVisitor(ast.NodeVisitor):
             ends_count += 1
 
             for if_ in comp.ifs:
-                line = "if bool({}) then".format(self.visit_all(if_, inline=True))
+                line = "if bool({{}}, {}) then".format(self.visit_all(if_, inline=True))
                 self.emit(line)
                 ends_count += 1
 
@@ -641,7 +644,7 @@ class NodeVisitor(ast.NodeVisitor):
             ends_count += 1
 
             for if_ in comp.ifs:
-                line = "if bool({}) then".format(self.visit_all(if_, inline=True))
+                line = "if bool({{}}, {}) then".format(self.visit_all(if_, inline=True))
                 self.emit(line)
                 ends_count += 1
 
@@ -702,7 +705,7 @@ class NodeVisitor(ast.NodeVisitor):
     def visit_While(self, node):
         test = self.visit_all(node.test, inline=True)
 
-        self.emit("while bool({}) do".format(test))
+        self.emit("while bool({{}}, {}) do".format(test))
 
         self.context.push_loop()
         self.visit_all(node.body)
