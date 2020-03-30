@@ -1,42 +1,42 @@
 local n = 0
-for _, i in list {_to_null(1, 2, 3)} do
+for _, i in list({}, {_to_null(1, 2, 3)}) do
     n = (n + 1)
-    assert(bool((i == n)))
+    assert(bool({}, (i == n)))
     ::loop_label_1::
 end
-local d = dict {[_to_null(1)] = _to_null(1), [_to_null(2)] = _to_null(2), [_to_null(3)] = _to_null(3)}
+local d = dict({}, {[_to_null(1)] = _to_null(1), [_to_null(2)] = _to_null(2), [_to_null(3)] = _to_null(3)})
 for _, k, v in d.items(merge_kwargs({}, {})) do
-    assert(bool((k == v)))
+    assert(bool({}, (k == v)))
     ::loop_label_2::
 end
 n = 0
 for _, i in range(merge_kwargs({}, {}), 10) do
-    assert(bool((i == n)))
+    assert(bool({}, (i == n)))
     n = (n + 1)
     ::loop_label_3::
 end
-assert(bool((n == 10)))
+assert(bool({}, (n == 10)))
 n = 1
 for _, i in range(merge_kwargs({}, {}), 1, 5) do
-    assert(bool((i == n)))
+    assert(bool({}, (i == n)))
     n = (n + 1)
     ::loop_label_4::
 end
-assert(bool((n == 5)))
+assert(bool({}, (n == 5)))
 n = 1
 for _, i in range(merge_kwargs({}, {}), 1, 10, 2) do
-    assert(bool((i == n)))
+    assert(bool({}, (i == n)))
     n = (n + 2)
     ::loop_label_5::
 end
-assert(bool((n == 11)))
+assert(bool({}, (n == 11)))
 n = 10
 for _, i in range(merge_kwargs({}, {}), 10, 1, (-2)) do
-    assert(bool((i == n)))
+    assert(bool({}, (i == n)))
     n = (n - 2)
     ::loop_label_6::
 end
-assert(bool((n == 0)))
+assert(bool({}, (n == 0)))
 return {
     n = n,
     d = d,

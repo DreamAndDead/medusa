@@ -88,7 +88,7 @@ local function bit_and(left, right)
       assert(left._is_set or left._is_frozenset, "does not overload & operator")
       assert(right._is_set or right._is_frozenset, "does not overload & operator")
 
-      return left.intersection(right)
+      return left.intersection({}, right)
    end
 
    -- normal bit operation
@@ -113,7 +113,7 @@ local function bit_or(left, right)
       assert(left._is_set or left._is_frozenset, "does not overload | operator")
       assert(right._is_set or right._is_frozenset, "does not overload | operator")
 
-      return left.union(right)
+      return left.union({}, right)
    end
 
    -- normal bit operation
@@ -153,7 +153,7 @@ local function bit_xor(left, right)
       assert(left._is_set or left._is_frozenset, "does not overload ^ operator")
       assert(right._is_set or right._is_frozenset, "does not overload ^ operator")
 
-      return left.symmetric_difference(right)
+      return left.symmetric_difference({}, right)
    end
 
    -- normal bit operation
@@ -426,19 +426,19 @@ setmetatable(list, {
                    local methods = {}
 
 		   -- L.append(object) -> None -- append object to end
-                   methods.append = function(self, value)
+                   methods.append = function(self, kvs, value)
 		      self._len = self._len + 1
 		      self._data[self._len] = value
                    end
 
 		   -- L.clear() -> None -- remove all items from L
-                   methods.clear = function(self)
+                   methods.clear = function(self, kvs)
 		      self._len = 0
                       self._data = {}
                    end
 
 		   -- L.copy() -> list -- a shallow copy of L
-                   methods.copy = function(self)
+                   methods.copy = function(self, kvs)
                       local c = list(self._data)
 		      c._len = self._len
 		      return c
@@ -457,16 +457,16 @@ setmetatable(list, {
                    end
 
 		   -- L.extend(iterable) -> None -- extend list by appending elements from the iterable
-                   methods.extend = function(self, iterable)
+                   methods.extend = function(self, kvs, iterable)
                       for _, value in iterable do
-                         self.append(value)
+                         self.append({}, value)
                       end
                    end
 
 		   -- L.index(value, [start, [stop]]) -> integer -- return first index of value.
 		   -- 相当于在 L[start:stop] 中寻找 value
 		   -- 当 start stop 超过开始/结束的界限，算作界限本身
-                   methods.index = function(self, value, start, stop)
+                   methods.index = function(self, kvs, value, start, stop)
 		      local size = self._len
 		      
 		      if not start then
@@ -493,7 +493,7 @@ setmetatable(list, {
                    end
 
 		   -- L.insert(index, object) -- insert object before index
-                   methods.insert = function(self, index, value)
+                   methods.insert = function(self, kvs, index, value)
 		      local size = self._len
 
 		      if index + 1 > size then
@@ -512,7 +512,7 @@ setmetatable(list, {
                    end
 
 		   -- L.pop([index]) -> item -- remove and return item at index (default last).
-                   methods.pop = function(self, index)
+                   methods.pop = function(self, kvs, index)
 		      local size = self._len
 		      
 		      if not index then
@@ -537,18 +537,18 @@ setmetatable(list, {
                    end
 
 		   -- L.remove(value) -> None -- remove first occurrence of value.
-                   methods.remove = function(self, value)
+                   methods.remove = function(self, kvs, value)
 		      for i = 1, self._len do
 			 v = self._data[i]
 			 if value == v then
-			    self.pop(i - 1)    -- use py index
+			    self.pop({}, i - 1)    -- use py index
 			    break
 			 end
 		      end
                    end
 
 		   -- L.reverse() -- reverse *IN PLACE*
-                   methods.reverse = function(self)
+                   methods.reverse = function(self, kvs)
                       local r = {}
                       for i = 1, self._len do
                          r[i] = self._data[self._len + 1 - i]
@@ -559,7 +559,7 @@ setmetatable(list, {
 		   -- L.sort(key=None, reverse=False) -> None -- stable sort *IN PLACE*
 		   -- TODO: sort 的参数是键值参数，目前暂时不支持，所以还无法传递 key 和 reverse
 		   -- TODO: key is a callable
-                   methods.sort = function(self, key, reverse)
+                   methods.sort = function(self, kvs, key, reverse)
                       key = key or function (itself) return itself end
                       reverse = reverse or false
 
@@ -584,13 +584,13 @@ setmetatable(list, {
 		   methods.__add__ = function(self, other)
 		      assert(other._is_list, "only concat list with list")
 
-		      res = list {}
+		      res = list({}, {})
 		      for _, e in self do
-			 res.append(e)
+			 res.append({}, e)
 		      end
 
 		      for _, e in other do
-			 res.append(e)
+			 res.append({}, e)
 		      end
 
 		      return res
@@ -604,14 +604,14 @@ setmetatable(list, {
 			 m = 0
 		      end
 
-		      res = list {}
+		      res = list({}, {})
 		      if m == 0 then
 			 return res
 		      end
 
 		      for i = 1, m do
 			 for _, e in self do
-			    res.append(e)
+			    res.append({}, e)
 			 end
 		      end
 
@@ -648,7 +648,7 @@ setmetatable(list, {
                                       end
 
 				      if type(index) == "table" and index._is_slice == true then
-					 local s = list()
+					 local s = list({}, {})
 					 
 					 local start = index.start or 0
 					 start = py_idx(start, self._len)
@@ -656,8 +656,8 @@ setmetatable(list, {
 					 stop = py_idx(stop, self._len)
 					 local step = index.step or 1
 
-					 for _, i in range(start, stop, step) do
-					    s.append(self[i])
+					 for _, i in range({}, start, stop, step) do
+					    s.append({}, self[i])
 					 end
 					 return s
 				      end
@@ -681,32 +681,32 @@ setmetatable(list, {
 					 local step = index.step or 1
 
 					 if step == 1 then
-					    for _, i in range(start, stop, step) do
-					       self.pop(start)
+					    for _, i in range({}, start, stop, step) do
+					       self.pop({}, start)
 					    end
 
 					    -- other may be nil
-					    local iter = list(other or list {})
-					    iter.reverse()
+					    local iter = list({}, other or list({}, {}))
+					    iter.reverse({})
 					    for _, e in iter do
-					       self.insert(start, e)
+					       self.insert({}, start, e)
 					    end
 					 else -- step != 1
-					    local idx = list {}
-					    for _, i in range(start, stop, step) do
-					       idx.append(i)
+					    local idx = list({}, {})
+					    for _, i in range({}, start, stop, step) do
+					       idx.append({}, i)
 					    end
 
 					    if other ~= nil then
-					       assert(len(idx) == len(other), "assign sequence size not equal to extend slice size")
-					       for _, i, v in enumerate(other) do
+					       assert(len({}, idx) == len({}, other), "assign sequence size not equal to extend slice size")
+					       for _, i, v in enumerate({}, other) do
 						  self[idx[i]] = v
 					       end
 					    else -- other == nil
-					       idx.sort()
+					       idx.sort({})
 					       local n = 0
 					       for _, i in idx do
-						  self.pop(i-n)
+						  self.pop({}, i-n)
 						  n = n + 1
 					       end
 					    end
@@ -1488,7 +1488,7 @@ end
 -- ref: https://docs.python.org/3/library/stdtypes.html#set-types-set-frozenset
 local set = {}
 setmetatable(set, {
-                __call = function(_, t)
+                __call = function(_, kvs, t)
                    local result = {}
 
                    result._is_set = true
@@ -1515,30 +1515,30 @@ setmetatable(set, {
 
 		   -- add an element to a set.
 		   -- this has no effect if the element is already present.
-                   methods.add = function(self, elem)
+                   methods.add = function(self, kvs, elem)
 		      self._data[_to_null(elem)] = true
                    end
 
 		   -- remove all elements from this set.
-                   methods.clear = function(self)
+                   methods.clear = function(self, kvs)
                       self._data = {}
                    end
 
 		   -- return a shallow copy of a set.
-                   methods.copy = function(self)
-                      return set(self)
+                   methods.copy = function(self, kvs)
+                      return set({}, self)
                    end
 
 		   -- return the difference of two or more sets as a new set.
 		   -- (i.e. all elements that are in this set but not the others.)
-                   methods.difference = function(self, ...)
-		      local diff_set = self.copy()
+                   methods.difference = function(self, kvs, ...)
+		      local diff_set = self.copy({})
 		      
-		      local others = list {...}
+		      local others = list({}, {...})
 		      for _, other_set in others do
 			 for _, elem in other_set do
 			    if operator_in(elem, diff_set) then
-			       diff_set.remove(elem)
+			       diff_set.remove({}, elem)
 			    end
 			 end
 		      end
@@ -1547,12 +1547,12 @@ setmetatable(set, {
                    end
 
 		   -- remove all elements of another set from this set.
-		   methods.difference_update = function(self, ...)
-		      local others = list {...}
+		   methods.difference_update = function(self, kvs, ...)
+		      local others = list({}, {...})
 		      for _, other_set in others do
 			 for _, elem in other_set do
 			    if operator_in(elem, self) then
-			       self.remove(elem)
+			       self.remove({}, elem)
 			    end
 			 end
 		      end
@@ -1560,67 +1560,67 @@ setmetatable(set, {
 
 		   -- remove an element from a set if it is a member.
 		   -- if the element is not a member, do nothing.
-		   methods.discard = function(self, elem)
+		   methods.discard = function(self, kvs, elem)
 		      if operator_in(elem, self) then
-			 self.remove(elem)
+			 self.remove({}, elem)
 		      end
 		   end
 
 		   -- return the intersection of two sets as a new set.
 		   -- (i.e. all elements that are in both sets.)
-                   methods.intersection = function(self, ...)
-		      local inter_set = self.copy()
+                   methods.intersection = function(self, kvs, ...)
+		      local inter_set = self.copy({})
 		      
-		      local others = list {...}
+		      local others = list({}, {...})
 		      for _, other_set in others do
-			 inter_set.difference_update(inter_set.difference(other_set))
+			 inter_set.difference_update({}, inter_set.difference({}, other_set))
 		      end
 
 		      return inter_set
 		   end
 
 		   -- update a set with the intersection of itself and another.
-                   methods.intersection_update = function(self, ...)
-		      local others = list {...}
+                   methods.intersection_update = function(self, kvs, ...)
+		      local others = list({}, {...})
 		      for _, other_set in others do
-			 self.difference_update(self.difference(other_set))
+			 self.difference_update({}, self.difference({}, other_set))
 		      end
 		   end
 
 
 		   -- return True if two sets have a null intersection.
-                   methods.isdisjoint = function(self, other)
-		      local inter_set = self.intersection(other)
-		      return len(inter_set) == 0
+                   methods.isdisjoint = function(self, kvs, other)
+		      local inter_set = self.intersection({}, other)
+		      return len({}, inter_set) == 0
 		   end
 
 		   -- report whether another set contains this set.
-                   methods.issubset = function(self, other)
-		      local inter_set = self.intersection(other)
-		      return len(inter_set) == len(self)
+                   methods.issubset = function(self, kvs, other)
+		      local inter_set = self.intersection({}, other)
+		      return len({}, inter_set) == len({}, self)
 		   end
 
 		   -- report whether this set contains another set.
-                   methods.issuperset = function(self, other)
-		      local inter_set = self.intersection(other)
-		      return len(inter_set) == len(other)
+                   methods.issuperset = function(self, kvs, other)
+		      local inter_set = self.intersection({}, other)
+		      return len({}, inter_set) == len({}, other)
 		   end
 
 		   -- remove and return an arbitrary set element.
 		   -- raises KeyError if the set is empty.
-		   methods.pop = function(self)
-		      assert(len(self) ~= 0, "set is empty")
+		   methods.pop = function(self, kvs)
+		      assert(len({}, self) ~= 0, "set is empty")
 		      local elem = nil
 		      for _, e in self do
 			 elem = e
 		      end
-		      self.remove(elem)
+		      self.remove({}, elem)
 		      return elem
 		   end
 		   
 		   -- remove an element from a set; it must be a member.
 		   -- if the element is not a member, raise a KeyError.
-		   methods.remove = function(self, elem)
+		   methods.remove = function(self, kvs, elem)
 		      assert(operator_in(elem, self), "elem not in set")
 		      elem = _to_null(elem)
 		      self._data[elem] = nil
@@ -1628,28 +1628,28 @@ setmetatable(set, {
 
 		   -- return the symmetric difference of two sets as a new set.
 		   -- (i.e. all elements that are in exactly one of the sets.)
-                   methods.symmetric_difference = function(self, other)
-		      local union_set = self.union(other)
-		      local inter_set = self.intersection(other)
-		      return union_set.difference(inter_set)
+                   methods.symmetric_difference = function(self, kvs, other)
+		      local union_set = self.union({}, other)
+		      local inter_set = self.intersection({}, other)
+		      return union_set.difference({}, inter_set)
                    end
 
 		   -- update a set with the symmetric difference of itself and another.
-                   methods.symmetric_difference_update = function(self, other)
-		      local inter_set = self.intersection(other)
-		      self.update(other)
-		      self.difference_update(inter_set)
+                   methods.symmetric_difference_update = function(self, kvs, other)
+		      local inter_set = self.intersection({}, other)
+		      self.update({}, other)
+		      self.difference_update({}, inter_set)
 		   end
 
 		   -- return the union of sets as a new set.
 		   -- (i.e. all elements that are in either set.)
-                   methods.union = function(self, ...)
-		      local union_set = self.copy()
+                   methods.union = function(self, kvs, ...)
+		      local union_set = self.copy({})
 
-		      local others = list {...}
+		      local others = list({}, {...})
 		      for _, other_set in others do
 			 for _, elem in other_set do
-			    union_set.add(elem)
+			    union_set.add({}, elem)
 			 end
 		      end
 
@@ -1657,11 +1657,11 @@ setmetatable(set, {
 		   end
 
 		   -- Update a set with the union of itself and others.
-                   methods.update = function(self, ...)
-		      local others = list {...}
+                   methods.update = function(self, kvs, ...)
+		      local others = list({}, {...})
 		      for _, other_set in others do
 			 for _, elem in other_set do
-			    self.add(elem)
+			    self.add({}, elem)
 			 end
 		      end
 		   end
@@ -1684,7 +1684,9 @@ setmetatable(set, {
 					 return methods[index](self, ...)
 				      end
                                    end,
-				   __sub = methods.difference,
+				   __sub = function(self, right)
+				      return self.difference({}, right)
+				   end,
                                    __call = function(self, _, idx)
                                       if idx == nil then
                                          iterator_index = nil
@@ -1707,7 +1709,7 @@ setmetatable(set, {
 -- build an immutable unordered collection of unique elements.
 local frozenset = {}
 setmetatable(frozenset, {
-                __call = function(_, t)
+                __call = function(_, kvs, t)
                    local result = {}
 
                    result._is_frozenset = true
@@ -1729,79 +1731,79 @@ setmetatable(frozenset, {
                    local methods = {}
 
 		   -- return a shallow copy of a frozenset.
-                   methods.copy = function(self)
+                   methods.copy = function(self, kvs)
                       return self
                    end
 
 		   -- return the difference of two or more sets as a new set.
 		   -- (i.e. all elements that are in this set but not the others.)
-                   methods.difference = function(self, ...)
-		      local diff_set = set(self)
+                   methods.difference = function(self, kvs, ...)
+		      local diff_set = set({}, self)
 		      
-		      local others = list {...}
+		      local others = list({}, {...})
 		      for _, other_set in others do
 			 for _, elem in other_set do
 			    if operator_in(elem, diff_set) then
-			       diff_set.remove(elem)
+			       diff_set.remove({}, elem)
 			    end
 			 end
 		      end
 
-		      return frozenset(diff_set)
+		      return frozenset({}, diff_set)
                    end
 
 		   -- return the intersection of two sets as a new set.
 		   -- (i.e. all elements that are in both sets.)
-                   methods.intersection = function(self, ...)
-		      local inter_set = set(self)
+                   methods.intersection = function(self, kvs, ...)
+		      local inter_set = set({}, self)
 		      
-		      local others = list {...}
+		      local others = list({}, {...})
 		      for _, other_set in others do
-			 inter_set.difference_update(inter_set.difference(other_set))
+			 inter_set.difference_update({}, inter_set.difference({}, other_set))
 		      end
 
-		      return frozenset(inter_set)
+		      return frozenset({}, inter_set)
 		   end
 
 		   -- return True if two sets have a null intersection.
-                   methods.isdisjoint = function(self, other)
-		      local inter_set = self.intersection(other)
-		      return len(inter_set) == 0
+                   methods.isdisjoint = function(self, kvs, other)
+		      local inter_set = self.intersection({}, other)
+		      return len({}, inter_set) == 0
 		   end
 
 		   -- report whether another set contains this set.
-                   methods.issubset = function(self, other)
-		      local inter_set = self.intersection(other)
-		      return len(inter_set) == len(self)
+                   methods.issubset = function(self, kvs, other)
+		      local inter_set = self.intersection({}, other)
+		      return len({}, inter_set) == len({}, self)
 		   end
 
 		   -- report whether this set contains another set.
-                   methods.issuperset = function(self, other)
-		      local inter_set = self.intersection(other)
-		      return len(inter_set) == len(other)
+                   methods.issuperset = function(self, kvs, other)
+		      local inter_set = self.intersection({}, other)
+		      return len({}, inter_set) == len({}, other)
 		   end
 
 		   -- return the symmetric difference of two sets as a new set.
 		   -- (i.e. all elements that are in exactly one of the sets.)
-                   methods.symmetric_difference = function(self, other)
-		      local union_set = self.union(other)
-		      local inter_set = self.intersection(other)
-		      return union_set.difference(inter_set)
+                   methods.symmetric_difference = function(self, kvs, other)
+		      local union_set = self.union({}, other)
+		      local inter_set = self.intersection({}, other)
+		      return union_set.difference({}, inter_set)
                    end
 
 		   -- return the union of sets as a new set.
 		   -- (i.e. all elements that are in either set.)
-                   methods.union = function(self, ...)
-		      local union_set = set(self)
+                   methods.union = function(self, kvs, ...)
+		      local union_set = set({}, self)
 
-		      local others = list {...}
+		      local others = list({}, {...})
 		      for _, other_set in others do
 			 for _, elem in other_set do
-			    union_set.add(elem)
+			    union_set.add({}, elem)
 			 end
 		      end
 
-		      return frozenset(union_set)
+		      return frozenset({}, union_set)
 		   end
 		   
 		   -- __iter__
@@ -1822,7 +1824,9 @@ setmetatable(frozenset, {
 					 return methods[index](self, ...)
 				      end
                                    end,
-				   __sub = methods.difference,
+				   __sub = function(self, right)
+				      return self.difference({}, right)
+				   end,
                                    __call = function(self, _, idx)
                                       if idx == nil then
                                          iterator_index = nil
@@ -1926,7 +1930,7 @@ setmetatable(tuple, {
                    local methods = {}
 
 		   -- T.count(value) -> integer -- return number of occurrences of value
-                   methods.count = function(self, value)
+                   methods.count = function(self, kvs, value)
                       local cnt = 0
 		      for i = 1, self._len do
 			 local v = self._data[i]
@@ -1941,7 +1945,7 @@ setmetatable(tuple, {
 		   -- raises ValueError if the value is not present.
 		   -- 相当于在 T[start:stop] 中寻找 value
 		   -- 当 start stop 超过开始/结束的界限，算作界限本身
-                   methods.index = function(self, value, start, stop)
+                   methods.index = function(self, kvs, value, start, stop)
 		      local size = self._len
 		      
 		      if not start then
@@ -1977,16 +1981,16 @@ setmetatable(tuple, {
 		   methods.__add__ = function(self, other)
 		      assert(other._is_tuple, "only concat tuple with tuple")
 
-		      res = list {}
+		      res = list({}, {})
 		      for _, e in self do
-			 res.append(e)
+			 res.append({}, e)
 		      end
 
 		      for _, e in other do
-			 res.append(e)
+			 res.append({}, e)
 		      end
 
-		      return tuple(res)
+		      return tuple({}, res)
 		   end
 		   
 		   -- tuple multi
@@ -1996,18 +2000,18 @@ setmetatable(tuple, {
 			 m = 0
 		      end
 
-		      res = list {}
+		      res = list({}, {})
 		      if m == 0 then
-			 return tuple(res)
+			 return tuple({}, res)
 		      end
 
 		      for i = 1, m do
 			 for _, e in self do
-			    res.append(e)
+			    res.append({}, e)
 			 end
 		      end
 
-		      return tuple(res)
+		      return tuple({}, res)
 		   end
 
                    local iterator_index = 0
@@ -2020,7 +2024,7 @@ setmetatable(tuple, {
                                       end
 
 				      if type(index) == "table" and index._is_slice == true then
-					 local s = list()
+					 local s = list({}, {})
 					 
 					 local start = index.start or 0
 					 start = py_idx(start, self._len)
@@ -2028,10 +2032,10 @@ setmetatable(tuple, {
 					 stop = py_idx(stop, self._len)
 					 local step = index.step or 1
 
-					 for _, i in range(start, stop, step) do
-					    s.append(self[i])
+					 for _, i in range({}, start, stop, step) do
+					    s.append({}, self[i])
 					 end
-					 return tuple(s)
+					 return tuple({}, s)
 				      end
 
 				      if methods[index] ~= nil then

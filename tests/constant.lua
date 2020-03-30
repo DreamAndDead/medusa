@@ -1,9 +1,9 @@
 local a = true
-assert(bool(a))
+assert(bool({}, a))
 local b = false
-assert(bool(not bool(b)))
+assert(bool({}, not bool(b)))
 local c = nil
-assert(bool(not bool(c)))
+assert(bool({}, not bool(c)))
 return {
     a = a,
     b = b,

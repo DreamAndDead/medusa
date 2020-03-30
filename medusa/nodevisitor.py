@@ -348,7 +348,7 @@ class NodeVisitor(ast.NodeVisitor):
             body.insert(0, line)
             
         if node.args.vararg is not None:
-            line = "local {name} = list {{...}}".format(name=node.args.vararg.arg)
+            line = "local {name} = list({{}}, {{...}})".format(name=node.args.vararg.arg)
             body.insert(0, line)
 
         defaults = [None] * (len(node.args.args) - len(node.args.defaults)) + node.args.defaults
@@ -623,7 +623,7 @@ class NodeVisitor(ast.NodeVisitor):
 
     def visit_Set(self, node):
         elements = [self.visit_all(item, inline=True) for item in node.elts]
-        line = "set {{_to_null({})}}".format(", ".join(elements))
+        line = "set({{}}, {{_to_null({})}})".format(", ".join(elements))
         self.emit(line)
 
     def visit_SetComp(self, node):
@@ -659,7 +659,7 @@ class NodeVisitor(ast.NodeVisitor):
         self.scope.pop()
         
     def visit_Slice(self, node):
-        line = "slice({start}, {stop}, {step})"
+        line = "slice({{}}, {start}, {stop}, {step})"
         values = {
             "start": self.visit_all(node.lower, inline=True) if node.lower is not None else "nil",
             "stop": self.visit_all(node.upper, inline=True) if node.upper is not None else "nil",
