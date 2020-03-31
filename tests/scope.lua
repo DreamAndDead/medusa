@@ -29,7 +29,7 @@ end, {}, "c")
 local o = c(merge_kwargs({}, {}))
 assert(bool({}, (g == 10)))
 g = 10
-l = (function() local result = list {} for _, g in range(merge_kwargs({}, {}), 20) do result.append(g) end return result end)()
+l = (function() local result = list({}, {}) for _, g in range(merge_kwargs({}, {}), 20) do result.append({}, g) end return result end)()
 assert(bool({}, (l[_to_null(19)] == 19)))
 assert(bool({}, (g == 10)))
 g = 10

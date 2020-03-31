@@ -367,7 +367,7 @@ class NodeVisitor(ast.NodeVisitor):
 
         # coroutine before decorator
         if cur_scope["coroutine"]:
-            line = "{name} = meta_generator({name})"
+            line = "{name} = meta_generator({{}}, {name})"
             self.emit(line.format(name=name))
 
         # 装饰器
@@ -539,7 +539,7 @@ class NodeVisitor(ast.NodeVisitor):
 
         body = []
         if node.args.vararg is not None:
-            line = "local {name} = list {{...}}".format(name=node.args.vararg.arg)
+            line = "local {name} = list({{}}, {{...}})".format(name=node.args.vararg.arg)
             body.insert(0, line)
 
         arg_index = -1
@@ -568,7 +568,7 @@ class NodeVisitor(ast.NodeVisitor):
     def visit_ListComp(self, node):
         self.scope.push(dict(kind="generator"))
         self.emit("(function()")
-        self.emit("local result = list {}")
+        self.emit("local result = list({}, {})")
 
         ends_count = 0
 
@@ -587,7 +587,7 @@ class NodeVisitor(ast.NodeVisitor):
                 self.emit(line)
                 ends_count += 1
 
-        line = "result.append({})"
+        line = "result.append({{}}, {})"
         line = line.format(self.visit_all(node.elt, inline=True))
         self.emit(line)
 
@@ -629,7 +629,7 @@ class NodeVisitor(ast.NodeVisitor):
     def visit_SetComp(self, node):
         self.scope.push(dict(kind="generator"))
         self.emit("(function()")
-        self.emit("local result = set {}")
+        self.emit("local result = set({}, {})")
 
         ends_count = 0
 
@@ -648,7 +648,7 @@ class NodeVisitor(ast.NodeVisitor):
                 self.emit(line)
                 ends_count += 1
 
-        line = "result.add({})"
+        line = "result.add({{}}, {})"
         line = line.format(self.visit_all(node.elt, inline=True))
         self.emit(line)
 

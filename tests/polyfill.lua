@@ -242,10 +242,10 @@ local _g_real_next = next
 -- return the next item from the iterator. If default is given and the iterator
 -- is exhausted, it is returned instead of raising StopIteration.
 -- fixme: support generator only for now
-local next = function(iter, default)
+local function next(kvs, iter, default)
    local v = nil
    if iter._is_generator then
-      v = iter.next()
+      v = iter.next({})
    end
    v = v or default
    return v
@@ -876,7 +876,7 @@ local function filter(kvs, func, iterable)
    local l = list({}, {})
    for _, item in iterable do
       if func({}, item) then
-	 l.append(item)
+	 l.append({}, item)
       end
    end
    return l
@@ -1034,7 +1034,7 @@ end
 -- generator (and meta) class
 local meta_generator = {}
 setmetatable(meta_generator, {
-                __call = function(_, t)
+                __call = function(_, kvs, t)
                    local result = {}
 
                    result._is_generator = true
@@ -1042,17 +1042,17 @@ setmetatable(meta_generator, {
 
 		   local methods = {}
 
-                   methods.next = function(self)
+                   methods.next = function(self, kvs)
                       local stat, value = coroutine.resume(self._generator)
 		      return value
                    end
 		   		   
-                   methods.send = function(self, ...)
+                   methods.send = function(self, kvs, ...)
                       local stat, value = coroutine.resume(self._generator, ...)
 		      return value
                    end
 
-		   methods.close = function(self)
+		   methods.close = function(self, kvs)
 		   end
 
                    setmetatable(result, {
@@ -1089,7 +1089,7 @@ local function map(kvs, func, ...)
    local min_len = math.huge
 
    for _, it in iterables do
-      lists.append(list({}, it))
+      lists.append({}, list({}, it))
       
       local l = len({}, list({}, it))
       if l < min_len then
@@ -1103,7 +1103,7 @@ local function map(kvs, func, ...)
       for _, ith in range({}, iter_num) do
 	 param[#param+1] = lists[ith][nth]
       end
-      res.append(func({}, unpack(param)))
+      res.append({}, func({}, unpack(param)))
    end
 
    return res
@@ -1276,21 +1276,21 @@ setmetatable(dict, {
 		   local methods = {}
 
 		   -- D.clear() -> None.  Remove all items from D.
-		   methods.clear = function(self)
+		   methods.clear = function(self, kvs)
 		      self._data = {}
 		   end
 
 		   -- D.copy() -> a shallow copy of D
-		   methods.copy = function(self)
-		      return dict(self._data)
+		   methods.copy = function(self, kvs)
+		      return dict({}, self._data)
 		   end
 
 		   -- d.fromkeys(iterable, value=None, /)
 		   -- returns a new dict with keys from iterable and values equal to value.
-		   methods.fromkeys = function(self, keys, value)
+		   methods.fromkeys = function(self, kvs, keys, value)
 		      value = _to_null(value or nil)
 
-		      local d = dict()
+		      local d = dict({})
 		      for _, k in keys do
 			 d._data[_to_null(k)] = value
 		      end
@@ -1298,13 +1298,13 @@ setmetatable(dict, {
 		   end
 
 		   -- D.get(k[,d]) -> D[k] if k in D, else d.  d defaults to None.
-		   methods.get = function(self, key, default)
+		   methods.get = function(self, kvs, key, default)
 		      value = self._data[_to_null(key)] or _to_null(default or nil)
 		      return _to_nil(value)
 		   end
 
 		   -- D.items() -> a set-like object providing a view on D's items
-		   methods.items = function(self)
+		   methods.items = function(self, kvs)
 		      return function(_, idx)
 			 idx, v = _g_real_next(self._data, idx)
 			 return idx, _to_nil(idx), _to_nil(v)
@@ -1312,8 +1312,8 @@ setmetatable(dict, {
 		   end
 
 		   -- D.keys() -> a set-like object providing a view on D's keys
-		   methods.keys = function(self)
-		      return function(_, idx) 
+		   methods.keys = function(self, kvs)
+		      return function(_, idx)
 			 idx, v = _g_real_next(self._data, idx)
 			 return idx, _to_nil(idx)
 		      end
@@ -1321,7 +1321,7 @@ setmetatable(dict, {
 
 		   -- D.pop(k[,d]) -> v, remove specified key and return the corresponding value.
 		   -- if key is not found, d is returned if given, otherwise KeyError is raised
-		   methods.pop = function(self, key, default)
+		   methods.pop = function(self, kvs, key, default)
 		      value = self._data[_to_null(key)] or _to_null(default or nil)
 		      self._data[_to_null(key)] = nil
 		      return _to_nil(value)
@@ -1329,7 +1329,7 @@ setmetatable(dict, {
 
 		   -- D.popitem() -> (k, v), remove and return some (key, value) pair as a
 		   -- 2-tuple; but raise KeyError if D is empty.
-		   methods.popitem = function(self)
+		   methods.popitem = function(self, kvs)
 		      local key, value = _g_real_next(self._data)
 		      if key ~= nil then
 			 self._data[key] = nil
@@ -1339,7 +1339,7 @@ setmetatable(dict, {
 		   end
 
 		   -- D.setdefault(k[,d]) -> D.get(k,d), also set D[k]=d if k not in D
-		   methods.setdefault = function(self, key, default)
+		   methods.setdefault = function(self, kvs, key, default)
 		      if self._data[_to_null(key)] == nil then
 			 self._data[_to_null(key)] = _to_null(default)
 		      end
@@ -1351,19 +1351,19 @@ setmetatable(dict, {
 		   -- if E is present and has a .keys() method, then does:  for k in E: D[k] = E[k]
 		   -- if E is present and lacks a .keys() method, then does:  for k, v in E: D[k] = v
 		   -- in either case, this is followed by: for k in F:  D[k] = F[k]
-		   methods.update = function(self, t)
+		   methods.update = function(self, kvs, t)
 		      if t._is_dict ~= true then
 			 return
 		      end
 
-		      for _, k, v in t.items() do
+		      for _, k, v in t.items({}) do
 			 self._data[_to_null(k)] = _to_null(v)
 		      end
 		   end
 
 		   -- D.values() -> an object providing a view on D's values
-		   methods.values = function(self)
-		      return function(_, idx) 
+		   methods.values = function(self, kvs)
+		      return function(_, idx)
 			 idx, v = _g_real_next(self._data, idx)
 			 return idx, _to_nil(v)
 		      end
@@ -2101,7 +2101,7 @@ local function class(class_init, bases, class_name)
    c = class_init(c)
    
    local mt = getmetatable(c) or {}
-   mt.__call = function(_, ...)
+   mt.__call = function(_, kvs, ...)
       local obj = {}
       
       setmetatable(obj, {
@@ -2109,8 +2109,8 @@ local function class(class_init, bases, class_name)
 			 local attr = c[idx]
 			 if type(attr) == "function" then
 			    return function(...)
-			       local args = list {...}
-			       local kvs = args.pop(0)
+			       local args = list({}, {...})
+			       local kvs = args.pop({}, 0)
 			       -- attr is function, obj is self
 			       return c[idx](kvs, obj, unpack(args)) 
 			    end
@@ -2125,7 +2125,7 @@ local function class(class_init, bases, class_name)
       
       -- search in the metatable
       if type(obj.__init__) == "function" then
-	 obj.__init__(...)
+	 obj.__init__(kvs, ...)
       end
       
       return obj
@@ -2175,14 +2175,14 @@ end
 -- is exhausted and then it raises StopIteration.
 local function zip(kvs, iter1, ...)
    local iters = list({}, {...})
-   iters.insert(0, iter1)
+   iters.insert({}, 0, iter1)
 
    local lists = list({}, {})
    local iters_num = len({}, iters)
    local min_iter_len = math.huge
 
    for _, it in iters do
-      lists.append(list({}, it))
+      lists.append({}, list({}, it))
       local l = len({}, list({}, it))
       if l < min_iter_len then
 	 min_iter_len = l
@@ -2193,9 +2193,9 @@ local function zip(kvs, iter1, ...)
    for _, nth in range({}, min_iter_len) do
       local item = list({}, {})
       for _, ith in range({}, iters_num) do
-	 item.append(lists[ith][nth])
+	 item.append({}, lists[ith][nth])
       end
-      res.append(item)
+      res.append({}, item)
    end
 
    return res

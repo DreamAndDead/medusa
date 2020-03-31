@@ -4,7 +4,7 @@ local function count(kvs)
         ::loop_label_1::
     end
 end
-count = meta_generator(count)
+count = meta_generator({}, count)
 local c = count(merge_kwargs({}, {}))
 assert(bool({}, (next(merge_kwargs({}, {}), c) == 0)))
 assert(bool({}, (next(merge_kwargs({}, {}), c) == 1)))
@@ -17,7 +17,7 @@ local function echo(kvs)
         ::loop_label_2::
     end
 end
-echo = meta_generator(echo)
+echo = meta_generator({}, echo)
 local e = echo(merge_kwargs({}, {}))
 assert(bool({}, (next(merge_kwargs({}, {}), e) == nil)))
 assert(bool({}, (e.send(merge_kwargs({}, {}), 10) == 10)))

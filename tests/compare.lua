@@ -13,12 +13,12 @@ local b = a
 local c = list({}, {_to_null()})
 assert(bool({}, (operator_is(a, b))))
 assert(bool({}, (not operator_is(a, c))))
-assert(bool({}, (operator_in(1, set {_to_null(1, 2, 3)}))))
-assert(bool({}, (operator_in(2, set {_to_null(1, 2, 3)}))))
-assert(bool({}, (operator_in(3, set {_to_null(1, 2, 3)}))))
-assert(bool({}, (not operator_in(4, set {_to_null(1, 2, 3)}))))
-assert(bool({}, (not operator_in(5, set {_to_null(1, 2, 3)}))))
-assert(bool({}, (not operator_in(6, set {_to_null(1, 2, 3)}))))
+assert(bool({}, (operator_in(1, set({}, {_to_null(1, 2, 3)})))))
+assert(bool({}, (operator_in(2, set({}, {_to_null(1, 2, 3)})))))
+assert(bool({}, (operator_in(3, set({}, {_to_null(1, 2, 3)})))))
+assert(bool({}, (not operator_in(4, set({}, {_to_null(1, 2, 3)})))))
+assert(bool({}, (not operator_in(5, set({}, {_to_null(1, 2, 3)})))))
+assert(bool({}, (not operator_in(6, set({}, {_to_null(1, 2, 3)})))))
 return {
     a = a,
     b = b,

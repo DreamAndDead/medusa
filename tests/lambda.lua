@@ -9,7 +9,7 @@ local dec = function(kvs, x, n) n = n or 1; return (x - n) end
 assert(bool({}, (dec(merge_kwargs({}, {}), 1) == 0)))
 assert(bool({}, (dec(merge_kwargs({}, {}), 10, 2) == 8)))
 assert(bool({}, (dec(merge_kwargs({}, {}), dec(merge_kwargs({}, {}), 10, 2)) == 7)))
-local itself = function(kvs, n, ...) local rest = list {...}; return rest end
+local itself = function(kvs, n, ...) local rest = list({}, {...}); return rest end
 local t = 0
 local l = list({}, {_to_null(1, 2, 3, 4)})
 for _, i in itself(merge_kwargs({}, {}), unpack(l)) do

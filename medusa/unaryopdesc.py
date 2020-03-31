@@ -14,7 +14,7 @@ class UnaryOperationDesc:
         },
         ast.Not: {
             "value": "not",
-            "format": "not bool({value})",
+            "format": "not bool({{}}, {value})",
         },
         ast.Invert: {
             "value": "~",
