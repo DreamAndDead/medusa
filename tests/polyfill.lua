@@ -1,3 +1,51 @@
+-- filter all args and get **kwargs
+local function get_kwargs(kvs, keys)
+   local t = {}
+   for k, v in pairs(kvs) do
+      if not keys[k] then
+	 t[k] = v
+      end
+   end
+   return t
+end
+
+-- if a kwonlyarg is optional or must
+local function get_kwonlyarg(kvs, var_name, default, func_name)
+   local arg = kvs[var_name]
+
+   assert(not(arg == nil and default == nil), "function " .. func_name .. " miss keyword-only argument: " .. var_name)
+
+   return arg or default
+end
+
+
+-- if kw arg is conflict with pos arg passed in
+local function get_posarg(kvs, var_name, var, default, func_name)
+   local kwvar = kvs[var_name]
+
+   assert(not(kwvar ~= nil and var ~= nil), "function " .. func_name .. " got multiple values for argument " .. var_name)
+
+   local v = var or kwvar or default
+
+   if v == nil then
+      error("miss position argument " .. var_name)
+   end
+
+   return v
+end
+
+
+local function merge_kwargs(kvs, kwargs)
+   for k, v in pairs(kwargs) do
+      assert(kvs[k] == nil, "got multiple values for argument " .. k)
+      kvs[k] = v
+   end
+
+   return kvs
+end
+
+
+
 local max_bit_length = 32
 
 local function check_int(n)
@@ -2217,52 +2265,6 @@ local function _require(m)
    setfenv(code, env)
    local export = code()
    return export
-end
-
--- filter all args and get **kwargs
-local function get_kwargs(kvs, keys)
-   local t = {}
-   for k, v in pairs(kvs) do
-      if not keys[k] then
-	 t[k] = v
-      end
-   end
-   return t
-end
-
--- if a kwonlyarg is optional or must
-local function get_kwonlyarg(kvs, var_name, default, func_name)
-   local arg = kvs[var_name]
-
-   assert(not(arg == nil and default == nil), "function " .. func_name .. " miss keyword-only argument: " .. var_name)
-
-   return arg or default
-end
-
-
--- if kw arg is conflict with pos arg passed in
-local function get_posarg(kvs, var_name, var, default, func_name)
-   local kwvar = kvs[var_name]
-
-   assert(not(kwvar ~= nil and var ~= nil), "function " .. func_name .. " got multiple values for argument " .. var_name)
-
-   local v = var or kwvar or default
-
-   if v == nil then
-      error("miss position argument " .. var_name)
-   end
-
-   return v
-end
-
-
-local function merge_kwargs(kvs, kwargs)
-   for k, v in pairs(kwargs) do
-      assert(kvs[k] == nil, "got multiple values for argument " .. k)
-      kvs[k] = v
-   end
-
-   return kvs
 end
 
 

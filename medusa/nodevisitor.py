@@ -538,19 +538,32 @@ class NodeVisitor(ast.NodeVisitor):
         function_def = line.format(arguments=", ".join(arguments))
 
         body = []
+
+        all_except_varkwargs = node.args.args + node.args.kwonlyargs
+
+        if node.args.kwarg is not None:
+            line = "local {} = get_kwargs(kvs, {{{}}})".format(node.args.kwarg.arg, ", ".join(map(lambda a: "{} = true".format(a.arg), all_except_varkwargs)))
+            body.insert(0, line)
+
+        for k, v in reversed(list(zip(node.args.kwonlyargs, node.args.kw_defaults))):
+            line = "local {} = get_kwonlyarg(kvs, '{}', {}, '{}')".format(k.arg, k.arg, self.visit_all(v, inline=True) if v else "nil", 'lambda')
+            body.insert(0, line)
+            
         if node.args.vararg is not None:
             line = "local {name} = list({{}}, {{...}})".format(name=node.args.vararg.arg)
             body.insert(0, line)
 
-        arg_index = -1
-        for d in reversed(node.args.defaults):
-            line = "{name} = {name} or {value}"
-            arg = node.args.args[arg_index]
-            values = {
-                "name": arg.arg,
-                "value": self.visit_all(d, inline=True),
-            }
-            body.insert(0, line.format(**values))
+        defaults = [None] * (len(node.args.args) - len(node.args.defaults)) + node.args.defaults
+        for arg, d in reversed(list(zip(node.args.args, defaults))):
+            line = "{} = get_posarg(kvs, '{}', {}, {}, '{}')".format(
+                arg.arg,
+                arg.arg,
+                arg.arg,
+                self.visit_all(d, inline=True),
+                'lambda'
+            )
+
+            body.insert(0, line)
 
         return_line = "return {} end"
         body.append(return_line.format(self.visit_all(node.body, inline=True)))

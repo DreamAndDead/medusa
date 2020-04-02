@@ -34,6 +34,9 @@ for i in itself(*l):
 assert t == 9
 
 
-## TODO
-## 键值参数测试
+## 键值参数
+
+func = lambda a, b=1, *c, d=2, e, **f: a + b + c[0] + d + e + f['c'] + f['f']
+
+assert func(0, 1, 2, 3, 4, d=3, e=4, c=10, f=20) == 40
 
