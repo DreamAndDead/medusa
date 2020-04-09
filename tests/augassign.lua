@@ -12,7 +12,7 @@ local b = 2
 assert(bool({}, (b == 2)))
 b = (math.pow(b, 10))
 assert(bool({}, (b == 1024)))
-b = (math.fmod(b, 3))
+b = (mod_operator(b, 3))
 assert(bool({}, (b == 1)))
 return {
     a = a,

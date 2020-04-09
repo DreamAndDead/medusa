@@ -15,7 +15,7 @@ end
 func(merge_kwargs({}, {}))
 assert(bool({}, (g == 10)))
 g = 10
-local l = function(kvs, g) return (g + 1) end
+local l = function(kvs, g) g = get_posarg(kvs, 'g', g, nil, 'lambda'); return (g + 1) end
 assert(bool({}, (g == 10)))
 assert(bool({}, (l(merge_kwargs({}, {}), 1) == 2)))
 assert(bool({}, (g == 10)))

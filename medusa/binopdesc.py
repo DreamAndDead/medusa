@@ -22,7 +22,7 @@ class BinaryOperationDesc:
         },
         ast.Mod: {
             "value": "",
-            "format": "math.fmod({left}, {right})",
+            "format": "mod_operator({left}, {right})",
         },
         ast.Pow: {
             "value": "",

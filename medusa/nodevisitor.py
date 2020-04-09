@@ -38,7 +38,7 @@ class NodeVisitor(ast.NodeVisitor):
         """
         if nodes is None and inline:
             return "nil"
-            
+
         visitor = NodeVisitor(context=self.context, scope=self.scope)
 
         if isinstance(nodes, list):
@@ -491,7 +491,6 @@ class NodeVisitor(ast.NodeVisitor):
             if alias.asname is None:
                 values["name"] = alias.name
                 values["asname"] = values["name"]
-                #values["asname"] = values["asname"].split(".")[-1]
             else:
                 values["name"] = alias.name
                 values["asname"] = alias.asname
@@ -518,7 +517,6 @@ class NodeVisitor(ast.NodeVisitor):
             last_scope['locals'].append(values["asname"])
             self.emit(line.format(**values))
 
-        
     def visit_Index(self, node):
         line = "_to_null({})"
         value = self.visit_all(node.value, inline=True)
@@ -727,5 +725,4 @@ class NodeVisitor(ast.NodeVisitor):
         self.output[-1].append("::{}::".format(last_ctx["loop_label"]))
 
         self.emit("end")
-
 

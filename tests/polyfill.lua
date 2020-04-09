@@ -44,8 +44,6 @@ local function merge_kwargs(kvs, kwargs)
    return kvs
 end
 
-
-
 local max_bit_length = 32
 
 local function check_int(n)
@@ -55,17 +53,9 @@ local function check_int(n)
    end
 end
 
-local function print_tbl(tbl)
-   local b = ''
-   for i = max_bit_length, 1, -1 do
-      b = b .. tostring(tbl[i])
-   end
-   print(b)
-end
-
 local function number_to_tbl(n)
    check_int(n)
-   
+
    local tbl = {}
 
    if n >= 0 then
@@ -241,7 +231,7 @@ end
 local function bit_lshift(n, shift)
    check_int(n)
    assert(shift >= 0, "negative shift count")
-   
+
    local tbl = number_to_tbl(n)
    local lshift_tbl = {}
 
@@ -266,13 +256,14 @@ local bit = {
    blshift = bit_lshift,
 }
 
-
-local _string_meta = getmetatable("")
-_string_meta.__add = function(v1, v2)
-   if type(v1) == "string" and type(v2) == "string" then
-      return v1 .. v2
-   end
-   return v1 + v2
+--[[
+   无论 + 左右哪个是 string 类型的值，都会引发元方法的调用
+   所以一旦调用这个方法，v1 v2 其中必定有一个 string 类型
+]]
+local string_meta = getmetatable("")
+string_meta.__add = function(v1, v2)
+   assert(type(v1) == "string" and type(v2) == "string", "can not explicitly do " .. type(v1) .. " + " .. type(v2))
+   return v1 .. v2
 end
 
 local _g_real_unpack = unpack or table.unpack
@@ -309,7 +300,7 @@ local function range(kvs, ...)
    local start = nil
    local stop = nil
    local step = nil
-   
+
    if l == 1 then
       stop = p[1]
    elseif l == 2 then
@@ -331,9 +322,9 @@ local function range(kvs, ...)
    return function()
       ret = i
       if (step > 0 and i >= stop) or (step < 0 and i <= stop) then
-         return nil, nil
+	 return nil, nil
       end
-      
+
       i = i + step
       return i, ret
    end
@@ -516,7 +507,7 @@ setmetatable(list, {
 		   -- 当 start stop 超过开始/结束的界限，算作界限本身
                    methods.index = function(self, kvs, value, start, stop)
 		      local size = self._len
-		      
+
 		      if not start then
 			 start = 1
 		      else
@@ -549,7 +540,7 @@ setmetatable(list, {
 		      else
 			 index = py_to_lua_idx(index, size)
 		      end
-		      
+
 		      self._len = self._len + 1
 		      for i = self._len, 1, -1 do
 			 if i > index then
@@ -562,7 +553,7 @@ setmetatable(list, {
 		   -- L.pop([index]) -> item -- remove and return item at index (default last).
                    methods.pop = function(self, kvs, index)
 		      local size = self._len
-		      
+
 		      if not index then
 			 index = size
 		      else
@@ -798,15 +789,6 @@ local function reversed(kvs, seq)
    return l
 end
 
-
-
---[[
-   builtin functions
-   ref: https://docs.python.org/3.4/library/functions.html
-
-   大致顺序按照字母顺序，其中有一些对依赖关系的调整，比如 bool 被很多依赖
---]]
-
 -- bool(x) -> bool
 -- returns True when the argument x is true, False otherwise.
 -- the builtins True and False are the only two instances of the class bool.
@@ -823,7 +805,7 @@ local function bool(kvs, x)
    end
 
    return true
-end 
+end
 
 -- abs(number) -> number
 -- return the absolute value of the argument.
@@ -905,9 +887,9 @@ local function callable(kvs, obj)
       if obj._is_list or obj._is_dict then
 	 return false
       end
-      
+
       local meta = getmetatable(obj)
-      return type(meta.__call) == "function" 
+      return type(meta.__call) == "function"
    end
 
    return false
@@ -1023,7 +1005,7 @@ local function int(kvs, x, base)
       else
 	 base = 10
       end
-      
+
       local n = tonumber(pos, base)
 
       assert(n ~= nil, "invalid literal for int(): " .. x)
@@ -1035,7 +1017,7 @@ local function int(kvs, x, base)
       return n
    else
       assert(base >= 2 and base <= 40, "int() base must be >= 2 and <= 36")
-      
+
       local is_neg = string.find(x, '-') ~= nil
       local pos = string.gsub(x, '-', '')
       local n = tonumber(pos, base)
@@ -1048,7 +1030,6 @@ local function int(kvs, x, base)
 
       return n
    end
-    
 end
 
 
@@ -1070,10 +1051,10 @@ local function coroutine_wrap(func)
 	 ret_code = code
       end
       ret_res = res
-      
+
       code = next_code
       res = next_res
-      
+
       return ret_code, ret_res
    end
 end
@@ -1094,7 +1075,7 @@ setmetatable(meta_generator, {
                       local stat, value = coroutine.resume(self._generator)
 		      return value
                    end
-		   		   
+		   
                    methods.send = function(self, kvs, ...)
                       local stat, value = coroutine.resume(self._generator, ...)
 		      return value
@@ -1319,7 +1300,6 @@ setmetatable(dict, {
 		   else
 		      -- dict()
 		   end
-		   
 
 		   local methods = {}
 
@@ -1422,13 +1402,13 @@ setmetatable(dict, {
 		   methods.__iter__ = function(self)
 		      return self
 		   end
-		   
+
 		   setmetatable(result, {
 				   __index = function(self, index)
 				      if self._data[_to_null(index)] ~= nil then
 					 return _to_nil(self._data[_to_null(index)])
 				      end
-				      
+
 				      if methods[index] ~= nil then
 					 return function(...)
 					    return methods[index](self, ...)
@@ -1444,7 +1424,7 @@ setmetatable(dict, {
 				      return idx, _to_nil(idx)
 				   end,
 		   })
-		   
+
 		   return result
 		end,
 })
@@ -1665,7 +1645,7 @@ setmetatable(set, {
 		      self.remove({}, elem)
 		      return elem
 		   end
-		   
+
 		   -- remove an element from a set; it must be a member.
 		   -- if the element is not a member, raise a KeyError.
 		   methods.remove = function(self, kvs, elem)
@@ -1914,7 +1894,7 @@ local function slice(kvs, ...)
       s.stop = p[2]
       s.step = p[3]
    end
-   
+
    return s
 end
 
@@ -1995,7 +1975,7 @@ setmetatable(tuple, {
 		   -- 当 start stop 超过开始/结束的界限，算作界限本身
                    methods.index = function(self, kvs, value, start, stop)
 		      local size = self._len
-		      
+
 		      if not start then
 			 start = 1
 		      else
@@ -2134,20 +2114,20 @@ local function class(class_init, bases, class_name)
    bases = bases or {}
 
    local c = {}
-   
+
    for _, base in ipairs(bases) do
       for k, v in pairs(base) do
 	 c[k] = v
       end
    end
-   
+
    c.__name__ = class_name
    c.__base__ = bases
    -- todo: __mro__ ?
    -- https://www.python.org/download/releases/2.3/mro/
-   
+
    c = class_init(c)
-   
+
    local mt = getmetatable(c) or {}
    mt.__call = function(_, kvs, ...)
       local obj = {}
@@ -2196,21 +2176,21 @@ local function issubclass()
 end
 
 --[[
-super() -> same as super(__class__, <first argument>)
-super(type) -> unbound super object
-super(type, obj) -> bound super object; requires isinstance(obj, type)
-super(type, type2) -> bound super object; requires issubclass(type2, type)
+   super() -> same as super(__class__, <first argument>)
+   super(type) -> unbound super object
+   super(type, obj) -> bound super object; requires isinstance(obj, type)
+   super(type, type2) -> bound super object; requires issubclass(type2, type)
 
-Typical use to call a cooperative superclass method:
-class C(B):
-    def meth(self, arg):
-        super().meth(arg)
+   Typical use to call a cooperative superclass method:
+   class C(B):
+   def meth(self, arg):
+   super().meth(arg)
 
-This works for class methods too:
-class C(B):
-    @classmethod
-    def cmeth(cls, arg):
-        super().cmeth(arg)
+   This works for class methods too:
+   class C(B):
+   @classmethod
+   def cmeth(cls, arg):
+   super().cmeth(arg)
 --]]
 local function super(cls, obj)
 end
@@ -2249,7 +2229,15 @@ local function zip(kvs, iter1, ...)
    return res
 end
 
-local g_real_require = require
+local function mod_operator(left, ...)
+   if type(left) == "string" then
+      return string.format(left, ...)
+   else
+      return math.fmod(left, ...)
+   end
+end
+
+local _g_real_require = require
 
 local function _require(m)
    local polyfill, e = loadfile('./polyfill.lua')
@@ -2317,6 +2305,7 @@ return {
    ["issubclass"] = issubclass,
    ["super"] = super,
    ["zip"] = zip,
+   ["mod_operator"] = mod_operator,
    ["require"] = _require,
    ["get_kwargs"] = get_kwargs,
    ["get_kwonlyarg"] = get_kwonlyarg,

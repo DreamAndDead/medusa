@@ -1,5 +1,10 @@
 # attribute
 
+l = [1, 2]
+
+assert l.count(1) == 1
+
+
 class T:
     def __init__(self):
         self.name = 'T'
